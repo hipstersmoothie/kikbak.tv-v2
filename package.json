@@ -1,0 +1,19 @@
+{
+  "name": "mongo-server",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "cheerio": "latest",
+    "express": "3.3.4",
+    "get-youtube-id": "^0.1.3",
+    "gulp": "^3.8.11",
+    "gulp-develop-server": "^0.4.2",
+    "gulp-watch": "^4.2.4",
+    "lodash": "^3.8.0",
+    "mongojs": "0.18.2",
+    "parse-rss": "*",
+    "request": "^2.55.0",
+    "youtube-node": "^1.2.0",
+    "youtube-thumbnail": "^1.2.0"
+  }
+}
