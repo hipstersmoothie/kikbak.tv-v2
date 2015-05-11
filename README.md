@@ -4,11 +4,12 @@ An automatically generated music video top 100 of the web.
 
 ## Building
 
-Make sure you have node and mongodb installed
+Make sure you have node, mongodb, and meteor installed
 
 ```shell
 node -v
 mongo --version
+meteor --version
 ```
 
 Once everything is installed, open two terminal tabs for the project.
