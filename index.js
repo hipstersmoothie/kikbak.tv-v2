@@ -8,7 +8,8 @@ var http = require('http'),
     cheerio = require('cheerio'),
     getYouTubeID = require('get-youtube-id'),
     youtubeThumbnail = require('youtube-thumbnail'),
-    YouTube = require('youtube-node');
+    YouTube = require('youtube-node'),
+    hypeBlogs = require('./blogs');
  
 var app = express();
 app.set('port', process.env.PORT || 3000); 
@@ -19,7 +20,19 @@ app.get('/', function (req, res) {
 
 app.get('/videos', function (req, res) {
 	db.videos.find(function(err, videos) {
-		res.send('<html><body><h1>' + JSON.stringify(videos) + '</html>');
+		var buffer = "";
+		videos.sort(function(a, b) {
+			return a.foundOn.length - b.foundOn.length
+		}).reverse();
+
+		buffer += '<html><body>';
+		_.forEach(videos.splice(0,20), function(video) {
+			buffer += '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + video.videoId + '" frameborder="0" allowfullscreen></iframe>'
+			//buffer += '<div><h1>' + video.title + '</h1><img src="' + video.thumbnail.medium.url + '"</div>';
+		});
+		buffer += '<body></html>';
+
+		res.send(buffer);
 	});
 });
 
@@ -31,32 +44,61 @@ http.createServer(app).listen(app.get('port'), function(){
   compileVideos();
 });
 
-var blogs = [
-    'http://pigeonsandplanes.com/category/video-2/feed/',
-    'http://www.stereogum.com/video/feed/',
-    'http://www.gorillavsbear.net/category/video/feed/',
-    'http://www.aquariumdrunkard.com/feed/',
-    'http://assets.complex.com/feeds/channels/music.xml',
-    'http://noisey.vice.com/videos/rss', 
-    'http://www.fakeshoredrive.com/feed/',
-    'http://drownedinsound.com/feed',
-    'http://dancingastronaut.com/videos/feed/',
-    'http://www.popjustice.com/videos/feed/',
-    'http://www.youredm.com/feed/',
-    'http://allhiphop.com/category/videos/feed/',
-    'http://2dopeboyz.com/category/video/feed/',
-    'http://www.factmag.com/feed/',
-    'http://hypetrak.com/category/videos/feed/'
-  ];
+var blogs;
 
 var compileVideos = function() {
 	//db.videos.remove();
+	var minutes = 15, the_interval = minutes * 60 * 1000;
+	db.blogs.find({ }, function(err, myBlogs) {
+		blogs = myBlogs;
+		refreshData();
+		setInterval(refreshData, the_interval);
+	})
+}
+
+var compileBlogs = function() {
+ 	_.forEach(hypeBlogs, _.bind(testUrl, null, _, endings));
+}
+
+var clearWordpress = function() {
+ 	_.forEach(blogs,function(blog) {
+ 		if(blog.url.indexOf('wordpress')) {
+ 			db.blogs.remove({url : blog.url});
+ 		}
+ 	});
+}
+
+var endings = [
+	'video/feed/',
+	'videos/feed/',
+	'category/video/feed/',
+	'category/videos/feed/',
+	'videos/rss',
+	'feed/'
+];
+
+var testUrl = function(url, endings) {
+	if (endings.length == 0)
+		return;
+
+	var str = url.siteurl[url.siteurl.length - 1] == '/' ? url.siteurl + _.first(endings) : url.siteurl + '/' + _.first(endings)
+	parser(str, function(err, posts) {
+		if(!err) {
+			db.blogs.update({url: str}, {$setOnInsert : {
+				url : str
+			}}, {upsert : true});
+		} else {
+			testUrl(url, _.rest(endings));
+		}
+  });
+}
+
+var refreshData = function() {
 	_.forEach(blogs, parseFeed);
 	_.delay(updateStatsForAllVids, 10000)
 }
 
 var updateStatsForAllVids = function() {
-	//console.log('asdfasdfasdf')
 	db.videos.find({ }, function(err, videos) {  	
 	  if (err)
 	    console.log(err);
@@ -67,15 +109,17 @@ var updateStatsForAllVids = function() {
 
 var parseFeed = function(url) {
 	parser(url, function(err, posts) {
-  	_.forEach(posts, _.bind(getHtml, null, _, url));
+		if(err) 
+			console.log('parseFeed', url, err);
+  	else 
+  		_.forEach(posts, _.bind(getHtml, null, _, url));
   });
 }
 
 var handlePost = function($, blog) {
 	var iframes = $('iframe');
-
 	_.forEach(iframes, function(iframe) {
-		if(iframe.attribs.src.indexOf('youtu') > -1)
+		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1)
 			 addToDb(iframe.attribs.src, blog);
 	});
 }
@@ -84,7 +128,7 @@ var addToDb = function(url, blog) {
 	var vidId = getYouTubeID(url);
   db.videos.find({ videoId : vidId }, function(err, video) {  
 	  if (err) {
-	    console.log(err);
+	    console.log('addToDb', err);
 	  } else {
 			if(video.length > 0)
 	  		updateVid(video, blog, vidId);
@@ -97,8 +141,9 @@ var addToDb = function(url, blog) {
 
 var updateVid = function(vidList, blog, vidId) {
 	video = vidList[0];
-	if (!_.includes(video.foundOn, blog)) {
-		console.log('updating', video.foundOn, blog);
+	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
+	if (!_.includes(foundUrls, blog.url)) {
+		console.log('updating', video.title, video.foundOn, blog);
 		video.foundOn.push(blog);
     db.videos.update({ videoId : vidId }, {$set: {
       foundOn : video.foundOn
@@ -108,23 +153,26 @@ var updateVid = function(vidList, blog, vidId) {
 
 var newVid = function(vidId, url, blog) {
 	youTube.getById(vidId, function(error, result) {
-		if(result['items'].length > 0) {
-			console.log('adding', url, vidId);
-			db.videos.insert({
-			  videoId : vidId,
-			  foundOn : [blog],
-			  dateFound : _.now(),
-			  thumbnail : youtubeThumbnail(url),
-			  title : result['items'][0]['snippet']['title'],
-			  description : result['items'][0]['snippet']['description'],
-			  publishedBy : result['items'][0]['snippet']['channelTitle'],
-			  oldStats : result['items'][0]['statistics'],
-			  avgViewPerHalfHour : 0,
-			  avgLikePerHalfHour : 0,
-			  avgDislikePerHalfHour : 0,
-			  avgFavoritePerHalfHour : 0,
-			  avgCommentPerHalfHour : 0
-			});
+		if(result['items'] && result['items'].length > 0) {// && (result['items'][0]['snippet']['title'].indexOf('Trailer') == -1 || result['items'][0]['snippet']['title'].indexOf('music') != -1) //weirdness to remove trailers
+			console.log('adding', url, vidId); 
+
+			db.videos.update({ videoId : vidId }, {
+		    $setOnInsert: {
+		    	videoId : vidId,
+				  foundOn : [blog],
+				  dateFound : _.now(),
+				  thumbnail : youtubeThumbnail(url),
+				  title : result['items'][0]['snippet']['title'],
+				  description : result['items'][0]['snippet']['description'],
+				  publishedBy : result['items'][0]['snippet']['channelTitle'],
+				  oldStats : result['items'][0]['statistics'],
+		    	avgViewPerHalfHour : 0,
+				  avgLikePerHalfHour : 0,
+				  avgDislikePerHalfHour : 0,
+				  avgFavoritePerHalfHour : 0,
+				  avgCommentPerHalfHour : 0 
+		    }
+		  }, { upsert : true });
 		}
 	});
 }
@@ -132,22 +180,24 @@ var newVid = function(vidId, url, blog) {
 var updateStats = function(video) {
 	var vidId = video.videoId;
 	youTube.getById(vidId, function(error, result) {
-		var oldStats = video.oldStats;
-		var newStats = result['items'][0]['statistics'];
-		var newViews = (parseInt(newStats.viewCount) - parseInt(oldStats.viewCount));
-		var newLikes = (parseInt(newStats.likeCount) - parseInt(oldStats.likeCount));
-		var newDislikes = (parseInt(newStats.dislikeCount) - parseInt(oldStats.dislikeCount));
-		var newFavorites = (parseInt(newStats.favoriteCount) - parseInt(oldStats.favoriteCount));
-		var newComments = (parseInt(newStats.commentCount) - parseInt(oldStats.commentCount));
+		if(result['items'] && result['items'][0]) {
+			var oldStats = video.oldStats;
+			var newStats = result['items'][0]['statistics'];
+			var newViews = (parseInt(newStats.viewCount) - parseInt(oldStats.viewCount));
+			var newLikes = (parseInt(newStats.likeCount) - parseInt(oldStats.likeCount));
+			var newDislikes = (parseInt(newStats.dislikeCount) - parseInt(oldStats.dislikeCount));
+			var newFavorites = (parseInt(newStats.favoriteCount) - parseInt(oldStats.favoriteCount));
+			var newComments = (parseInt(newStats.commentCount) - parseInt(oldStats.commentCount));
 
-		db.videos.update({ videoId : vidId }, {$set: {
-    	oldStats : newStats,
-    	avgViewPerHalfHour : video.avgViewPerHalfHour ? (video.avgViewPerHalfHour + newViews)/2 : newViews,
-    	avgLikePerHalfHour : video.avgLikePerHalfHour ? (video.avgLikePerHalfHour + newLikes)/2 : newLikes,
-    	avgDislikePerHalfHour : video.avgDislikePerHalfHour ? (video.avgDislikePerHalfHour + newDislikes)/2 : newDislikes,
-    	avgFavoritePerHalfHour : video.avgFavoritePerHalfHour ? (video.avgFavoritePerHalfHour + newFavorites)/2 : newFavorites,
-    	avgCommentPerHalfHour : video.avgCommentPerHalfHour ? (video.avgCommentPerHalfHour + newComments)/2 : newComments
-    }});
+			db.videos.update({ videoId : vidId }, {$set: {
+	    	oldStats : newStats,
+	    	avgViewPerHalfHour : video.avgViewPerHalfHour ? (video.avgViewPerHalfHour + newViews)/2 : newViews,
+	    	avgLikePerHalfHour : video.avgLikePerHalfHour ? (video.avgLikePerHalfHour + newLikes)/2 : newLikes,
+	    	avgDislikePerHalfHour : video.avgDislikePerHalfHour ? (video.avgDislikePerHalfHour + newDislikes)/2 : newDislikes,
+	    	avgFavoritePerHalfHour : video.avgFavoritePerHalfHour ? (video.avgFavoritePerHalfHour + newFavorites)/2 : newFavorites,
+	    	avgCommentPerHalfHour : video.avgCommentPerHalfHour ? (video.avgCommentPerHalfHour + newComments)/2 : newComments
+	    }});
+		}
 	});
 }
 
