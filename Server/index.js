@@ -51,18 +51,20 @@ youTube.setKey('AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg');
  
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
-  compileVideos();
+  //compileVideos();
+  compileBlogs();
 });
 
 var blogs;
 
 var compileVideos = function() {
 	//db.videos.remove();
-	var minutes = 15, the_interval = minutes * 60 * 1000;
+	var minutes = 10, the_interval = minutes * 30 * 1000;
 	db.blogs.find({ }, function(err, myBlogs) {
 		blogs = myBlogs;
-		refreshData();
-		setInterval(refreshData, the_interval);
+		console.log(myBlogs)
+		//refreshData();
+		//setInterval(refreshData, the_interval);
 	})
 }
 
@@ -72,7 +74,7 @@ var compileBlogs = function() {
 
 var clearWordpress = function() {
  	_.forEach(blogs,function(blog) {
- 		if(blog.url.indexOf('wordpress')) {
+ 		if(blog.url.indexOf('wordpress') > -1) {
  			db.blogs.remove({url : blog.url});
  		}
  	});
@@ -94,6 +96,7 @@ var testUrl = function(url, endings) {
 	var str = url.siteurl[url.siteurl.length - 1] == '/' ? url.siteurl + _.first(endings) : url.siteurl + '/' + _.first(endings)
 	parser(str, function(err, posts) {
 		if(!err) {
+			console.log(str);
 			db.blogs.update({url: str}, {$setOnInsert : {
 				url : str
 			}}, {upsert : true});
@@ -104,6 +107,8 @@ var testUrl = function(url, endings) {
 }
 
 var refreshData = function() {
+	console.log(blogs)
+	console.log('pulling');
 	_.forEach(blogs, parseFeed);
 	_.delay(updateStatsForAllVids, 10000)
 }
@@ -118,6 +123,7 @@ var updateStatsForAllVids = function() {
 }
 
 var parseFeed = function(url) {
+	console.log(url)
 	parser(url, function(err, posts) {
 		if(err) 
 			console.log('parseFeed', url, err);
@@ -140,6 +146,7 @@ var addToDb = function(url, blog) {
 	  if (err) {
 	    console.log('addToDb', err);
 	  } else {
+	  	console.log('here')
 			if(video.length > 0)
 	  		updateVid(video, blog, vidId);
 	  	else {
@@ -151,6 +158,7 @@ var addToDb = function(url, blog) {
 
 var updateVid = function(vidList, blog, vidId) {
 	video = vidList[0];
+	console.log(vidId)
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
 	if (!_.includes(foundUrls, blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
@@ -158,7 +166,7 @@ var updateVid = function(vidList, blog, vidId) {
     db.videos.update({ videoId : vidId }, {$set: {
       foundOn : video.foundOn
     }});
-  }
+	}
 }
 
 var newVid = function(vidId, url, blog) {

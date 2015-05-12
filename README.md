@@ -20,6 +20,7 @@ mongod
 ```
 To start server go to /Server: (starts on localHost:4000)
 ```shell
+npm install
 gulp
 ```
 
