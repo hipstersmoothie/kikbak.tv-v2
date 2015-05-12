@@ -36,13 +36,19 @@ app.get('/videosList', function (req, res) {
 	});
 });
 
+var multiplier = function(time) {
+	console.log(time);
+}
+
 app.get('/videos', function (req, res) {
 	db.videos.find(function(err, videos) {
 		videos.sort(function(a, b) {
+			multiplier((_.now() - Date.parse(a.youTubePostDate))/1000000);
+			//console.log(a.dateFound - Date.parse(a.youTubePostDate) );
 			return a.foundOn.length - b.foundOn.length
 		}).reverse();
 
-		res.send(videos);
+		res.send(videos.splice(0,100));
 	});
 });
 

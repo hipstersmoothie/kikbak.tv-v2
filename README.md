@@ -16,7 +16,7 @@ Once everything is installed, open two terminal tabs for the project.
 
 To start database, go to /Server:
 ```shell
-mongod
+mongod --dbpath ./mongodb
 ```
 To start server go to /Server: (starts on localHost:4000)
 ```shell
