@@ -95,6 +95,7 @@ var testUrl = function(url, endings) {
 	var str = url.siteurl[url.siteurl.length - 1] == '/' ? url.siteurl + _.first(endings) : url.siteurl + '/' + _.first(endings)
 	parser(str, function(err, posts) {
 		if(!err) {
+			console.log(str);
 			db.blogs.update({url: str}, {$setOnInsert : {
 				url : str
 			}}, {upsert : true});
