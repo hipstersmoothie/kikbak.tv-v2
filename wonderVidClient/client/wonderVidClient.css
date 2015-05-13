@@ -1,1 +1,105 @@
 /* CSS declarations go here */
+body{
+	background: #151515;
+	margin: 0;
+	padding: 0;
+	font-family: 'Lato', sans-serif;
+	font-weight: 400;
+}
+
+#youtube-video{
+	margin-left: 20px;
+	width: 65%;
+	height: 80vh;
+	display: inline-block;
+}
+
+.single{
+	opacity: 1;
+	width: 320px;
+	height: 250px;
+	display: inline-block;
+	margin: 10px;
+    background-repeat: no-repeat;
+    background: #252525;
+    /*border: 1px white solid;*/
+}
+
+
+.overlay{
+	transition: all 0.30s ease-in-out;
+  -webkit-transition: all 0.30s ease-in-out;
+  -moz-transition: all 0.30s ease-in-out;
+  -ms-transition: all 0.30s ease-in-out;
+  -o-transition: all 0.30s ease-in-out;
+	font-size: 10px;
+	/*opacity: 0;*/
+	width: 100%;
+	height: 100%;
+	text-align: center;
+
+	background-image: 'playButton';
+	display: inline-block;
+}
+
+.description{
+	position: fixed;
+	/*color: black;*/
+}
+
+.descriptionText{
+	color: white;
+	font-size: 12px;
+	margin: 200px 20px 20px 0;
+}
+
+
+
+.single:hover .overlay{
+	display: inline-block;
+}
+
+.container{
+	overflow: scroll;
+	width: 32%;
+	height: 80vh;
+	display: inline-block;
+	float: right;
+}
+
+
+.navbar-default {
+  background-color: rgba(0,0,0,0);
+  border-color: rgba(0,0,0,0);
+}
+.navbar-default .navbar-toggle {
+  border-color: rgba(0,0,0,0);
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+  color: #31C663;
+  background-color: rgba(0,0,0,0);
+}
+.dropdown-menu {
+	background-color: rgba(0,0,0,0);
+	border: 0px;
+}
+.dropdown-menu > li > a {
+  color: #31C663;
+}
+.navbar-default .navbar-nav > li > a {
+  color: #31C663;
+}
+.navbar-default .navbar-brand {
+  color: #31C663;
+  font-size: 36px;
+}
+
+.playButton {
+  margin: -4px 0 0 0px;
+  width: 64px;
+  height: 64px;
+}
+
+.selected {
+	border: 3px #31C663 solid
+}
