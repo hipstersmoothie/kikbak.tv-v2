@@ -1,0 +1,76 @@
+.wrap2 {
+	perspective: 800px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -40px;
+	margin-top: -40px;
+	z-index: 600001;
+	pointer-events: none;
+}
+.boxcube2 {
+	position: relative;
+	width: 80px;
+	-webkit-transform-style: preserve-3d;
+	-webkit-transform: translate3d(0,0,0);
+	-webkit-transform-origin: 40px 40px 0;
+	-webkit-transform-origin: 40px 40px 0;
+	-webkit-animation: spin 1.8s infinite ease-in-out;
+}
+.boxcube2 div {
+	position: absolute;
+	width: 80px;
+	height: 80px;
+	color: white;
+	text-align: center;
+	line-height: 80px;
+	font-size: 34px;
+}
+.boxfront {
+	-webkit-transform: translateZ(40px);
+	-webkit-backface-visibility: hidden;
+}
+.boxback {
+	-webkit-transform: translateZ(-40px) rotateY(180deg);
+	-webkit-backface-visibility: hidden;
+}
+.boxtop {
+	-webkit-transform: rotateX(-90deg) translateY(-40px);
+	-webkit-transform-origin: top center;
+	-webkit-backface-visibility: hidden;
+}
+.boxbottom {
+	-webkit-transform: rotateX(90deg) translateY(40px);
+	-webkit-transform-origin: bottom center;
+	-webkit-backface-visibility: hidden;
+}
+.boxleft {
+	-webkit-transform: rotateY(270deg) translateX(-40px);
+	-webkit-transform-origin: center left;
+	-webkit-backface-visibility: hidden;
+}
+.boxright {
+	-webkit-transform: rotateY(-270deg) translateX(40px);
+	-webkit-transform-origin: top right;
+	-webkit-backface-visibility: hidden;
+}
+.face2 {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	opacity: 0.2;
+}
+
+@-webkit-keyframes spin {
+	0% { 
+	-webkit-transform: rotateY(0deg); 
+	}
+	60% { 
+	-webkit-transform: rotateY(-360deg);
+	}
+	
+	100% { 
+	-webkit-transform: rotateY(-360deg);
+	}
+}
