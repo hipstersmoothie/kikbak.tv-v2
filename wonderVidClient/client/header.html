@@ -25,7 +25,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{selectedGenre}}<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               {{#each genres}}
-                <li><a href="#" class="{{this.className}}">{{this.type}}</a></li>
+                <li><a href="#" class="{{this.className}}" onclick="return false;">{{this.type}}</a></li>
               {{/each}}
             </ul>
           </li>

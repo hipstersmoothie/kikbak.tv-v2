@@ -7,9 +7,9 @@ Meteor.startup(function() {
 })
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
-Template.gridThumbs.rendered = function() {
-	getVideos();
-}
+// Template.gridThumbs.rendered = function() {
+// 	getVideos();
+// }
 
 getVideos = function() {
 	console.log('here')
@@ -38,30 +38,33 @@ Template.header.helpers({
 
 Template.header.events({
 	'click .topVideos': function() {
+		Session.set('videos', null);
+		video.destroy(); 
+		Router.go('/');
 		Session.set('selectedGenre', 'Top Videos');
 	},
 	'click .hipHopVideos': function() {
 		Session.set('videos', null);
+		video.destroy(); 
 		Router.go('/hipHop');
-		Meteor.call("hipHopVideos", setList);
 		Session.set('selectedGenre', 'Hip Hop');
 	},
 	'click .interviewVideos': function() {
 		Session.set('videos', null);
+		video.destroy(); 
 		Router.go('/interviews');
-		Meteor.call("interviews", setList);
 		Session.set('selectedGenre', 'Interviews');
 	},
 	'click .liveVideos': function() {
 		Session.set('videos', null);
+		video.destroy(); 
 		Router.go('/live');
-		Meteor.call("live", setList);
 		Session.set('selectedGenre', 'Live');
 	},
 	'click .electronicVideos': function() {
 		Session.set('videos', null);
+		video.destroy(); 
 		Router.go('/electronic');
-		Meteor.call("electronic", setList);
 		Session.set('selectedGenre', 'Electronic');
 	},
 	"click .playButton": function () {
@@ -95,6 +98,7 @@ Template.header.helpers({
 
 Template.gridThumbs.helpers({
 	videos: function () {
+		console.log('gotem')
 		return Session.get('videos');
     },
     isSelected: function () {
@@ -135,12 +139,11 @@ var renderVids = function() {
 				}else if (event.data == YT.PlayerState.PAUSED) {
 					Session.set("stateImage",playButton);
 				}else if (event.data == YT.PlayerState.ENDED) {
-					// playlist = Session.get('playlist');
-				 //    console.log(playlist);
-				 //    var i = 0;
+					playlist = Session.get('playlist');
+				    console.log(playlist);
 
-				 //    var index = playlist.indexOf(Session.get('videoId'));
-				 //    session.set('videoId', playlist[index+1]);
+				    var index = playlist.indexOf(Session.get('videoId'));
+				    session.set('videoId', playlist[index+1]);
 
 
 
