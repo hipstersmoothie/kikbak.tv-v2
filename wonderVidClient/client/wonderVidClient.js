@@ -34,6 +34,7 @@ Template.header.helpers({
 	genres: function() {
 		return [{type:"Top Videos", className: "topVideos"}, 
              	{type:"Hip Hop", className: "hipHopVideos"},
+             	{type:"Electronic", className: "electronicVideos"},
              	{type:"Interviews", className: "interviewVideos"},
              	{type:"Live", className: "liveVideos"}];
 	},
@@ -61,7 +62,7 @@ Template.header.events({
 			Session.set('videoId', result[0].videoId);
 			renderVid(result[0].videoId);
 		});
-		Session.set('selectedGenre', 'Hip Hop');
+		Session.set('selectedGenre', 'Interviews');
 	},
 	'click .liveVideos': function() {
 		Meteor.call("live", function (error, result) { 
@@ -69,7 +70,15 @@ Template.header.events({
 			Session.set('videoId', result[0].videoId);
 			renderVid(result[0].videoId);
 		});
-		Session.set('selectedGenre', 'Hip Hop');
+		Session.set('selectedGenre', 'Live');
+	},
+	'click .electronicVideos': function() {
+		Meteor.call("electronic", function (error, result) { 
+			Session.set('videos', result);
+			Session.set('videoId', result[0].videoId);
+			renderVid(result[0].videoId);
+		});
+		Session.set('selectedGenre', 'Electronic');
 	}
 });
 

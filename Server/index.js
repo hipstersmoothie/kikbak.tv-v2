@@ -114,6 +114,13 @@ app.get('/videos-hip-hop', function (req, res) {
 	});
 });
 
+app.get('/electronic', function (req, res) {
+	db.videos.find({tags: {$nin : ["Live", "Interview"], $in: ["Electonic"]}}, function(err, videos) {
+		sort(videos);
+		res.send(videos.splice(0,100));
+	});
+});
+
 app.get('/interviews', function (req, res) {
 	db.videos.find({tags: "Interview"}, function(err, videos) {
 		sort(videos);
@@ -211,7 +218,7 @@ var parseFeed = function(url) {
   });
 }
 
-var tagVideo = function(vidId, html, $) {
+var getTag = function(html, $, youTubeDescription) {
 	var type = "";
 	html.each(function(i, el) {
 		var text = $(this).text().toLowerCase();
@@ -219,10 +226,24 @@ var tagVideo = function(vidId, html, $) {
 			|| text.indexOf('hip-hop') > -1 || text.indexOf('rap') > -1) {
 			type = "Hip Hop";
 			return false;
+		} else if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 
+			|| youTubeDescription.indexOf('hip-hop') > -1 || youTubeDescription.indexOf('rap') > -1) {
+			type = "Electonic";
+			return false;
 		}
 	});
 
+	return type;
+}
+
+var tagVideo = function(vidId, html, $, youTubeDescription) {
+	var type = getTag(html, $, youTubeDescription)	
+
 	if (type == "Hip Hop") {
+  	db.videos.update({ videoId : vidId }, {$addToSet: {
+      tags : type
+    }});
+  } else if (type == "Electonic") {
   	console.log(vidId);
   	db.videos.update({ videoId : vidId }, {$addToSet: {
       tags : type
@@ -235,39 +256,42 @@ var handlePost = function($, blog) {
 
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
-			//tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $)
-			addToDb(iframe.attribs.src, blog);
+			//tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $, "")
+			addToDb(iframe.attribs.src, blog, $);
 		}
 	});
 }
 
-var addToDb = function(url, blog) {
+var addToDb = function(url, blog, $) {
 	var vidId = getYouTubeID(url);
   db.videos.find({ videoId : vidId }, function(err, video) {  
 	  if (err) {
 	    console.log('addToDb', err);
 	  } else {
 			if(video.length > 0)
-	  		updateVid(video, blog, vidId);
+	  		updateVid(video, blog, vidId, $);
 	  	else {
-		    newVid(vidId, url, blog);
+		    newVid(vidId, url, blog, $);
 	  	}
 	  }
   });
 }
 
-var updateVid = function(vidList, blog, vidId) {
+var updateVid = function(vidList, blog, vidId, $) {
 	video = vidList[0];
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
 	if (!_.includes(foundUrls, blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
-    db.videos.update({ videoId : vidId }, {$addToSet: {
-      foundOn : blog
-    }});
+    db.videos.update({ videoId : vidId }, {
+    	$addToSet: {
+      	foundOn : blog,
+      	tags : getTag(vidId, $('p'), $, "");
+      },
+    });
 	}
 }
 
-var newVid = function(vidId, url, blog) {
+var newVid = function(vidId, url, blog, $) {
 	youTube.getById(vidId, function(error, result) {
 		if(result && result['items'] && result['items'].length > 0 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
@@ -275,7 +299,7 @@ var newVid = function(vidId, url, blog) {
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('[audio]') == -1 
 			&& result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {// && (result['items'][0]['snippet']['title'].indexOf('Trailer') == -1 || result['items'][0]['snippet']['title'].indexOf('music') != -1) //weirdness to remove trailers
 			console.log('adding', url, vidId); 
-
+			
 			db.videos.update({ videoId : vidId }, {
 		    $setOnInsert: {
 		    	videoId : vidId,
@@ -290,7 +314,8 @@ var newVid = function(vidId, url, blog) {
 				  avgLikePerHalfHour : 0,
 				  avgDislikePerHalfHour : 0,
 				  avgFavoritePerHalfHour : 0,
-				  avgCommentPerHalfHour : 0 
+				  avgCommentPerHalfHour : 0,
+				  tags : [getTag(vidId, $('p'), $, result['items'][0]['snippet']['description'])]
 		    }
 		  }, { upsert : true });
 		}

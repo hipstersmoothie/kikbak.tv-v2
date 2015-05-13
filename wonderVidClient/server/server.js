@@ -36,6 +36,13 @@ Meteor.methods({
     } catch (err) {                                                                                  
       throw new Error("Failed to live performances D:" + err.message);                   
     }
+  },
+  electronic : function() {
+    try {                                                                                            
+      return Meteor.http.get("http://localhost:4000/electronic").data;                                                                                       
+    } catch (err) {                                                                                  
+      throw new Error("Failed to electronic videos D:" + err.message);                   
+    }
   }
 });
 
