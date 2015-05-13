@@ -19,7 +19,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/videosList', function (req, res) {
-	db.videos.find(function(err, videos) {
+	db.videos.find({tags : {$nin : ["Live", "Interview"]}}, function(err, videos) {
 		var buffer = "";
 		sort(videos)
 
@@ -36,11 +36,13 @@ app.get('/videosList', function (req, res) {
 
 var multiplier = function(days) {
 	//console.log(days);
-	if (days < 2)
+	if (days <= 1)
+		return 30;
+	else if (days <= 2)
 		return 20;
-	else if (days < 3)
+	else if (days <= 3)
 		return 10;
-	else if (days < 7)
+	else if (days <= 7)
 		return 7;
 	if (days < 31)
 		return 6;
@@ -87,22 +89,15 @@ var sort = function(videos) {
 		var adg2 = multiplier((Date.now() - Date.parse(b.youTubePostDate))/day);
 		var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
 		var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour);
-		//var metric1 = ratioMetric(a.oldStats.viewCount, a.oldStats.likeCount);
-		//var metric2 =ratioMetric(b.oldStats.viewCount, b.oldStats.likeCount);
+		var metric1 = ratioMetric(a.oldStats.viewCount, a.oldStats.likeCount);
+		var metric2 =ratioMetric(b.oldStats.viewCount, b.oldStats.likeCount);
 		return (a.foundOn.length * adg1 * viewMultiplier1 ) - (b.foundOn.length * adg2 * viewMultiplier2);
 	}).reverse();
 }
 
 app.get('/videos', function (req, res) {
 	db.videos.find({tags : {$nin : ["Live", "Interview"]}}, function(err, videos) {
-		var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
-		videos.sort(function(a, b) {
-			var adg1 = multiplier((Date.now() - Date.parse(a.youTubePostDate))/day);
-			var adg2 = multiplier((Date.now() - Date.parse(b.youTubePostDate))/day);
-			var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
-			var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour);
-			return (a.foundOn.length * adg1 * viewMultiplier1 ) - (b.foundOn.length * adg2 * viewMultiplier2 );
-		}).reverse();
+		sort(videos);
 		res.send(videos.splice(0,100));
 	});
 });
@@ -220,18 +215,26 @@ var parseFeed = function(url) {
 
 var getTag = function(html, $, youTubeDescription) {
 	var type = "";
-	html.each(function(i, el) {
-		var text = $(this).text().toLowerCase();
-		if(text.indexOf(' rapper') > -1 || text.indexOf(' rapping') > -1 
-			|| text.indexOf('hip-hop') > -1 || text.indexOf('rap') > -1) {
-			type = "Hip Hop";
-			return false;
-		} else if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 
-			|| youTubeDescription.indexOf('hip-hop') > -1 || youTubeDescription.indexOf('rap') > -1) {
-			type = "Electonic";
-			return false;
-		}
-	});
+	if (html.each) {
+		html.each(function(i, el) {
+			var text = $(this).text().toLowerCase();
+			if(text.indexOf(' rapper') > -1 || text.indexOf(' rapping') > -1 
+				|| text.indexOf('hip-hop') > -1 || text.indexOf('rap') > -1) {
+				type = "Hip Hop";
+				return false;
+			} else if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 
+				|| youTubeDescription.toLowerCase().indexOf('hip-hop') > -1 || youTubeDescription.toLowerCase().indexOf('rap') > -1) {
+				type = "Electonic";
+				return false;
+			} else if (text.indexOf('interview') > -1 || text.indexOf('Interview')) {
+				type = "Interview";
+				return false;
+			} else if (text.indexOf(' live') > -1 || youTubeDescription.toLowerCase().indexOf(' live') > -1) {
+				type = "Live";
+				return false;
+			}
+		});
+	}
 
 	return type;
 }
@@ -257,6 +260,7 @@ var handlePost = function($, blog) {
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
 			//tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $, "")
+			//console.log(iframe.attribs.src)
 			addToDb(iframe.attribs.src, blog, $);
 		}
 	});
@@ -268,8 +272,9 @@ var addToDb = function(url, blog, $) {
 	  if (err) {
 	    console.log('addToDb', err);
 	  } else {
-			if(video.length > 0)
+			if(video.length > 0){
 	  		updateVid(video, blog, vidId, $);
+			}
 	  	else {
 		    newVid(vidId, url, blog, $);
 	  	}
@@ -280,14 +285,15 @@ var addToDb = function(url, blog, $) {
 var updateVid = function(vidList, blog, vidId, $) {
 	video = vidList[0];
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
+	//console.log(blog)
 	if (!_.includes(foundUrls, blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
-    db.videos.update({ videoId : vidId }, {
-    	$addToSet: {
-      	foundOn : blog,
-      	tags : getTag(vidId, $('p'), $, "");
-      },
-    });
+		var tag = getTag($('p'), $, "");
+	    db.videos.update({ videoId : vidId }, {
+	    	$addToSet: {
+	      	foundOn : blog
+	      }
+	    });
 	}
 }
 
