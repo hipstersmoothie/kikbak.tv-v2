@@ -39,7 +39,9 @@ body{
 	height: 100%;
 	text-align: center;
 
-	background-image: 'playButton';
+	background-repeat: no-repeat;
+  	background-size: 75px;
+  	background-image: url('/images/rankBackground.png');
 	display: inline-block;
 }
 
