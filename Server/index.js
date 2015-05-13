@@ -21,12 +21,10 @@ app.get('/', function (req, res) {
 app.get('/videosList', function (req, res) {
 	db.videos.find(function(err, videos) {
 		var buffer = "";
-		videos.sort(function(a, b) {
-			return a.foundOn.length - b.foundOn.length
-		}).reverse();
+		sort(videos)
 
 		buffer += '<html><body>';
-		_.forEach(videos.splice(0,20), function(video) {
+		_.forEach(videos.splice(0,40), function(video) {
 			buffer += '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + video.videoId + '" frameborder="0" allowfullscreen></iframe>'
 			//buffer += '<div><h1>' + video.title + '</h1><img src="' + video.thumbnail.medium.url + '"</div>';
 		});
@@ -36,18 +34,55 @@ app.get('/videosList', function (req, res) {
 	});
 });
 
-var multiplier = function(time) {
-	console.log(time);
+var multiplier = function(days) {
+	//console.log(days);
+	if (days < 2)
+		return 20;
+	else if (days < 3)
+		return 10;
+	else if (days < 7)
+		return 7;
+	if (days < 31)
+		return 6;
+	else if (days < 50)
+		return 4;
+	else if (days < 150)
+		return 0.1;
+	else if (days < 365)
+		return -1;
+	else if (days < 600)
+		return -2;
+	else
+		return 0.50;
+}
+
+var viewMultiplier = function(views) {
+	if (views > 1500)
+		return 3;
+	else if (views > 500)
+		return 2;
+	else if (views > 100)
+		return 1.5;
+	else
+		return 1;
+}
+
+var sort = function(videos) {
+	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
+	videos.sort(function(a, b) {
+		var adg1 = multiplier((Date.now() - Date.parse(a.youTubePostDate))/day);
+		var adg2 = multiplier((Date.now() - Date.parse(b.youTubePostDate))/day);
+		var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
+		var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour);
+		//var metric1 = a.oldStats.viewCount > 150 ? (a.oldStats.likeCount / a.oldStats.viewCount) : 1;
+		//var metric2 = b.oldStats.viewCount > 150 ? (b.oldStats.likeCount / b.oldStats.viewCount) : 1;
+		return (a.foundOn.length * adg1 * viewMultiplier1) - (b.foundOn.length * adg2 * viewMultiplier2);
+	}).reverse();
 }
 
 app.get('/videos', function (req, res) {
 	db.videos.find(function(err, videos) {
-		videos.sort(function(a, b) {
-			multiplier((_.now() - Date.parse(a.youTubePostDate))/1000000);
-			//console.log(a.dateFound - Date.parse(a.youTubePostDate) );
-			return a.foundOn.length - b.foundOn.length
-		}).reverse();
-
+		sort(videos);
 		res.send(videos.splice(0,100));
 	});
 });
@@ -58,14 +93,13 @@ youTube.setKey('AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg');
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
   compileVideos();
-  //compileBlogs();
 });
 
 var blogs;
 
 var compileVideos = function() {
 	//db.videos.remove();
-	var minutes = 10, the_interval = minutes * 30 * 1000;
+	var minutes = 10, the_interval = minutes * 60 * 1000;
 	db.blogs.find({ }, function(err, myBlogs) {
 		blogs = myBlogs;
 		refreshData();
@@ -172,7 +206,7 @@ var updateVid = function(vidList, blog, vidId) {
 
 var newVid = function(vidId, url, blog) {
 	youTube.getById(vidId, function(error, result) {
-		if(result && result['items'] && result['items'].length > 0) {// && (result['items'][0]['snippet']['title'].indexOf('Trailer') == -1 || result['items'][0]['snippet']['title'].indexOf('music') != -1) //weirdness to remove trailers
+		if(result && result['items'] && result['items'].length > 0 && result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 && result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {// && (result['items'][0]['snippet']['title'].indexOf('Trailer') == -1 || result['items'][0]['snippet']['title'].indexOf('music') != -1) //weirdness to remove trailers
 			console.log('adding', url, vidId); 
 
 			db.videos.update({ videoId : vidId }, {
