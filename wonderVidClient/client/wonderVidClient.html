@@ -4,22 +4,14 @@
 </head>
 
 <body>
+</body>
+
+<template name="app">
 	{{> header}}
 
   	<div id="player"></div>
-	{{#if video}}
-  	<!-- {{> youtubePlayer}} -->
-
-  {{else}}
-    <h1>No Videos :(</h1>
-  {{/if}}
-  {{> gridThumbs}}
-  <!-- {{> hello}} -->
-</body>
-
-<!-- <template name='youtubePlayer'>
-    <div id='youtube-video'></div>
-</template> -->
+  	{{> gridThumbs}}
+</template>
 
 <template name='gridThumbs'>
 	<div class='container'>
@@ -35,4 +27,8 @@
 			</div>
     {{/each}}
 	</div>
+</template>
+
+<template name="loading">
+	<h1>loading>>></h1>
 </template>
