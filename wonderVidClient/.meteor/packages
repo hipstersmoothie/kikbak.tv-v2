@@ -11,3 +11,6 @@ twbs:bootstrap
 mrt:moment
 mrt:popcorn
 http
+hpx7:youtube-iframe-player
+adrianliaw:youtube-iframe-api
+alethes:lodash

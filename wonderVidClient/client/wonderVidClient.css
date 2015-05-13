@@ -7,7 +7,7 @@ body{
 	font-weight: 400;
 }
 
-#youtube-video{
+#player{
 	margin-left: 20px;
 	width: 65%;
 	height: 80vh;
@@ -42,6 +42,14 @@ body{
 	display: inline-block;
 }
 
+.rank {
+	font-size: 30px;
+	color: white;
+	float: left;
+	padding: 10px;
+	background-image: url("public/images/rankBackground.png");
+}
+
 .description{
 	position: fixed;
 	/*color: black;*/
@@ -51,6 +59,7 @@ body{
 	color: white;
 	font-size: 12px;
 	margin: 200px 20px 20px 0;
+	padding: 0 20px;
 }
 
 
@@ -61,9 +70,19 @@ body{
 
 .container{
 	overflow: scroll;
-	width: 32%;
+	width: 27%;
 	height: 80vh;
 	display: inline-block;
+	-webkit-columns: 320px;
+    -moz-columns: 320px;
+    columns: 320px; /* desired width of column */
+     -webkit-column-gap: 0; /* Chrome, Safari, Opera */
+    -moz-column-gap: 0; /* Firefox */
+    column-gap: 0;
+    -webkit-column-rule-style: none; /* Chrome, Safari, Opera */
+    -moz-column-rule-style: none; /* Firefox */
+    column-rule-style: none;
+
 }
 
 
@@ -79,7 +98,7 @@ body{
   background-color: rgba(0,0,0,0);
 }
 .dropdown-menu {
-	background-color: rgba(0,0,0,0);
+	background-color: rgb(0,0,0);
 	border: 0px;
 }
 .dropdown-menu > li > a {
@@ -93,6 +112,8 @@ body{
   font-size: 36px;
 }
 
+.nextButton,
+.prevButton,
 .playButton {
   margin: -4px 0 0 0px;
   width: 64px;
@@ -101,4 +122,37 @@ body{
 
 .selected {
 	border: 3px #31C663 solid
+}
+
+
+
+
+
+::-webkit-scrollbar {
+    width: 3px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    background: #31C663; 
+}
+
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-button {
+      background-color: rgba(0,0,0,0);
+} 
+
+::selection {
+  background: rgba(229, 94, 45, .8); /* WebKit/Blink Browsers */
+}
+::-moz-selection {
+  background: rgba(229, 94, 45, .8); /* Gecko Browsers */
 }

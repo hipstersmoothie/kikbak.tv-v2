@@ -7,18 +7,22 @@ Meteor.startup(function() {
 
 })
 
-Template.youtubePlayer.rendered = function () {
-	console.log("Rendered");
-    //enderVid(Session.get('videoId'));
+// Template.youtubePlayer.rendered = function () {
+// 	console.log("Rendered");
+//     //enderVid(Session.get('videoId'));
 
-    // Session.set("youtubePlayer", video);
-}
+//     // Session.set("youtubePlayer", video);
+// }
 
+
+//==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.gridThumbs.rendered = function() {
-	Meteor.call("topVideos", function (error, result) { 
+	Meteor.call("videos", function (error, result) { 
 		Session.set('videos', result);
 		Session.set('videoId', result[0].videoId);
+		Session.set('playlist', _.pluck(result, "videoId"));
 		renderVid(result[0].videoId);
+		
 	});
 }
 
@@ -52,7 +56,8 @@ Template.header.events({
 			console.log(result);
 			Session.set('videos', result);
 			Session.set('videoId', result[0].videoId);
-			renderVid(result[0].videoId);
+			Session.set('playlist', _.pluck(result, "videoId"));
+			renderVid();
 		});
 		Session.set('selectedGenre', 'Hip Hop');
 	},
@@ -60,7 +65,8 @@ Template.header.events({
 		Meteor.call("interviews", function (error, result) { 
 			Session.set('videos', result);
 			Session.set('videoId', result[0].videoId);
-			renderVid(result[0].videoId);
+			Session.set('playlist', _.pluck(result, "videoId"));
+			renderVid();
 		});
 		Session.set('selectedGenre', 'Interviews');
 	},
@@ -68,7 +74,8 @@ Template.header.events({
 		Meteor.call("live", function (error, result) { 
 			Session.set('videos', result);
 			Session.set('videoId', result[0].videoId);
-			renderVid(result[0].videoId);
+			Session.set('playlist', _.pluck(result, "videoId"));
+			renderVid();
 		});
 		Session.set('selectedGenre', 'Live');
 	},
@@ -76,22 +83,32 @@ Template.header.events({
 		Meteor.call("electronic", function (error, result) { 
 			Session.set('videos', result);
 			Session.set('videoId', result[0].videoId);
-			renderVid(result[0].videoId);
+			Session.set('playlist', _.pluck(result, "videoId"));
+			renderVid();
 		});
 		Session.set('selectedGenre', 'Electronic');
-	}
+	},
+	"click .playButton": function () {
+		if(Session.equals("stateImage",playButton)){
+			video.playVideo();
+			Session.set('stateImage', pauseButton);
+		}else{
+			video.pauseVideo();
+			Session.set('stateImage', playButtonn);
+		}
+    },
+    "click .nextButton": function () {
+		Session.set('stateImage', pauseButton);
+		video.nextVideo();	
+    },
+    "click .prevButton": function () {
+		Session.set('stateImage', pauseButton);
+		video.prevVideo();	
+    }
 });
 
 Template.header.events({
-    "click .playButton": function () {
-		if(Session.equals("stateImage",playButton)){
-			video.play();
-			Session.set('stateImage', pauseButton);
-		}else{
-			video.pause();
-			Session.set('stateImage', playButtonn);
-		}
-    }
+    
   });
 
 Template.header.helpers({
@@ -113,52 +130,103 @@ Template.gridThumbs.helpers({
     },
     isSelected: function () {
   		return Session.equals("videoId", this.videoId) ? "selected" : '';
+	},
+	rank: function(){
+		return Session.get('playlist').indexOf(this.videoId) + 1;
 	}
 });
 
 Template.gridThumbs.events({
     "click .single": function () {
       	Session.set('videoId', this.videoId);
-		renderVid(this.videoId);
+      	var index = Session.get('playlist').indexOf(this.videoId);
+		video.playVideoAt(index);
     }
   });
 
-var renderVid = function(videoId) {
-	if(video != null){
-  		video.destroy();
-	}
-	console.log(videoId);
+var renderVid = function() {
+	
+	// console.log(Session.get('playlist'));	
 	Session.set("stateImage",pauseButton);
-	video = Popcorn.smart('#youtube-video', 'http://www.youtube.com/embed/' + videoId + '&html5=1');
+	// video = Popcorn.smart('#youtube-video', 'http://www.youtube.com/embed/' + videoId + '&html5=1');
 	 //video = Popcorn.youtube('#youtube-video', 'http://www.youtube.com/embed/' + videoId);
-	video.play();
-	video.on("playing", function() {
-		Session.set("stateImage",pauseButton);
-	});
-	video.on("pause", function() {
-		Session.set("stateImage",playButton);
-	});
-	video.on("ended", function() {
-	    playlist = Session.get('videos');
-	    console.log(playlist);
-	    var i = 0;
-	    for(current in playlist){
-	    	console.log("[" + playlist[current].videoId + "]");
+	// video = new YTPlayer('player', {
+	// 	videoId: videoId,
+	// 	events: {
+	// 	'onReady': onPlayerReady,
+	// 	'onStateChange': onPlayerStateChange
+	// 	}
+ //      });
+	
+	video = new YT.Player("player", {
+        loadPlaylist:{
+	        listType: 'playlist',
+	        list: Session.get('playlist'),
+	        index: parseInt(0),
+	     },
+		events: {
+			 onReady: function (event) {
+                event.target.loadPlaylist(Session.get('playlist'));
+            },
+		// 'onReady': onPlayerReady,
+			onStateChange: function (event) {
+				if(event.data == YT.PlayerState.PLAYING) {
+					Session.set("stateImage",pauseButton);
+				}else if (event.data == YT.PlayerState.PAUSED) {
+					Session.set("stateImage",playButton);
+				}else if (event.data == YT.PlayerState.ENDED) {
+					playlist = Session.get('playlist');
+				    console.log(playlist);
+				    var i = 0;
+				    for(current in playlist){
+				    	if(playlist[current] == Session.get('videoId')){
+				    		console.log("Found this video: " + playlist[current] + ", Next Vid: " + playlist[i + 1]);
+				    		if(playlist.length <= i + 1){
+				    			Session.set('videoId', playlist[0]);
+				    		}else{
+				    			//console.log(playlist[i])
+				    			var newID = playlist[i + 1]
+				    			Session.set('videoId', newID);
+				    		}
+				    	}
+				    	i++;
+				    }
+				    Session.set('videos', playlist);
+				}
+			}
+		} 
+    });
+    
+    YT.load();    
+	// video.play();
+	// video.on("playing", function() {
+	// 	Session.set("stateImage",pauseButton);
+	// });
+	// video.on("pause", function() {
+	// 	Session.set("stateImage",playButton);
+	// });
+	// video.on("ended", function() {
+	//     playlist = Session.get('videos');
+	//     console.log(playlist);
+	//     var i = 0;
+	//     for(current in playlist){
+	//     	console.log("[" + playlist[current].videoId + "]");
 
-	    	if(playlist[current].videoId == Session.get('videoId')){
-	    		console.log("Found this video: " + playlist[current].videoId + ", Next Vid: " + playlist[i + 1].videoId);
-	    		if(playlist.length <= i + 1){
-	    			Session.set('videoId', playlist[0].videoId);
-	    			renderVid(playlist[0].videoId);
-	    		}else{
-	    			//console.log(playlist[i])
-	    			var newID = playlist[i + 1].videoId
-	    			Session.set('videoId', newID);
-	    			renderVid(newID);
-	    		}
-	    	}
-	    	i++;
-	    }
-	    Session.set('videos', playlist);
-	});
+	//     	if(playlist[current].videoId == Session.get('videoId')){
+	//     		console.log("Found this video: " + playlist[current].videoId + ", Next Vid: " + playlist[i + 1].videoId);
+	//     		if(playlist.length <= i + 1){
+	//     			Session.set('videoId', playlist[0].videoId);
+	//     			renderVid(playlist[0].videoId);
+	//     		}else{
+	//     			//console.log(playlist[i])
+	//     			var newID = playlist[i + 1].videoId
+	//     			Session.set('videoId', newID);
+	//     			renderVid(newID);
+	//     		}
+	//     	}
+	//     	i++;
+	//     }
+	//     Session.set('videos', playlist);
+	// });
+	
 };

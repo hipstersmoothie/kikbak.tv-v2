@@ -5,8 +5,11 @@
 
 <body>
 	{{> header}}
+
+  	<div id="player"></div>
 	{{#if video}}
-  	{{> youtubePlayer}}
+  	<!-- {{> youtubePlayer}} -->
+
   {{else}}
     <h1>No Videos :(</h1>
   {{/if}}
@@ -14,17 +17,19 @@
   <!-- {{> hello}} -->
 </body>
 
-<template name='youtubePlayer'>
-    <!-- // HTML element where the Popcorn video will be inserted in -->
-    <!-- {{setVideo}} -->
+<!-- <template name='youtubePlayer'>
     <div id='youtube-video'></div>
-</template>
+</template> -->
 
 <template name='gridThumbs'>
 	<div class='container'>
 		{{#each videos}}
 			<div id="{{this._id}}" style="background-repeat: no-repeat; background-image:url('{{this.thumbnail.medium.url}}')" class="single">
 				<div class="overlay {{isSelected}}">
+					<div class="rank">
+						<p >{{rank}}</p>
+					</div>
+					
 					<p class="descriptionText">{{this.title}}</p>
 				</div>
 			</div>
