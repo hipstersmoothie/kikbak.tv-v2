@@ -12,6 +12,7 @@ body{
 	width: 65%;
 	height: 80vh;
 	display: inline-block;
+	border: 1px #31C663 solid;
 }
 
 .single{
@@ -73,6 +74,8 @@ body{
 	width: 27%;
 	height: 80vh;
 	display: inline-block;
+	float: right;
+	margin: 0;
 	-webkit-columns: 320px;
     -moz-columns: 320px;
     columns: 320px; /* desired width of column */
@@ -134,8 +137,10 @@ body{
  
 /* Track */
 ::-webkit-scrollbar-track {
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #252525;
+    width: 0px;
 }
  
 /* Handle */
