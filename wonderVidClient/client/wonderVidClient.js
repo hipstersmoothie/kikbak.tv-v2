@@ -4,35 +4,24 @@ Session.setDefault('selectedGenre', 'Top Videos');
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
 Meteor.startup(function() {
-
 })
-
-// Template.youtubePlayer.rendered = function () {
-// 	console.log("Rendered");
-//     //enderVid(Session.get('videoId'));
-
-//     // Session.set("youtubePlayer", video);
-// }
-
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.gridThumbs.rendered = function() {
-	Meteor.call("videos", function (error, result) { 
-		Session.set('videos', result);
-		Session.set('videoId', result[0].videoId);
-		Session.set('playlist', _.pluck(result, "videoId"));
-		renderVid(result[0].videoId);
-		
-	});
+	getVideos();
 }
 
-// Template.youtubePlayer.helpers({
-// 	setVideo: function () {
-// 		console.log('loading video..');
-// 		video = Popcorn.youtube('#youtube-video', 'http://www.youtube.com/embed/' + Session.get('videoId'));
-// 		return;
-//     }
-// })
+getVideos = function() {
+	console.log('here')
+	Meteor.call("videos", setList);
+}
+
+setList = function(error, result) {
+	Session.set('videos', result);
+	Session.set('videoId', result[0].videoId);
+	Session.set('playlist', _.pluck(result, "videoId"));
+	renderVids();
+}
 
 Template.header.helpers({
 	genres: function() {
@@ -52,40 +41,27 @@ Template.header.events({
 		Session.set('selectedGenre', 'Top Videos');
 	},
 	'click .hipHopVideos': function() {
-		Meteor.call("hipHopVideos", function (error, result) { 
-			console.log(result);
-			Session.set('videos', result);
-			Session.set('videoId', result[0].videoId);
-			Session.set('playlist', _.pluck(result, "videoId"));
-			renderVid();
-		});
+		Session.set('videos', null);
+		Router.go('/hipHop');
+		Meteor.call("hipHopVideos", setList);
 		Session.set('selectedGenre', 'Hip Hop');
 	},
 	'click .interviewVideos': function() {
-		Meteor.call("interviews", function (error, result) { 
-			Session.set('videos', result);
-			Session.set('videoId', result[0].videoId);
-			Session.set('playlist', _.pluck(result, "videoId"));
-			renderVid();
-		});
+		Session.set('videos', null);
+		Router.go('/interviews');
+		Meteor.call("interviews", setList);
 		Session.set('selectedGenre', 'Interviews');
 	},
 	'click .liveVideos': function() {
-		Meteor.call("live", function (error, result) { 
-			Session.set('videos', result);
-			Session.set('videoId', result[0].videoId);
-			Session.set('playlist', _.pluck(result, "videoId"));
-			renderVid();
-		});
+		Session.set('videos', null);
+		Router.go('/live');
+		Meteor.call("live", setList);
 		Session.set('selectedGenre', 'Live');
 	},
 	'click .electronicVideos': function() {
-		Meteor.call("electronic", function (error, result) { 
-			Session.set('videos', result);
-			Session.set('videoId', result[0].videoId);
-			Session.set('playlist', _.pluck(result, "videoId"));
-			renderVid();
-		});
+		Session.set('videos', null);
+		Router.go('/electronic');
+		Meteor.call("electronic", setList);
 		Session.set('selectedGenre', 'Electronic');
 	},
 	"click .playButton": function () {
@@ -117,13 +93,6 @@ Template.header.helpers({
 	}
 });
 
-Template.body.helpers({
-	video: function () {
-		console.log( Session.get('videoId'));
-		return Session.get('videoId') != null;
-	}
-});
-
 Template.gridThumbs.helpers({
 	videos: function () {
 		return Session.get('videos');
@@ -144,89 +113,56 @@ Template.gridThumbs.events({
     }
   });
 
-var renderVid = function() {
-	
-	// console.log(Session.get('playlist'));	
-	Session.set("stateImage",pauseButton);
-	// video = Popcorn.smart('#youtube-video', 'http://www.youtube.com/embed/' + videoId + '&html5=1');
-	 //video = Popcorn.youtube('#youtube-video', 'http://www.youtube.com/embed/' + videoId);
-	// video = new YTPlayer('player', {
-	// 	videoId: videoId,
-	// 	events: {
-	// 	'onReady': onPlayerReady,
-	// 	'onStateChange': onPlayerStateChange
-	// 	}
- //      });
-	
+var renderVids = function() {
+	Session.set("stateImage",pauseButton);	
+	console.log(Session.get('playlist'))
+
+	console.log($("player"));
 	video = new YT.Player("player", {
         loadPlaylist:{
 	        listType: 'playlist',
 	        list: Session.get('playlist'),
-	        index: parseInt(0),
-	     },
+	        index: 0,
+	    },
 		events: {
-			 onReady: function (event) {
+			onReady: function (event) {
+				console.log('ready')
                 event.target.loadPlaylist(Session.get('playlist'));
             },
-		// 'onReady': onPlayerReady,
 			onStateChange: function (event) {
 				if(event.data == YT.PlayerState.PLAYING) {
 					Session.set("stateImage",pauseButton);
 				}else if (event.data == YT.PlayerState.PAUSED) {
 					Session.set("stateImage",playButton);
 				}else if (event.data == YT.PlayerState.ENDED) {
-					playlist = Session.get('playlist');
-				    console.log(playlist);
-				    var i = 0;
-				    for(current in playlist){
-				    	if(playlist[current] == Session.get('videoId')){
-				    		console.log("Found this video: " + playlist[current] + ", Next Vid: " + playlist[i + 1]);
-				    		if(playlist.length <= i + 1){
-				    			Session.set('videoId', playlist[0]);
-				    		}else{
-				    			//console.log(playlist[i])
-				    			var newID = playlist[i + 1]
-				    			Session.set('videoId', newID);
-				    		}
-				    	}
-				    	i++;
-				    }
+					// playlist = Session.get('playlist');
+				 //    console.log(playlist);
+				 //    var i = 0;
+
+				 //    var index = playlist.indexOf(Session.get('videoId'));
+				 //    session.set('videoId', playlist[index+1]);
+
+
+
+
+				    // for(current in playlist){
+				    // 	if(playlist[current] == Session.get('videoId')){
+				    // 		console.log("Found this video: " + playlist[current] + ", Next Vid: " + playlist[i + 1]);
+				    // 		if(playlist.length <= i + 1){
+				    // 			Session.set('videoId', playlist[0]);
+				    // 		}else{
+				    // 			//console.log(playlist[i])
+				    // 			var newID = playlist[i + 1]
+				    // 			Session.set('videoId', newID);
+				    // 		}
+				    // 	}
+				    // 	i++;
+				    // }
 				    Session.set('videos', playlist);
 				}
 			}
 		} 
     });
     
-    YT.load();    
-	// video.play();
-	// video.on("playing", function() {
-	// 	Session.set("stateImage",pauseButton);
-	// });
-	// video.on("pause", function() {
-	// 	Session.set("stateImage",playButton);
-	// });
-	// video.on("ended", function() {
-	//     playlist = Session.get('videos');
-	//     console.log(playlist);
-	//     var i = 0;
-	//     for(current in playlist){
-	//     	console.log("[" + playlist[current].videoId + "]");
-
-	//     	if(playlist[current].videoId == Session.get('videoId')){
-	//     		console.log("Found this video: " + playlist[current].videoId + ", Next Vid: " + playlist[i + 1].videoId);
-	//     		if(playlist.length <= i + 1){
-	//     			Session.set('videoId', playlist[0].videoId);
-	//     			renderVid(playlist[0].videoId);
-	//     		}else{
-	//     			//console.log(playlist[i])
-	//     			var newID = playlist[i + 1].videoId
-	//     			Session.set('videoId', newID);
-	//     			renderVid(newID);
-	//     		}
-	//     	}
-	//     	i++;
-	//     }
-	//     Session.set('videos', playlist);
-	// });
-	
+    YT.load();   	
 };
