@@ -7,13 +7,10 @@ Meteor.startup(function() {
 })
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
-// Template.gridThumbs.rendered = function() {
-// 	getVideos();
-// }
-
-getVideos = function() {
-	console.log('here')
-	Meteor.call("videos", setList);
+Template.gridThumbs.rendered = function() {
+	setTimeout(function() {
+		renderVids();
+	}, 1000)
 }
 
 setList = function(error, result) {
@@ -39,31 +36,36 @@ Template.header.helpers({
 Template.header.events({
 	'click .topVideos': function() {
 		Session.set('videos', null);
-		video.destroy(); 
+		if(video)
+			video.destroy(); 
 		Router.go('/');
 		Session.set('selectedGenre', 'Top Videos');
 	},
 	'click .hipHopVideos': function() {
 		Session.set('videos', null);
-		video.destroy(); 
+		if(video)
+			video.destroy(); 
 		Router.go('/hipHop');
 		Session.set('selectedGenre', 'Hip Hop');
 	},
 	'click .interviewVideos': function() {
 		Session.set('videos', null);
-		video.destroy(); 
+		if(video)
+			video.destroy(); 
 		Router.go('/interviews');
 		Session.set('selectedGenre', 'Interviews');
 	},
 	'click .liveVideos': function() {
 		Session.set('videos', null);
-		video.destroy(); 
+		if(video)
+			video.destroy(); 
 		Router.go('/live');
 		Session.set('selectedGenre', 'Live');
 	},
 	'click .electronicVideos': function() {
 		Session.set('videos', null);
-		video.destroy(); 
+		if(video)
+			video.destroy(); 
 		Router.go('/electronic');
 		Session.set('selectedGenre', 'Electronic');
 	},
@@ -93,10 +95,6 @@ Template.header.helpers({
 });
 
 Template.gridThumbs.helpers({
-	videos: function () {
-		console.log('gotem')
-		return Session.get('videos');
-    },
     isSelected: function () {
   		return Session.equals("videoId", this.videoId);
 	},
@@ -109,16 +107,14 @@ Template.gridThumbs.events({
     "click .single": function () {
       	Session.set('videoId', this.videoId);
       	var index = Session.get('playlist').indexOf(this.videoId);
+      	console.log(index)
 		video.playVideoAt(index);
     }
   });
 
-var renderVids = function() {
+renderVids = function() {
 	Session.set("stateImage",pauseButton);	
-	console.log(Session.get('playlist'))
-
-	console.log($("player"));
-	video = new YT.Player("player", {
+	videoTmp = new YT.Player("player", {
         loadPlaylist:{
 	        listType: 'playlist',
 	        list: Session.get('playlist'),
@@ -128,6 +124,9 @@ var renderVids = function() {
 			onReady: function (event) {
 				console.log('ready')
                 event.target.loadPlaylist(Session.get('playlist'));
+            },
+            playVid: function (event) {
+				console.log('playing')
             },
 			onStateChange: function (event) {
 				if(event.data == YT.PlayerState.PLAYING) {
@@ -146,6 +145,6 @@ var renderVids = function() {
 			}
 		} 
     });
-    
+    video = videoTmp;
     YT.load();   	
 };

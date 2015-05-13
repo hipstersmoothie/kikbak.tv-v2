@@ -6,14 +6,13 @@
 <body>
 </body>
 
-<template name="app">
-	{{> header}}
-
-  	<div id="player"></div>
-  	{{> gridThumbs}}
+<template name="layout">
+	{{> yield}}	
 </template>
 
 <template name='gridThumbs'>
+	{{> header}}
+	<div id="player"></div>
 	<div class='container'>
 		{{#each videos}}
 			<div id="{{this._id}}" style="background-repeat: no-repeat; background-image:url('{{this.thumbnail.medium.url}}')" class="single">
