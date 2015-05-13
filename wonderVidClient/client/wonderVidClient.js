@@ -1,13 +1,25 @@
 Session.setDefault('videoId', null);
 Session.setDefault('stateImage', 'playButton.png');
+Session.setDefault('selectedGenre', 'Top Videos');
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
+Meteor.startup(function() {
+
+})
 
 Template.youtubePlayer.rendered = function () {
 	console.log("Rendered");
     //enderVid(Session.get('videoId'));
 
     // Session.set("youtubePlayer", video);
+}
+
+Template.gridThumbs.rendered = function() {
+	Meteor.call("topVideos", function (error, result) { 
+		Session.set('videos', result);
+		Session.set('videoId', result[0].videoId);
+		renderVid(result[0].videoId);
+	});
 }
 
 // Template.youtubePlayer.helpers({
@@ -17,6 +29,50 @@ Template.youtubePlayer.rendered = function () {
 // 		return;
 //     }
 // })
+
+Template.header.helpers({
+	genres: function() {
+		return [{type:"Top Videos", className: "topVideos"}, 
+             	{type:"Hip Hop", className: "hipHopVideos"},
+             	{type:"Interviews", className: "interviewVideos"},
+             	{type:"Live", className: "liveVideos"}];
+	},
+	selectedGenre: function() {
+		return Session.get('selectedGenre');
+	}
+});
+
+Template.header.events({
+	'click .topVideos': function() {
+		Session.set('selectedGenre', 'Top Videos');
+	},
+	'click .hipHopVideos': function() {
+		Meteor.call("hipHopVideos", function (error, result) { 
+			console.log(result);
+			Session.set('videos', result);
+			Session.set('videoId', result[0].videoId);
+			renderVid(result[0].videoId);
+		});
+		Session.set('selectedGenre', 'Hip Hop');
+	},
+	'click .interviewVideos': function() {
+		Meteor.call("interviews", function (error, result) { 
+			Session.set('videos', result);
+			Session.set('videoId', result[0].videoId);
+			renderVid(result[0].videoId);
+		});
+		Session.set('selectedGenre', 'Hip Hop');
+	},
+	'click .liveVideos': function() {
+		Meteor.call("live", function (error, result) { 
+			Session.set('videos', result);
+			Session.set('videoId', result[0].videoId);
+			renderVid(result[0].videoId);
+		});
+		Session.set('selectedGenre', 'Hip Hop');
+	}
+});
+
 Template.header.events({
     "click .playButton": function () {
 		if(Session.equals("stateImage",playButton)){
@@ -44,11 +100,6 @@ Template.body.helpers({
 
 Template.gridThumbs.helpers({
 	videos: function () {
-		Meteor.call("videos", function (error, result) { 
-			Session.set('videos', result);
-			Session.set('videoId', result[0].videoId);
-			renderVid(result[0].videoId);
-		});
 		return Session.get('videos');
     },
     isSelected: function () {
@@ -70,7 +121,7 @@ var renderVid = function(videoId) {
 	console.log(videoId);
 	Session.set("stateImage",pauseButton);
 	video = Popcorn.smart('#youtube-video', 'http://www.youtube.com/embed/' + videoId + '&html5=1');
-	// video = Popcorn.youtube('#youtube-video', 'http://www.youtube.com/embed/' + videoId);
+	 //video = Popcorn.youtube('#youtube-video', 'http://www.youtube.com/embed/' + videoId);
 	video.play();
 	video.on("playing", function() {
 		Session.set("stateImage",pauseButton);
@@ -91,8 +142,10 @@ var renderVid = function(videoId) {
 	    			Session.set('videoId', playlist[0].videoId);
 	    			renderVid(playlist[0].videoId);
 	    		}else{
-	    			Session.set('videoId', playlist[i + 1].videoId);
-	    			renderVid(playlist[i + 1].videoId);
+	    			//console.log(playlist[i])
+	    			var newID = playlist[i + 1].videoId
+	    			Session.set('videoId', newID);
+	    			renderVid(newID);
 	    		}
 	    	}
 	    	i++;

@@ -1,17 +1,42 @@
-  Meteor.startup(function () {
-    // code to run on server at startup
+Meteor.startup(function () {
+  // code to run on server at startup
 
-  });
+});
+
 Meteor.methods({
-  	videos: function () {
-  		console.log(videoData);
-    	// Make sure the user is logged in before inserting a task
-   		return videoData;
+  videos: function () {
+		console.log(videoData);
+  	// Make sure the user is logged in before inserting a task
+ 		return videoData;
 	},
-	test: function () {
-    	// Make sure the user is logged in before inserting a task
-   		return "GUH";
-	}
+  topVideos : function() {
+    try {                                                                                            
+      return Meteor.http.get("http://localhost:4000/videos").data;                                                                                       
+    } catch (err) {                                                                                  
+      throw new Error("Failed to fetch top videos D:" + err.message);                   
+    }
+  },
+  hipHopVideos : function() {
+    try {                                                                                            
+      return Meteor.http.get("http://localhost:4000/videos-hip-hop").data;                                                                                       
+    } catch (err) {                                                                                  
+      throw new Error("Failed to fetch top hip hop videos D:" + err.message);                   
+    }
+  },
+  interviews : function() {
+    try {                                                                                            
+      return Meteor.http.get("http://localhost:4000/interviews").data;                                                                                       
+    } catch (err) {                                                                                  
+      throw new Error("Failed to fetch interviews D:" + err.message);                   
+    }
+  },
+  live : function() {
+    try {                                                                                            
+      return Meteor.http.get("http://localhost:4000/live").data;                                                                                       
+    } catch (err) {                                                                                  
+      throw new Error("Failed to live performances D:" + err.message);                   
+    }
+  }
 });
 
 videoData = [

@@ -67,6 +67,19 @@ var viewMultiplier = function(views) {
 		return 1;
 }
 
+var ratioMetric = function(views, likes) {
+	var ratio = likes / views;
+	if(views < 500)
+		return 1;
+	else if(ratio > 0.30)
+		return 4;
+	else if(ratio > 0.20)
+		return 3;
+	else if(ratio > 0.15)
+		return 2;
+
+}
+
 var sort = function(videos) {
 	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
 	videos.sort(function(a, b) {
@@ -74,14 +87,42 @@ var sort = function(videos) {
 		var adg2 = multiplier((Date.now() - Date.parse(b.youTubePostDate))/day);
 		var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
 		var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour);
-		//var metric1 = a.oldStats.viewCount > 150 ? (a.oldStats.likeCount / a.oldStats.viewCount) : 1;
-		//var metric2 = b.oldStats.viewCount > 150 ? (b.oldStats.likeCount / b.oldStats.viewCount) : 1;
-		return (a.foundOn.length * adg1 * viewMultiplier1) - (b.foundOn.length * adg2 * viewMultiplier2);
+		//var metric1 = ratioMetric(a.oldStats.viewCount, a.oldStats.likeCount);
+		//var metric2 =ratioMetric(b.oldStats.viewCount, b.oldStats.likeCount);
+		return (a.foundOn.length * adg1 * viewMultiplier1 ) - (b.foundOn.length * adg2 * viewMultiplier2);
 	}).reverse();
 }
 
 app.get('/videos', function (req, res) {
-	db.videos.find(function(err, videos) {
+	db.videos.find({tags : {$nin : ["Live", "Interview"]}}, function(err, videos) {
+		var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
+		videos.sort(function(a, b) {
+			var adg1 = multiplier((Date.now() - Date.parse(a.youTubePostDate))/day);
+			var adg2 = multiplier((Date.now() - Date.parse(b.youTubePostDate))/day);
+			var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
+			var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour);
+			return (a.foundOn.length * adg1 * viewMultiplier1 ) - (b.foundOn.length * adg2 * viewMultiplier2 );
+		}).reverse();
+		res.send(videos.splice(0,100));
+	});
+});
+
+app.get('/videos-hip-hop', function (req, res) {
+	db.videos.find({tags: {$nin : ["Live", "Interview"], $in: ["Hip Hop"]}}, function(err, videos) {
+		sort(videos);
+		res.send(videos.splice(0,100));
+	});
+});
+
+app.get('/interviews', function (req, res) {
+	db.videos.find({tags: "Interview"}, function(err, videos) {
+		sort(videos);
+		res.send(videos.splice(0,100));
+	});
+});
+
+app.get('/live', function (req, res) {
+	db.videos.find({tags: "Live"}, function(err, videos) {
 		sort(videos);
 		res.send(videos.splice(0,100));
 	});
@@ -94,6 +135,7 @@ http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
   compileVideos();
 });
+
 
 var blogs;
 
@@ -169,11 +211,33 @@ var parseFeed = function(url) {
   });
 }
 
+var tagVideo = function(vidId, html, $) {
+	var type = "";
+	html.each(function(i, el) {
+		var text = $(this).text().toLowerCase();
+		if(text.indexOf(' rapper') > -1 || text.indexOf(' rapping') > -1 
+			|| text.indexOf('hip-hop') > -1 || text.indexOf('rap') > -1) {
+			type = "Hip Hop";
+			return false;
+		}
+	});
+
+	if (type == "Hip Hop") {
+  	console.log(vidId);
+  	db.videos.update({ videoId : vidId }, {$addToSet: {
+      tags : type
+    }});
+  }
+}
+
 var handlePost = function($, blog) {
 	var iframes = $('iframe');
+
 	_.forEach(iframes, function(iframe) {
-		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1)
-			 addToDb(iframe.attribs.src, blog);
+		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
+			//tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $)
+			addToDb(iframe.attribs.src, blog);
+		}
 	});
 }
 
@@ -197,16 +261,19 @@ var updateVid = function(vidList, blog, vidId) {
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
 	if (!_.includes(foundUrls, blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
-		video.foundOn.push(blog);
-    db.videos.update({ videoId : vidId }, {$set: {
-      foundOn : video.foundOn
+    db.videos.update({ videoId : vidId }, {$addToSet: {
+      foundOn : blog
     }});
 	}
 }
 
 var newVid = function(vidId, url, blog) {
 	youTube.getById(vidId, function(error, result) {
-		if(result && result['items'] && result['items'].length > 0 && result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 && result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {// && (result['items'][0]['snippet']['title'].indexOf('Trailer') == -1 || result['items'][0]['snippet']['title'].indexOf('music') != -1) //weirdness to remove trailers
+		if(result && result['items'] && result['items'].length > 0 
+			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
+			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('(audio)') == -1 
+			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('[audio]') == -1 
+			&& result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {// && (result['items'][0]['snippet']['title'].indexOf('Trailer') == -1 || result['items'][0]['snippet']['title'].indexOf('music') != -1) //weirdness to remove trailers
 			console.log('adding', url, vidId); 
 
 			db.videos.update({ videoId : vidId }, {

@@ -20,14 +20,11 @@
         
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Genre <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{selectedGenre}}<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="#">Country</a></li>
-              <li><a href="#">Hip Hop</a></li>
-              <li><a href="#">Indie</a></li>
-              <li><a href="#">Electronic</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Log out</a></li>
+              {{#each genres}}
+                <li><a href="#" class="{{this.className}}">{{this.type}}</a></li>
+              {{/each}}
             </ul>
           </li>
         </ul>
