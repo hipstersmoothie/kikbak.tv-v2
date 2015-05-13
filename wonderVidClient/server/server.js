@@ -5,7 +5,6 @@ Meteor.startup(function () {
 
 Meteor.methods({
   videos: function () {
-		console.log(videoData);
   	// Make sure the user is logged in before inserting a task
  		return videoData;
 	},
