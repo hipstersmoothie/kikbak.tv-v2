@@ -86,10 +86,6 @@ Template.header.events({
     }
 });
 
-Template.header.events({
-    
-  });
-
 Template.header.helpers({
 	stateImage: function () {
 		return Session.get("stateImage");
@@ -102,7 +98,7 @@ Template.gridThumbs.helpers({
 		return Session.get('videos');
     },
     isSelected: function () {
-  		return Session.equals("videoId", this.videoId) ? "selected" : '';
+  		return Session.equals("videoId", this.videoId);
 	},
 	rank: function(){
 		return Session.get('playlist').indexOf(this.videoId) + 1;
@@ -136,32 +132,16 @@ var renderVids = function() {
 			onStateChange: function (event) {
 				if(event.data == YT.PlayerState.PLAYING) {
 					Session.set("stateImage",pauseButton);
-				}else if (event.data == YT.PlayerState.PAUSED) {
+				} else if (event.data == YT.PlayerState.PAUSED) {
 					Session.set("stateImage",playButton);
-				}else if (event.data == YT.PlayerState.ENDED) {
-					playlist = Session.get('playlist');
-				    console.log(playlist);
+				} else if (event.data == YT.PlayerState.ENDED) {
+					var playlist = Session.get('playlist'),
+						index = playlist.indexOf(Session.get('videoId'));
 
-				    var index = playlist.indexOf(Session.get('videoId'));
-				    session.set('videoId', playlist[index+1]);
-
-
-
-
-				    // for(current in playlist){
-				    // 	if(playlist[current] == Session.get('videoId')){
-				    // 		console.log("Found this video: " + playlist[current] + ", Next Vid: " + playlist[i + 1]);
-				    // 		if(playlist.length <= i + 1){
-				    // 			Session.set('videoId', playlist[0]);
-				    // 		}else{
-				    // 			//console.log(playlist[i])
-				    // 			var newID = playlist[i + 1]
-				    // 			Session.set('videoId', newID);
-				    // 		}
-				    // 	}
-				    // 	i++;
-				    // }
-				    Session.set('videos', playlist);
+				    if(index + 1 >= playlist.length)
+				    	Session.set('videoId', playlist[0]);
+				    else
+				    	Session.set('videoId', playlist[index+1]);
 				}
 			}
 		} 

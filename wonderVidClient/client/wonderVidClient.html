@@ -17,7 +17,7 @@
 	<div class='container'>
 		{{#each videos}}
 			<div id="{{this._id}}" style="background-repeat: no-repeat; background-image:url('{{this.thumbnail.medium.url}}')" class="single">
-				<div class="overlay {{isSelected}}">
+				<div class="overlay {{#if isSelected}}selected{{/if}}">
 					<div class="rank">
 						<p >{{rank}}</p>
 					</div>
