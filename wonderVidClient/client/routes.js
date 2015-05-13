@@ -8,7 +8,10 @@ Router.route('/', function () {
     // the loading plugin will render the loading template
     // until this subscription is ready
     return [function () {
-      getVideos();
+    	setTimeout(function() {
+    		getVideos();
+    	}, 1000)
+      
       return Session.get('videos') != null;
     }];
   }
