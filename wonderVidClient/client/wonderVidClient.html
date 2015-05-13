@@ -5,7 +5,11 @@
 
 <body>
 	{{> header}}
-  {{> youtubePlayer}}
+	{{#if video}}
+  	{{> youtubePlayer}}
+  {{else}}
+    <h1>No Videos :(</h1>
+  {{/if}}
   {{> gridThumbs}}
   <!-- {{> hello}} -->
 </body>

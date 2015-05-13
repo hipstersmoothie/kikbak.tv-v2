@@ -1,10 +1,11 @@
-Session.setDefault('videoId', "8PMJNUjaivw");
+Session.setDefault('videoId', null);
+Session.setDefault('stateImage', 'playButton.png');
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
 
 Template.youtubePlayer.rendered = function () {
 	console.log("Rendered");
-    renderVid(Session.get('videoId'));
+    //enderVid(Session.get('videoId'));
 
     // Session.set("youtubePlayer", video);
 }
@@ -34,12 +35,19 @@ Template.header.helpers({
 	}
 });
 
+Template.body.helpers({
+	video: function () {
+		console.log( Session.get('videoId'));
+		return Session.get('videoId') != null;
+	}
+});
+
 Template.gridThumbs.helpers({
 	videos: function () {
 		Meteor.call("videos", function (error, result) { 
-			return Session.set('videos', result);
+			Session.set('videos', result);
 			Session.set('videoId', result[0].videoId);
-
+			renderVid(result[0].videoId);
 		});
 		return Session.get('videos');
     },
@@ -50,10 +58,8 @@ Template.gridThumbs.helpers({
 
 Template.gridThumbs.events({
     "click .single": function () {
-      	console.log(this.videoId);
       	Session.set('videoId', this.videoId);
 		renderVid(this.videoId);
-
     }
   });
 
@@ -61,7 +67,8 @@ var renderVid = function(videoId) {
 	if(video != null){
   		video.destroy();
 	}
-
+	console.log(videoId);
+	Session.set("stateImage",pauseButton);
 	video = Popcorn.smart('#youtube-video', 'http://www.youtube.com/embed/' + videoId + '&html5=1');
 	// video = Popcorn.youtube('#youtube-video', 'http://www.youtube.com/embed/' + videoId);
 	video.play();
