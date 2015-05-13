@@ -10,7 +10,7 @@ Router.route('/', function () {
     return [function () {
     	setTimeout(function() {
     		getVideos();
-    	}, 1000)
+    	}, 3000)
       
       return Session.get('videos') != null;
     }];
