@@ -33,6 +33,7 @@ Template.header.helpers({
 	}
 });
 
+CurrentVideos = null;
 Template.header.events({
 	'click .topVideos': function() {
 		Session.set('videos', null);
@@ -104,12 +105,12 @@ Template.gridThumbs.helpers({
   		return Session.equals("videoId", this.videoId);
 	},
 	rank: function(){
-		return Session.get('playlist').indexOf(this.videoId) + 1;
+		var video = CurrentVideos.findOne({videoId:this.videoId});
+		return video.rank;
 	},
 	backgroundImage: function () {
 		var index = Session.get('playlist').indexOf(Session.get('videoId'));
 		var videos = Session.get('videos');
-		console.log("HIGH:" + videos[index].thumbnail.high.url);
 		return Session.get('videos')[index].thumbnail.high.url;
     },
 	hidePlayer: function() {

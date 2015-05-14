@@ -1,53 +1,27 @@
 Meteor.startup(function () {
   // code to run on server at startup
-  updateTop();
-  updateHipHop();
-  updateElectronic();
-  updateLive();
-  updateInterviews();
+  updateAll();
+  var minutes = 10, the_interval = minutes * 60 * 1000;
+  Meteor.setInterval(updateAll, the_interval);
 });
 
-var updateTop = function() {
-  Meteor.http.get("http://localhost:4000/videos", function(err, res) {
-    TopVideos.remove({});
-    _.forEach(res.data, function(node) {
-      TopVideos.insert(node);
-    })    
-  })
+var updateAll = function() {
+  updateThis('/videos', TopVideos);
+  updateThis('/videos-hip-hop', HipHopVideos);
+  updateThis('/electronic', ElectronicVideos);
+  updateThis('/live', LiveVideos);
+  updateThis('/interviews', InterviewVideos);
 }
 
-var updateHipHop = function() {
-  Meteor.http.get("http://localhost:4000/videos-hip-hop", function(err, res) {
-    HipHopVideos.remove({});
-    _.forEach(res.data, function(node) {
-      HipHopVideos.insert(node);
-    })    
-  })
-}
-
-var updateElectronic = function() {
-  Meteor.http.get("http://localhost:4000/electronic", function(err, res) {
-    ElectronicVideos.remove({});
-    _.forEach(res.data, function(node) {
-      ElectronicVideos.insert(node);
-    })    
-  })
-}
-
-var updateLive = function() {
-  Meteor.http.get("http://localhost:4000/live", function(err, res) {
-    LiveVideos.remove({});
-    _.forEach(res.data, function(node) {
-      LiveVideos.insert(node);
-    })    
-  })
-}
-
-var updateInterviews = function() {
-  Meteor.http.get("http://localhost:4000/interviews", function(err, res) {
-    InterviewVideos.remove({});
-    _.forEach(res.data, function(node) {
-      InterviewVideos.insert(node);
+var updateThis = function(url, collection) {
+  Meteor.http.get("http://localhost:4000" + url, function(err, res) {
+    _.forEach(res.data, function(node, index) {
+      node.rank = index + 1;
+      var video = collection.findOne({rank:node.rank})
+      if(video && video.videoId != node.videoId) {
+        delete node._id;
+        collection.update({rank:node.rank}, node);
+      }
     })    
   })
 }
@@ -57,7 +31,6 @@ HipHopVideos = new Mongo.Collection('hipHop');
 ElectronicVideos = new Mongo.Collection('electronic');
 LiveVideos = new Mongo.Collection('live');
 InterviewVideos = new Mongo.Collection('interviews');
-
 
 Meteor.publish('videos', function(type) {
   if (type == "topVideos") {
@@ -82,7 +55,6 @@ Meteor.methods({
   topVideos : function() {
     try {           
       var data = Meteor.http.get("http://localhost:4000/videos").data 
-      TopVideos.insert(data);                                                                     
       return data;                                                                                       
     } catch (err) {                                                                                  
       throw new Error("Failed to fetch top videos D:" + err.message);                   

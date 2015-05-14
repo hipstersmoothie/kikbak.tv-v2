@@ -19,7 +19,7 @@ template(name='gridThumbs')
 		img(src="images/arrow.png")
 
 	.container
-		each videos
+		+each videos
 			.single(id="#{this._id}" style="background-repeat: no-repeat; background-image:url('#{this.thumbnail.medium.url}')")
 				.overlay(class="{{#if isSelected}}selected{{/if}}")
 					.rank

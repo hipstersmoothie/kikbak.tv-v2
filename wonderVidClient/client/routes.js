@@ -18,7 +18,8 @@ Router.route('/', {
   },
   data: function() {
     Session.set('selectedGenre', 'Top Videos');
-    templateData = { videos: TopVideos.find() };
+    CurrentVideos = TopVideos;
+    templateData = { videos: TopVideos.find({}, {sort:{rank:1}}) };
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
     Session.set('videos', _.values(templateData.videos.collection._docs._map));
     return templateData;
@@ -32,7 +33,8 @@ Router.route('/hipHop', {
     return  Meteor.subscribe('videos', 'hipHop');
   },
   data: function() {
-    templateData = { videos: HipHopVideos.find() };
+    CurrentVideos = HipHopVideos;
+    templateData = { videos: HipHopVideos.find({}, {sort:{rank:1}}) };
     Session.set('selectedGenre', 'Hip Hop');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
     Session.set('videos', _.values(templateData.videos.collection._docs._map));
@@ -47,7 +49,8 @@ Router.route('/interviews', {
     return  Meteor.subscribe('videos', 'interviews');
   },
   data: function() {
-    templateData = { videos: InterviewVideos.find() };
+    CurrentVideos = InterviewVideos;
+    templateData = { videos: InterviewVideos.find({}, {sort:{rank:1}}) };
     Session.set('selectedGenre', 'Interviews');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
     Session.set('videos', _.values(templateData.videos.collection._docs._map));
@@ -62,7 +65,8 @@ Router.route('/live', {
     return  Meteor.subscribe('videos', 'live');
   },
   data: function() {
-    templateData = { videos: LiveVideos.find() };
+    CurrentVideos = LiveVideos;
+    templateData = { videos: LiveVideos.find({}, {sort:{rank:1}}) };
     Session.set('selectedGenre', 'Live');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
     Session.set('videos', _.values(templateData.videos.collection._docs._map));
@@ -77,7 +81,8 @@ Router.route('/electronic', {
     return  Meteor.subscribe('videos', 'electronic');
   },
   data: function() {
-    templateData = { videos: ElectronicVideos.find() };
+    CurrentVideos = ElectronicVideos;
+    templateData = { videos: ElectronicVideos.find({}, {sort:{rank:1}}) };
     Session.set('selectedGenre', 'Electronic');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
     Session.set('videos', _.values(templateData.videos.collection._docs._map));

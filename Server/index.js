@@ -9,7 +9,8 @@ var http = require('http'),
     getYouTubeID = require('get-youtube-id'),
     youtubeThumbnail = require('youtube-thumbnail'),
     YouTube = require('youtube-node'),
-    hypeBlogs = require('./blogs');
+    hypeBlogs = require('./blogs'),
+    feed = require("fast-feed");
  
 var app = express();
 app.set('port', process.env.PORT || 4000); 
@@ -37,7 +38,7 @@ app.get('/videosList', function (req, res) {
 var multiplier = function(days) {
 	//console.log(days);
 	if (days <= 1)
-		return 30;
+		return 50;
 	else if (days <= 2)
 		return 20;
 	else if (days <= 3)
@@ -58,7 +59,7 @@ var multiplier = function(days) {
 		return 0.50;
 }
 
-var viewMultiplier = function(views) {
+var viewMultiplier = function(views, days) {
 	if (views > 1500)
 		return 3;
 	else if (views > 500)
@@ -85,32 +86,35 @@ var ratioMetric = function(views, likes) {
 var sort = function(videos) {
 	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
 	videos.sort(function(a, b) {
-		var adg1 = multiplier((Date.now() - Date.parse(a.youTubePostDate))/day);
-		var adg2 = multiplier((Date.now() - Date.parse(b.youTubePostDate))/day);
-		var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
-		var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour);
-		var metric1 = ratioMetric(a.oldStats.viewCount, a.oldStats.likeCount);
-		var metric2 =ratioMetric(b.oldStats.viewCount, b.oldStats.likeCount);
-		return (a.foundOn.length * adg1 * viewMultiplier1 ) - (b.foundOn.length * adg2 * viewMultiplier2);
+		var date1 = (Date.now() - Date.parse(a.youTubePostDate))/day
+		var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day
+		var adg1 = multiplier(date1);
+		var adg2 = multiplier(date2);
+		var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour, date1);
+		var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour, date2);
+		// var metric1 = ratioMetric(a.oldStats.viewCount, a.oldStats.likeCount);
+		// var metric2 =ratioMetric(b.oldStats.viewCount, b.oldStats.likeCount);
+		return (a.foundOn.length * adg1 * viewMultiplier1 ) - (b.foundOn.length * adg2 * viewMultiplier2 );
 	}).reverse();
 }
 
 app.get('/videos', function (req, res) {
-	db.videos.find({tags : {$nin : ["Live", "Interview"]}}, function(err, videos) {
+	db.videos.find({tags : {$nin : ["Live", "Interview", "Trailer"]}}, function(err, videos) {
+		console.log('newVids');
 		sort(videos);
 		res.send(videos.splice(0,100));
 	});
 });
 
 app.get('/videos-hip-hop', function (req, res) {
-	db.videos.find({tags: {$nin : ["Live", "Interview"], $in: ["Hip Hop"]}}, function(err, videos) {
+	db.videos.find({tags: {$nin : ["Live", "Interview", "Trailer"], $in: ["Hip Hop"]}}, function(err, videos) {
 		sort(videos);
 		res.send(videos.splice(0,100));
 	});
 });
 
 app.get('/electronic', function (req, res) {
-	db.videos.find({tags: {$nin : ["Live", "Interview"], $in: ["Electonic"]}}, function(err, videos) {
+	db.videos.find({tags: {$nin : ["Live", "Interview", "Trailer"], $in: ["Electonic"]}}, function(err, videos) {
 		sort(videos);
 		res.send(videos.splice(0,100));
 	});
@@ -130,12 +134,19 @@ app.get('/live', function (req, res) {
 	});
 });
 
+app.get('/trailers', function (req, res) {
+	db.videos.find({tags: "Trailer"}, function(err, videos) {
+		sort(videos);
+		res.send(videos.splice(0,100));
+	});
+});
+
 var youTube = new YouTube();
 youTube.setKey('AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg');
  
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
-  compileVideos();
+  //compileVideos();
 });
 
 
@@ -177,7 +188,7 @@ var testUrl = function(url, endings) {
 		return;
 
 	var str = url.siteurl[url.siteurl.length - 1] == '/' ? url.siteurl + _.first(endings) : url.siteurl + '/' + _.first(endings)
-	parser(str, function(err, posts) {
+	feed.parse(str, function(err, posts) {
 		if(!err) {
 			db.blogs.update({url: str}, {$setOnInsert : {
 				url : str
@@ -191,7 +202,7 @@ var testUrl = function(url, endings) {
 var refreshData = function() {
 	console.log('pulling');
 	_.forEach(blogs, parseFeed);
-	_.delay(updateStatsForAllVids, 10000)
+	_.delay(updateStatsForAllVids, 15000)
 }
 
 var updateStatsForAllVids = function() {
@@ -205,14 +216,16 @@ var updateStatsForAllVids = function() {
 
 var parseFeed = function(url) {
 	parser(url, function(err, posts) {
-		if(err) 
+		if(err) {
 			console.log('parseFeed', url, err);
-  	else 
+		}
+  	else {
   		_.forEach(posts, _.bind(getHtml, null, _, url));
+  	}
   });
 }
 
-var getTag = function(html, $, youTubeDescription) {
+var getTag = function(html, $, youTubeDescription, title) {
 	var type = "";
 	if (html.each) {
 		html.each(function(i, el) {
@@ -225,10 +238,11 @@ var getTag = function(html, $, youTubeDescription) {
 				youTubeDescription.toLowerCase().indexOf('electonic') > -1 || youTubeDescription.toLowerCase().indexOf(' edm') > -1) {
 				type = "Electonic";
 				return false;
-			} else if (text.indexOf('interview') > -1 || text.indexOf('Interview')) {
+			} else if (text.indexOf('interview') > -1 || text.indexOf('Interview') > -1 || title.toLowerCase() == "SwaysUniverse") {
 				type = "Interview";
 				return false;
-			} else if (text.indexOf(' live') > -1 || youTubeDescription.toLowerCase().indexOf(' live') > -1) {
+			} else if (text.indexOf(' live') > -1 || youTubeDescription.toLowerCase().indexOf(' live') > -1
+				|| title.toLowerCase().indexOf(' live') > -1|| title.toLowerCase().indexOf('bbc') > -1 || title.toLowerCase().indexOf('2015')) {
 				type = "Live";
 				return false;
 			}
@@ -238,19 +252,11 @@ var getTag = function(html, $, youTubeDescription) {
 	return type;
 }
 
-var tagVideo = function(vidId, html, $, youTubeDescription) {
-	var type = getTag(html, $, youTubeDescription)	
-
-	if (type == "Hip Hop") {
-  	db.videos.update({ videoId : vidId }, {$addToSet: {
-      tags : type
-    }});
-  } else if (type == "Electonic") {
-  	console.log(vidId);
-  	db.videos.update({ videoId : vidId }, {$addToSet: {
-      tags : type
-    }});
-  }
+var tagVideo = function(vidId, html, $, youTubeDescription, title) {
+	var type = getTag(html, $, youTubeDescription, title)	
+	db.videos.update({ videoId : vidId }, {$addToSet: {
+    tags : type
+  }});
 }
 
 var handlePost = function($, blog) {
@@ -287,7 +293,7 @@ var updateVid = function(vidList, blog, vidId, $) {
 	//console.log(blog)
 	if (!_.includes(foundUrls, blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
-		var tag = getTag($('p'), $, "");
+		var tag = getTag($('p'), $, "", "");
 	    db.videos.update({ videoId : vidId }, {
 	    	$addToSet: {
 	      	foundOn : blog
@@ -320,7 +326,7 @@ var newVid = function(vidId, url, blog, $) {
 				  avgDislikePerHalfHour : 0,
 				  avgFavoritePerHalfHour : 0,
 				  avgCommentPerHalfHour : 0,
-				  tags : [getTag(vidId, $('p'), $, result['items'][0]['snippet']['description'])]
+				  tags : [getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'])]
 		    }
 		  }, { upsert : true });
 		}
@@ -338,7 +344,7 @@ var updateStats = function(video) {
 			var newDislikes = (parseInt(newStats.dislikeCount) - parseInt(oldStats.dislikeCount));
 			var newFavorites = (parseInt(newStats.favoriteCount) - parseInt(oldStats.favoriteCount));
 			var newComments = (parseInt(newStats.commentCount) - parseInt(oldStats.commentCount));
-
+			// console.log(parseInt(newStats.viewCount), '-', parseInt(oldStats.viewCount), '=', newViews, video.avgViewPerHalfHour, (video.avgViewPerHalfHour + newViews)/2)
 			db.videos.update({ videoId : vidId }, {$set: {
 				youTubePostDate : result['items'][0]['snippet']['publishedAt'],
 	    	oldStats : newStats,

@@ -16,10 +16,11 @@ body{
 .blackOverlay{
 	background-color: rgba(1,1,1,0.6);
 	display: block;
-	height: 800px;
+	height: 100vh;
 	left: 0;
 	position: fixed;
 	right: 0;
+	top:0;
 	z-index: -1;
 }
 
@@ -142,18 +143,18 @@ body{
 
 }
 
-.navbar-default {
+.navbar-inverse {
 	margin-left: 0;
 }
 
-.navbar-default {
+/*.navbar-inverse {
   background-color: rgba(0,0,0,0);
   border-color: rgba(0,0,0,0);
-}
-.navbar-default .navbar-toggle {
+}*/
+.navbar-inverse .navbar-toggle {
   border-color: rgba(0,0,0,0);
 }
-.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
   color: #31C663;
   background-color: rgba(0,0,0,0);
 }
@@ -164,10 +165,10 @@ body{
 .dropdown-menu > li > a {
   color: #31C663;
 }
-.navbar-default .navbar-nav > li > a {
+.navbar-inverse .navbar-nav > li > a {
   color: #31C663;
 }
-.navbar-default .navbar-brand {
+.navbar-inverse .navbar-brand {
   color: #31C663;
   font-size: 36px;
 }
