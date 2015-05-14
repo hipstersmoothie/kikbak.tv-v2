@@ -83,18 +83,46 @@ Template.header.events({
     "click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
 		video.prevVideo();	
+    },
+    "click .prevButton": function () {
+		Session.set('stateImage', pauseButton);
+		video.prevVideo();	
     }
-});
 
-Template.header.events({
-    
-  });
+});
 
 Template.header.helpers({
 	stateImage: function () {
 		return Session.get("stateImage");
 	}
 });
+
+Template.app.helpers({
+	backgroundImage: function () {
+		var index = Session.get('playlist').indexOf(Session.get('videoId'));
+		var videos = Session.get('videos');
+		console.log("HIGH:" + videos[index].thumbnail.high.url);
+		return Session.get('videos')[index].thumbnail.high.url;
+    },
+	hidePlayer: function() {
+		return Session.get('playerTuckedLeft');
+	}
+});
+
+Template.app.events({
+    "click .togglePlayer": function () {
+    	if(Session.get('playerTuckedLeft') == "tuckedLeft"){
+			Session.set('playerTuckedLeft', "");
+    		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
+    		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
+    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
+    	}else{
+			Session.set('playerTuckedLeft', "tuckedLeft");
+    		TweenLite.to(".playerContainer", 0.5, { x:-screen.width, y:0,z:0, display:'none'});
+    		TweenLite.to(".container", 0.5, { width:screen.width}).delay(0.5);
+    	}
+    }
+})
 
 Template.gridThumbs.helpers({
 	videos: function () {
@@ -169,3 +197,5 @@ var renderVids = function() {
     
     YT.load();   	
 };
+
+

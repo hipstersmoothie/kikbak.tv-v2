@@ -39,6 +39,7 @@ minifiers@1.1.5
 minimongo@1.0.8
 mobile-status-bar@1.0.3
 mongo@1.1.0
+mrt:gsap@1.11.8
 mrt:moment@2.8.1
 mrt:popcorn@0.1.0
 numtel:template-from-string@0.1.0

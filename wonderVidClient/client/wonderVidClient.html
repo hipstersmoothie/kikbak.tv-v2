@@ -3,17 +3,28 @@
   <link href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
 </head>
 
-<body>
+<body >
+
 </body>
 
 <template name="app">
+	<div class="blackOverlay"></div>
+	<div class="appBody" style="background-repeat: no-repeat; background-image:url('{{backgroundImage}}')"></div>
+	
 	{{> header}}
+		<div class="playerContainer">
+  		<div id="player" ></div>
+  		<div class="togglePlayer">
+  			<img src="/arrow.png">
+  		</div>
 
-  	<div id="player"></div>
+		</div>
   	{{> gridThumbs}}
+	
 </template>
 
 <template name='gridThumbs'>
+
 	<div class='container'>
 		{{#each videos}}
 			<div id="{{this._id}}" style="background-repeat: no-repeat; background-image:url('{{this.thumbnail.medium.url}}')" class="single">

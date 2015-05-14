@@ -1,4 +1,4 @@
-Router.plugin('loading', {loadingTemplate: 'Loading'});
+Router.plugin('loading', {loadingTemplate: 'loading'});
 
 Router.route('/', function () {
 	Session.set('selectedGenre', 'Top Videos');

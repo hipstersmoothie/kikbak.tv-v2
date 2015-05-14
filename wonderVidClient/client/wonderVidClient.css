@@ -5,14 +5,72 @@ body{
 	padding: 0;
 	font-family: 'Lato', sans-serif;
 	font-weight: 400;
+
+	transition: all 0.80s ease-in-out;
+  -webkit-transition: all 0.80s ease-in-out;
+  -moz-transition: all 0.80s ease-in-out;
+  -ms-transition: all 0.80s ease-in-out;
+  -o-transition: all 0.80s ease-in-out;
+}
+
+.blackOverlay{
+	background-color: rgba(1,1,1,0.6);
+	display: block;
+	height: 800px;
+	left: 0;
+	position: fixed;
+	right: 0;
+	z-index: -1;
+}
+
+.appBody{
+	background-size: cover;
+	  display: block;
+	  filter: blur(5px);
+	  -webkit-filter: blur(5px);
+	  height: 200%;
+	  width: 200%;
+	  left: -100%;
+	  position: fixed;
+	  right: 0;
+	  z-index: -2;
+	  top: -100%; 
+	transition: background-image 0.30s ease-in-out;
+  -webkit-transition: background-image 0.30s ease-in-out;
+  -moz-transition: background-image 0.30s ease-in-out;
+  -ms-transition: background-image 0.30s ease-in-out;
+  -o-transition: background-image 0.30s ease-in-out;
+}
+
+.togglePlayer{
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  /* float: right; */
+  right: 0;
+  top: 50%;
+}
+
+.playerContainer{
+	transition: translate3d 0.5s ease-out;
+	-webkit-transform: translate3d(0px, 0px, 0px);
+	 transform: translate3d(0px, 0px, 0px); 
+	margin-left: 20px;
+	width: 68%;
+	height: 80vh;
+	display: inline-block;
+}
+
+.tuckedLeft{
+	transition: translate3d 0.5s ease-out;
+	-webkit-transform: translate3d(-1440px, 0px, 0px);
+	 transform: translate3d(-1440px, 0px, 0px); 
+	 display: none;
 }
 
 #player{
-	margin-left: 20px;
-	width: 65%;
-	height: 80vh;
-	display: inline-block;
-	border: 1px #31C663 solid;
+	width: 96%;
+	height: 100%;
 }
 
 .single{
@@ -28,14 +86,9 @@ body{
 
 
 .overlay{
-	transition: all 0.30s ease-in-out;
-  -webkit-transition: all 0.30s ease-in-out;
-  -moz-transition: all 0.30s ease-in-out;
-  -ms-transition: all 0.30s ease-in-out;
-  -o-transition: all 0.30s ease-in-out;
 	font-size: 10px;
 	/*opacity: 0;*/
-	width: 100%;
+	width: 96%;
 	height: 100%;
 	text-align: center;
 
