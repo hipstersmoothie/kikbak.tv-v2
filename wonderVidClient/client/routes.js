@@ -20,6 +20,7 @@ Router.route('/', {
     Session.set('selectedGenre', 'Top Videos');
     templateData = { videos: TopVideos.find() };
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
+    Session.set('videos', _.values(templateData.videos.collection._docs._map));
     return templateData;
   }
 }); 
@@ -34,6 +35,7 @@ Router.route('/hipHop', {
     templateData = { videos: HipHopVideos.find() };
     Session.set('selectedGenre', 'Hip Hop');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
+    Session.set('videos', _.values(templateData.videos.collection._docs._map));
     return templateData;
   }
 }); 
@@ -48,6 +50,7 @@ Router.route('/interviews', {
     templateData = { videos: InterviewVideos.find() };
     Session.set('selectedGenre', 'Interviews');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
+    Session.set('videos', _.values(templateData.videos.collection._docs._map));
     return templateData;
   }
 }); 
@@ -62,6 +65,7 @@ Router.route('/live', {
     templateData = { videos: LiveVideos.find() };
     Session.set('selectedGenre', 'Live');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
+    Session.set('videos', _.values(templateData.videos.collection._docs._map));
     return templateData;
   }
 }); 
@@ -76,6 +80,7 @@ Router.route('/electronic', {
     templateData = { videos: ElectronicVideos.find() };
     Session.set('selectedGenre', 'Electronic');
     Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
+    Session.set('videos', _.values(templateData.videos.collection._docs._map));
     return templateData;
   }
 }); 

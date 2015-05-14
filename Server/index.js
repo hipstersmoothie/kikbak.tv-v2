@@ -143,7 +143,7 @@ var blogs;
 
 var compileVideos = function() {
 	//db.videos.remove();
-	var minutes = 10, the_interval = minutes * 60 * 1000;
+	var minutes = 30, the_interval = minutes * 60 * 1000;
 	db.blogs.find({ }, function(err, myBlogs) {
 		blogs = myBlogs;
 		refreshData();
@@ -179,7 +179,6 @@ var testUrl = function(url, endings) {
 	var str = url.siteurl[url.siteurl.length - 1] == '/' ? url.siteurl + _.first(endings) : url.siteurl + '/' + _.first(endings)
 	parser(str, function(err, posts) {
 		if(!err) {
-			console.log(str);
 			db.blogs.update({url: str}, {$setOnInsert : {
 				url : str
 			}}, {upsert : true});
@@ -222,8 +221,8 @@ var getTag = function(html, $, youTubeDescription) {
 				|| text.indexOf('hip-hop') > -1 || text.indexOf('rap') > -1) {
 				type = "Hip Hop";
 				return false;
-			} else if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 
-				|| youTubeDescription.toLowerCase().indexOf('hip-hop') > -1 || youTubeDescription.toLowerCase().indexOf('rap') > -1) {
+			} else if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 || 
+				youTubeDescription.toLowerCase().indexOf('electonic') > -1 || youTubeDescription.toLowerCase().indexOf(' edm') > -1) {
 				type = "Electonic";
 				return false;
 			} else if (text.indexOf('interview') > -1 || text.indexOf('Interview')) {

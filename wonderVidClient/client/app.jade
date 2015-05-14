@@ -1,0 +1,45 @@
+head
+	title wonderVidClient
+	link(href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css')
+
+body
+
+template(name="layout")
+	+yield
+
+template(name='gridThumbs')
+	+header
+	.blackOverlay
+	.appBody(style="background-repeat: no-repeat; background-image:url('#{backgroundImage}')")
+	
+	.playerContainer
+		#player
+
+	.togglePlayer
+		img(src="images/arrow.png")
+
+	.container
+		each videos
+			.single(id="#{this._id}" style="background-repeat: no-repeat; background-image:url('#{this.thumbnail.medium.url}')")
+				.overlay(class="{{#if isSelected}}selected{{/if}}")
+					.rank
+						p #{rank}
+					p.descriptionText #{this.title}
+
+template(name="loading")
+	.wrap2
+		.boxcube2
+			.boxfront.face1(style="background-color: #31c663;")
+				| ►
+			.boxback.face1(style="background-color: #31c663;")
+				| ►
+			.boxtop.face1(style="background-color: #31c663;")
+				| ►
+			.boxbottom.face1(style="background-color: #31c663;")
+				| ►
+			.boxleft.face1(style="background-color: #31c663;")
+				.face2
+				| ❙ ❙
+			.boxright.face1(style="background-color: #31c663;")
+				.face2
+				| ❙ ❙
