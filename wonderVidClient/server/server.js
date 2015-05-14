@@ -47,49 +47,6 @@ Meteor.publish('videos', function(type) {
   return [];
 });
 
-Meteor.methods({
-  videos: function () {
-  	// Make sure the user is logged in before inserting a task
- 		return videoData;
-	},
-  topVideos : function() {
-    try {           
-      var data = Meteor.http.get("http://localhost:4000/videos").data 
-      return data;                                                                                       
-    } catch (err) {                                                                                  
-      throw new Error("Failed to fetch top videos D:" + err.message);                   
-    }
-  },
-  hipHopVideos : function() {
-    try {                                                                                            
-      return Meteor.http.get("http://localhost:4000/videos-hip-hop").data;                                                                                       
-    } catch (err) {                                                                                  
-      throw new Error("Failed to fetch top hip hop videos D:" + err.message);                   
-    }
-  },
-  interviews : function() {
-    try {                                                                                            
-      return Meteor.http.get("http://localhost:4000/interviews").data;                                                                                       
-    } catch (err) {                                                                                  
-      throw new Error("Failed to fetch interviews D:" + err.message);                   
-    }
-  },
-  live : function() {
-    try {                                                                                            
-      return Meteor.http.get("http://localhost:4000/live").data;                                                                                       
-    } catch (err) {                                                                                  
-      throw new Error("Failed to live performances D:" + err.message);                   
-    }
-  },
-  electronic : function() {
-    try {                                                                                            
-      return Meteor.http.get("http://localhost:4000/electronic").data;                                                                                       
-    } catch (err) {                                                                                  
-      throw new Error("Failed to electronic videos D:" + err.message);                   
-    }
-  }
-});
-
 videoData = [
   {
     "_id": "55510e7f97b575c31788e93b",

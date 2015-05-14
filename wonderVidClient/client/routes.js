@@ -17,12 +17,7 @@ Router.route('/', {
     return  Meteor.subscribe('videos', 'topVideos');
   },
   data: function() {
-    Session.set('selectedGenre', 'Top Videos');
-    CurrentVideos = TopVideos;
-    templateData = { videos: TopVideos.find({}, {sort:{rank:1}}) };
-    Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
-    Session.set('videos', _.values(templateData.videos.collection._docs._map));
-    return templateData;
+    return updateGrid('Top Videos', TopVideos);
   }
 }); 
 
@@ -33,12 +28,7 @@ Router.route('/hipHop', {
     return  Meteor.subscribe('videos', 'hipHop');
   },
   data: function() {
-    CurrentVideos = HipHopVideos;
-    templateData = { videos: HipHopVideos.find({}, {sort:{rank:1}}) };
-    Session.set('selectedGenre', 'Hip Hop');
-    Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
-    Session.set('videos', _.values(templateData.videos.collection._docs._map));
-    return templateData;
+    return updateGrid('Hip Hop', HipHopVideos);
   }
 }); 
 
@@ -49,14 +39,9 @@ Router.route('/interviews', {
     return  Meteor.subscribe('videos', 'interviews');
   },
   data: function() {
-    CurrentVideos = InterviewVideos;
-    templateData = { videos: InterviewVideos.find({}, {sort:{rank:1}}) };
-    Session.set('selectedGenre', 'Interviews');
-    Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
-    Session.set('videos', _.values(templateData.videos.collection._docs._map));
-    return templateData;
+    return updateGrid('Interviews', InterviewVideos);
   }
-}); 
+});
 
 Router.route('/live', {
   layoutTemplate: 'layout',
@@ -65,14 +50,9 @@ Router.route('/live', {
     return  Meteor.subscribe('videos', 'live');
   },
   data: function() {
-    CurrentVideos = LiveVideos;
-    templateData = { videos: LiveVideos.find({}, {sort:{rank:1}}) };
-    Session.set('selectedGenre', 'Live');
-    Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
-    Session.set('videos', _.values(templateData.videos.collection._docs._map));
-    return templateData;
+   return updateGrid('Live', LiveVideos);
   }
-}); 
+});
 
 Router.route('/electronic', {
   layoutTemplate: 'layout',
@@ -81,11 +61,19 @@ Router.route('/electronic', {
     return  Meteor.subscribe('videos', 'electronic');
   },
   data: function() {
-    CurrentVideos = ElectronicVideos;
-    templateData = { videos: ElectronicVideos.find({}, {sort:{rank:1}}) };
-    Session.set('selectedGenre', 'Electronic');
-    Session.set('playlist', _.pluck(_.values(templateData.videos.collection._docs._map), 'videoId'));
-    Session.set('videos', _.values(templateData.videos.collection._docs._map));
-    return templateData;
+    return updateGrid('Electronic', ElectronicVideos);
   }
-}); 
+});  
+
+var updateGrid = function(genre, collection) {
+  Session.set('selectedGenre', genre);
+  CurrentVideos = collection;
+  var templateData = { videos: collection.find({}, {sort:{rank:1}}) };
+  var vids = _.values(templateData.videos.collection._docs._map);
+  vids.sort(function(a, b) {
+    return a.rank - b.rank;
+  });
+  Session.set('playlist', _.pluck(vids, 'videoId'));// 
+  Session.set('videos', _.values(templateData.videos.collection._docs._map));
+  return templateData;
+}
