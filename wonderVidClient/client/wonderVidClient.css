@@ -42,13 +42,13 @@ body{
   -o-transition: background-image 0.30s ease-in-out;
 }
 
-.togglePlayer{
-  width: 30px;
+.togglePlayer{  
+	width: 30px;
   height: 30px;
   position: absolute;
   /* float: right; */
-  right: 0;
-  top: 50%;
+  right: 30%;
+  top: 45%;
 }
 
 .playerContainer{
@@ -143,6 +143,9 @@ body{
 
 }
 
+.navbar-default {
+	margin-left: 0;
+}
 
 .navbar-default {
   background-color: rgba(0,0,0,0);
