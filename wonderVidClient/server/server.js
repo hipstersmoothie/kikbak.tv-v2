@@ -1,6 +1,77 @@
 Meteor.startup(function () {
   // code to run on server at startup
+  updateTop();
+  updateHipHop();
+  updateElectronic();
+  updateLive();
+  updateInterviews();
+});
 
+var updateTop = function() {
+  Meteor.http.get("http://localhost:4000/videos", function(err, res) {
+    TopVideos.remove({});
+    _.forEach(res.data, function(node) {
+      TopVideos.insert(node);
+    })    
+  })
+}
+
+var updateHipHop = function() {
+  Meteor.http.get("http://localhost:4000/videos-hip-hop", function(err, res) {
+    HipHopVideos.remove({});
+    _.forEach(res.data, function(node) {
+      HipHopVideos.insert(node);
+    })    
+  })
+}
+
+var updateElectronic = function() {
+  Meteor.http.get("http://localhost:4000/electronic", function(err, res) {
+    ElectronicVideos.remove({});
+    _.forEach(res.data, function(node) {
+      ElectronicVideos.insert(node);
+    })    
+  })
+}
+
+var updateLive = function() {
+  Meteor.http.get("http://localhost:4000/live", function(err, res) {
+    LiveVideos.remove({});
+    _.forEach(res.data, function(node) {
+      LiveVideos.insert(node);
+    })    
+  })
+}
+
+var updateInterviews = function() {
+  Meteor.http.get("http://localhost:4000/interviews", function(err, res) {
+    InterviewVideos.remove({});
+    _.forEach(res.data, function(node) {
+      InterviewVideos.insert(node);
+    })    
+  })
+}
+
+TopVideos = new Mongo.Collection('videos');
+HipHopVideos = new Mongo.Collection('hipHop');
+ElectronicVideos = new Mongo.Collection('electronic');
+LiveVideos = new Mongo.Collection('live');
+InterviewVideos = new Mongo.Collection('interviews');
+
+
+Meteor.publish('videos', function(type) {
+  if (type == "topVideos") {
+    return TopVideos.find({});
+  } else if (type == 'hipHop') {
+    return HipHopVideos.find({});
+  } else if (type == 'electronic') {
+    return ElectronicVideos.find({});
+  } else if (type == 'live') {
+    return LiveVideos.find({});
+  } else if (type == 'interviews') {
+    return InterviewVideos.find({});
+  }
+  return [];
 });
 
 Meteor.methods({
@@ -9,8 +80,10 @@ Meteor.methods({
  		return videoData;
 	},
   topVideos : function() {
-    try {                                                                                            
-      return Meteor.http.get("http://localhost:4000/videos").data;                                                                                       
+    try {           
+      var data = Meteor.http.get("http://localhost:4000/videos").data 
+      TopVideos.insert(data);                                                                     
+      return data;                                                                                       
     } catch (err) {                                                                                  
       throw new Error("Failed to fetch top videos D:" + err.message);                   
     }
