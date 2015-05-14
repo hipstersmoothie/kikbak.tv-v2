@@ -92,9 +92,9 @@ var sort = function(videos) {
 		var adg2 = multiplier(date2);
 		var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour, date1);
 		var viewMultiplier2 = viewMultiplier(a.avgViewPerHalfHour, date2);
-		// var metric1 = ratioMetric(a.oldStats.viewCount, a.oldStats.likeCount);
-		// var metric2 =ratioMetric(b.oldStats.viewCount, b.oldStats.likeCount);
-		return (a.foundOn.length * adg1 * viewMultiplier1 ) - (b.foundOn.length * adg2 * viewMultiplier2 );
+		var metric1 = ratioMetric(a.oldStats.viewCount, a.oldStats.likeCount);
+		var metric2 =ratioMetric(b.oldStats.viewCount, b.oldStats.likeCount);
+		return (a.foundOn.length * adg1 * viewMultiplier1  * metric1) - (b.foundOn.length * adg2 * viewMultiplier2 *metric2);
 	}).reverse();
 }
 
@@ -146,7 +146,7 @@ youTube.setKey('AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg');
  
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
-  //compileVideos();
+  compileVideos();
 });
 
 
@@ -160,43 +160,6 @@ var compileVideos = function() {
 		refreshData();
 		setInterval(refreshData, the_interval);
 	})
-}
-
-var compileBlogs = function() {
- 	_.forEach(hypeBlogs, _.bind(testUrl, null, _, endings));
-}
-
-var clearWordpress = function() {
- 	_.forEach(blogs,function(blog) {
- 		if(blog.url.indexOf('wordpress') > -1) {
- 			db.blogs.remove({url : blog.url});
- 		}
- 	});
-}
-
-var endings = [
-	'video/feed/',
-	'videos/feed/',
-	'category/video/feed/',
-	'category/videos/feed/',
-	'videos/rss',
-	'feed/'
-];
-
-var testUrl = function(url, endings) {
-	if (endings.length == 0)
-		return;
-
-	var str = url.siteurl[url.siteurl.length - 1] == '/' ? url.siteurl + _.first(endings) : url.siteurl + '/' + _.first(endings)
-	feed.parse(str, function(err, posts) {
-		if(!err) {
-			db.blogs.update({url: str}, {$setOnInsert : {
-				url : str
-			}}, {upsert : true});
-		} else {
-			testUrl(url, _.rest(endings));
-		}
-  });
 }
 
 var refreshData = function() {
@@ -225,38 +188,44 @@ var parseFeed = function(url) {
   });
 }
 
-var getTag = function(html, $, youTubeDescription, title) {
-	var type = "";
+var getTag = function(html, $, youTubeDescription, title, uploader) {
+	var tags = [];
 	if (html.each) {
 		html.each(function(i, el) {
 			var text = $(this).text().toLowerCase();
 			if(text.indexOf(' rapper') > -1 || text.indexOf(' rapping') > -1 
 				|| text.indexOf('hip-hop') > -1 || text.indexOf('rap') > -1) {
-				type = "Hip Hop";
-				return false;
-			} else if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 || 
+				tags = _.union(tags, ["Hip Hop"])
+			} 
+			if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 || 
 				youTubeDescription.toLowerCase().indexOf('electonic') > -1 || youTubeDescription.toLowerCase().indexOf(' edm') > -1) {
-				type = "Electonic";
-				return false;
+				tags = _.union(tags, ["Electonic"]);
 			} else if (text.indexOf('interview') > -1 || text.indexOf('Interview') > -1 || title.toLowerCase() == "SwaysUniverse") {
-				type = "Interview";
-				return false;
+				tags = _.union(tags, ["Interview"]);
 			} else if (text.indexOf(' live') > -1 || youTubeDescription.toLowerCase().indexOf(' live') > -1
-				|| title.toLowerCase().indexOf(' live') > -1|| title.toLowerCase().indexOf('bbc') > -1 || title.toLowerCase().indexOf('2015')) {
-				type = "Live";
-				return false;
+				|| title.toLowerCase().indexOf(' live') > -1 || title.toLowerCase().indexOf(' bbc') > -1 || title.toLowerCase().indexOf('2015')
+				|| title.toLowerCase().indexOf('american idol') > -1 || uploader == 'MTV' || uploader == 'timwestwoodtv'
+				|| title.toLowerCase().indexOf('jimmy fallon') > -1 || uploader == 'BBC Radio 1'|| title.toLowerCase().indexOf('boiler room') > -1) {
+				tags = _.union(tags, ["Live"]);
 			}
 		});
 	}
-
-	return type;
+	return tags;
 }
 
-var tagVideo = function(vidId, html, $, youTubeDescription, title) {
-	var type = getTag(html, $, youTubeDescription, title)	
-	db.videos.update({ videoId : vidId }, {$addToSet: {
-    tags : type
-  }});
+var tagVideo = function(vidId, html, $) {
+	youTube.getById(vidId, function(error, result) {
+		if(!error) {
+			var tags;
+			if(result && result['items'] && result['items'][0] && result['items'][0]['snippet'])
+				tags = getTag(html, $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']);
+			else
+				tags = getTag(html, $, '', '', '');
+			db.videos.update({ videoId : vidId }, {$addToSet: {
+		    tags : {$each:tags}
+		  }});
+		}
+	});
 }
 
 var handlePost = function($, blog) {
@@ -264,8 +233,7 @@ var handlePost = function($, blog) {
 
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
-			//tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $, "")
-			//console.log(iframe.attribs.src)
+			tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $, "")
 			addToDb(iframe.attribs.src, blog, $);
 		}
 	});
@@ -290,15 +258,17 @@ var addToDb = function(url, blog, $) {
 var updateVid = function(vidList, blog, vidId, $) {
 	video = vidList[0];
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
-	//console.log(blog)
 	if (!_.includes(foundUrls, blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
-		var tag = getTag($('p'), $, "", "");
-	    db.videos.update({ videoId : vidId }, {
-	    	$addToSet: {
-	      	foundOn : blog
-	      }
-	    });
+		var tags = getTag($('p'), $, "", "", "");
+    db.videos.update({ videoId : vidId }, {
+    	$addToSet: {
+      	foundOn : blog
+      }
+    });
+    db.videos.update({ videoId : vidId }, {$addToSet: {
+	    tags : {$each:tags}
+	  }});
 	}
 }
 
@@ -326,7 +296,7 @@ var newVid = function(vidId, url, blog, $) {
 				  avgDislikePerHalfHour : 0,
 				  avgFavoritePerHalfHour : 0,
 				  avgCommentPerHalfHour : 0,
-				  tags : [getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'])]
+				  tags : [getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle'])]
 		    }
 		  }, { upsert : true });
 		}

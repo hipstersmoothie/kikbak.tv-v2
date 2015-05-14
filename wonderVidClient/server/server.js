@@ -20,7 +20,7 @@ var updateThis = function(url, collection) {
       var video = collection.findOne({rank:node.rank})
       if(video && video.videoId != node.videoId) {
         delete node._id;
-        collection.update({rank:node.rank}, node);
+        collection.update({rank:node.rank}, node, {upsert:true});
       }
     })    
   })
