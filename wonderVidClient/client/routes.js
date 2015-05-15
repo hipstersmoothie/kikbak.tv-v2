@@ -66,6 +66,7 @@ Router.route('/electronic', {
 });  
 
 var updateGrid = function(genre, collection) {
+  Session.set('videos', null);
   Session.set('selectedGenre', genre);
   CurrentVideos = collection;
   var templateData = { videos: collection.find({}, {sort:{rank:1}}) };

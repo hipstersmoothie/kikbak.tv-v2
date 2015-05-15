@@ -3,21 +3,11 @@ Session.setDefault('stateImage', 'playButton.png');
 Session.setDefault('selectedGenre', 'Top Videos');
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
-Meteor.startup(function() {
-})
-
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.gridThumbs.rendered = function() {
 	setTimeout(function() {
 		renderVids();
-	}, 1000)
-}
-
-setList = function(error, result) {
-	Session.set('videos', result);
-	Session.set('videoId', result[0].videoId);
-	Session.set('playlist', _.pluck(result, "videoId"));
-	renderVids();
+	}, 1500)
 }
 
 Template.header.helpers({
@@ -36,39 +26,29 @@ Template.header.helpers({
 CurrentVideos = null;
 Template.header.events({
 	'click .topVideos': function() {
-		Session.set('videos', null);
 		if(video)
 			video.destroy(); 
 		Router.go('/');
-		Session.set('selectedGenre', 'Top Videos');
 	},
 	'click .hipHopVideos': function() {
-		Session.set('videos', null);
 		if(video)
 			video.destroy(); 
 		Router.go('/hipHop');
-		Session.set('selectedGenre', 'Hip Hop');
 	},
 	'click .interviewVideos': function() {
-		Session.set('videos', null);
 		if(video)
 			video.destroy(); 
 		Router.go('/interviews');
-		Session.set('selectedGenre', 'Interviews');
 	},
 	'click .liveVideos': function() {
-		Session.set('videos', null);
 		if(video)
 			video.destroy(); 
 		Router.go('/live');
-		Session.set('selectedGenre', 'Live');
 	},
 	'click .electronicVideos': function() {
-		Session.set('videos', null);
 		if(video)
 			video.destroy(); 
 		Router.go('/electronic');
-		Session.set('selectedGenre', 'Electronic');
 	},
 	"click .playButton": function () {
 		if(Session.equals("stateImage",playButton)){
@@ -105,13 +85,10 @@ Template.gridThumbs.helpers({
   		return Session.equals("videoId", this.videoId);
 	},
 	rank: function(){
-		var video = CurrentVideos.findOne({videoId:this.videoId});
-		return video.rank;
+		return CurrentVideos.findOne({videoId:this.videoId}).rank;
 	},
 	backgroundImage: function () {
-		var index = Session.get('playlist').indexOf(Session.get('videoId'));
-		var videos = Session.get('videos');
-		return Session.get('videos')[index].thumbnail.high.url;
+		return CurrentVideos.findOne({videoId:Session.get('videoId')}).thumbnail.high.url;
     },
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
@@ -121,9 +98,7 @@ Template.gridThumbs.helpers({
 Template.gridThumbs.events({
     "click .single": function () {
       	Session.set('videoId', this.videoId);
-      	var index = Session.get('playlist').indexOf(this.videoId);
-      	console.log(index)
-		video.playVideoAt(index);
+		video.playVideoAt(this.rank);
     },
     "click .togglePlayer": function () {
     	if(Session.get('playerTuckedLeft') == "tuckedLeft"){
@@ -144,6 +119,7 @@ Template.gridThumbs.events({
 
 renderVids = function() {
 	Session.set("stateImage",pauseButton);	
+	Session.set("videoId", Session.get('playlist')[0]);
 	videoTmp = new YT.Player("player", {
         loadPlaylist:{
 	        listType: 'playlist',
@@ -152,11 +128,7 @@ renderVids = function() {
 	    },
 		events: {
 			onReady: function (event) {
-				console.log('ready')
                 event.target.loadPlaylist(Session.get('playlist'));
-            },
-            playVid: function (event) {
-				console.log('playing')
             },
 			onStateChange: function (event) {
 				if(event.data == YT.PlayerState.PLAYING) {
@@ -166,7 +138,6 @@ renderVids = function() {
 				} else if (event.data == YT.PlayerState.ENDED) {
 					var playlist = Session.get('playlist'),
 						index = playlist.indexOf(Session.get('videoId'));
-
 				    if(index + 1 >= playlist.length)
 				    	Session.set('videoId', playlist[0]);
 				    else
@@ -178,5 +149,3 @@ renderVids = function() {
     video = videoTmp;
     YT.load();   	
 };
-
-
