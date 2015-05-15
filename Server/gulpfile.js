@@ -3,11 +3,11 @@ var gulp = require('gulp'),
     server = require( 'gulp-develop-server');
 
 gulp.task('server:start', function() {
-    server.listen( { path: './index.js' } );
+    server.listen( { path: './server.js' } );
 });
 
 gulp.task('server:restart', function() {
-    gulp.watch( [ './index.js' ], server.restart );
+    gulp.watch( [ './server.js' ], server.restart );
 });
 
 gulp.task('default', ['server:start', 'server:restart']);

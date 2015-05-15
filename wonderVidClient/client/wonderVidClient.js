@@ -71,7 +71,6 @@ Template.header.events({
 		Session.set('stateImage', pauseButton);
 		video.prevVideo();	
     }
-
 });
 
 Template.header.helpers({
@@ -98,7 +97,7 @@ Template.gridThumbs.helpers({
 Template.gridThumbs.events({
     "click .single": function () {
       	Session.set('videoId', this.videoId);
-		video.playVideoAt(this.rank);
+		video.playVideoAt(this.rank - 1);
     },
     "click .togglePlayer": function () {
     	if(Session.get('playerTuckedLeft') == "tuckedLeft"){

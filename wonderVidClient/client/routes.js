@@ -69,12 +69,13 @@ var updateGrid = function(genre, collection) {
   Session.set('videos', null);
   Session.set('selectedGenre', genre);
   CurrentVideos = collection;
-  var templateData = { videos: collection.find({}, {sort:{rank:1}}) };
-  var vids = _.values(templateData.videos.collection._docs._map);
-  vids.sort(function(a, b) {
+  var videos = collection.find({}, {sort:{rank:1}}).collection._docs._map;
+  videos = _.values(videos).sort(function(a, b) {
     return a.rank - b.rank;
   });
-  Session.set('playlist', _.pluck(vids, 'videoId'));// 
-  Session.set('videos', _.values(templateData.videos.collection._docs._map));
+  var templateData = { videos: videos  };
+  console.log(videos)
+  Session.set('playlist', _.pluck(videos, 'videoId'));// 
+  Session.set('videos', videos);
   return templateData;
 }

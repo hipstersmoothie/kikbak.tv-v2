@@ -1,4 +1,4 @@
-Meteor.startup(function () {
+  Meteor.startup(function () {
   // code to run on server at startup
   updateAll();
   var minutes = 30, the_interval = minutes * 60 * 1000;
@@ -19,6 +19,9 @@ var updateThis = function(url, collection) {
       node.rank = index + 1;
       var video = collection.findOne({rank:node.rank})
       if(video && video.videoId != node.videoId) {
+        delete node._id;
+        collection.update({rank:node.rank}, node, {upsert:true});
+      } else {
         delete node._id;
         collection.update({rank:node.rank}, node, {upsert:true});
       }
