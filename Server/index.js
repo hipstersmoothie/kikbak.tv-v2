@@ -9,8 +9,7 @@ var http = require('http'),
     getYouTubeID = require('get-youtube-id'),
     youtubeThumbnail = require('youtube-thumbnail'),
     YouTube = require('youtube-node'),
-    hypeBlogs = require('./blogs'),
-    feed = require("fast-feed");
+    hypeBlogs = require('./blogs');
  
 var app = express();
 app.set('port', process.env.PORT || 4000); 
