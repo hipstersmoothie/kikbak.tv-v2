@@ -127,7 +127,7 @@ app.get('/interviews', function (req, res) {
 });
 
 app.get('/live', function (req, res) {
-	db.videos.find({tags: "Live"}, function(err, videos) {
+	db.videos.find({tags: {$nin : ["Music Video", "Trailer"], $in: ["Live"]}}, function(err, videos) {
 		sort(videos);
 		res.send(videos.splice(0,100));
 	});
@@ -199,13 +199,17 @@ var getTag = function(html, $, youTubeDescription, title, uploader) {
 			if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 || 
 				youTubeDescription.toLowerCase().indexOf('electonic') > -1 || youTubeDescription.toLowerCase().indexOf(' edm') > -1) {
 				tags = _.union(tags, ["Electonic"]);
-			} else if (text.indexOf('interview') > -1 || text.indexOf('Interview') > -1 || title.toLowerCase() == "SwaysUniverse") {
+			}
+			if (text.indexOf('interview') > -1 || text.indexOf('Interview') > -1 || title.toLowerCase() == "SwaysUniverse")
 				tags = _.union(tags, ["Interview"]);
-			} else if (text.indexOf(' live') > -1 || youTubeDescription.toLowerCase().indexOf(' live') > -1
+			if (text.indexOf(' live') > -1 || youTubeDescription.toLowerCase().indexOf(' live') > -1
 				|| title.toLowerCase().indexOf(' live') > -1 || title.toLowerCase().indexOf(' bbc') > -1 || title.toLowerCase().indexOf('2015')
 				|| title.toLowerCase().indexOf('american idol') > -1 || uploader == 'MTV' || uploader == 'timwestwoodtv'
 				|| title.toLowerCase().indexOf('jimmy fallon') > -1 || uploader == 'BBC Radio 1'|| title.toLowerCase().indexOf('boiler room') > -1) {
 				tags = _.union(tags, ["Live"]);
+			}
+			if (title.toLowerCase().indexOf('official video') > -1 || title.toLowerCase().indexOf('music video') > -1) {
+				tags = _.union(tags, ["Music Video"]);
 			}
 		});
 	}
