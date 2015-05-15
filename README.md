@@ -4,20 +4,15 @@ An automatically generated music video top 100 of the web.
 
 ## Building
 
-Make sure you have node, mongodb, and meteor installed
+Make sure you have node, and meteor installed
 
 ```shell
 node -v
-mongo --version
 meteor --version
 ```
 
 Once everything is installed, open two terminal tabs for the project.
 
-To start database, go to /Server:
-```shell
-mongod --dbpath ./mongodb
-```
 To start server go to /Server: (starts on localHost:4000)
 ```shell
 npm install
@@ -29,5 +24,7 @@ To start client got to WonderVidClient: (starts on localHost:3000)
 meteor
 ```
 
-Navigate to http://localhost:3000/videosList to see the first 20 videos.
-GET http://localhost:3000/videos for full list
+Navigate to http://localhost:4000/videosList to see the first 20 videos.
+GET http://localhost:4000/videos for full list
+
+Go to  http://localhost:3000/ to see UI.
