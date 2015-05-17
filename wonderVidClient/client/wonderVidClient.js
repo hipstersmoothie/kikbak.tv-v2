@@ -13,6 +13,7 @@ Template.gridThumbs.rendered = function() {
 Template.header.helpers({
 	genres: function() {
 		return [{type:"Top Videos", className: "topVideos"}, 
+				{type:"Emerging", className: "emergingVideos"},
              	{type:"Hip Hop", className: "hipHopVideos"},
              	{type:"Electronic", className: "electronicVideos"},
              	{type:"Interviews", className: "interviewVideos"},
@@ -49,6 +50,11 @@ Template.header.events({
 		if(video)
 			video.destroy(); 
 		Router.go('/electronic');
+	},
+	'click .emergingVideos': function() {
+		if(video)
+			video.destroy(); 
+		Router.go('/emerging');
 	},
 	"click .playButton": function () {
 		if(Session.equals("stateImage",playButton)){

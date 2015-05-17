@@ -11,6 +11,7 @@ var updateAll = function() {
   updateThis('/electronic', ElectronicVideos);
   updateThis('/live', LiveVideos);
   updateThis('/interviews', InterviewVideos);
+  updateThis('/emerging', EmergingVideos);
 }
 
 var updateThis = function(url, collection) {
@@ -34,6 +35,7 @@ HipHopVideos = new Mongo.Collection('hipHop');
 ElectronicVideos = new Mongo.Collection('electronic');
 LiveVideos = new Mongo.Collection('live');
 InterviewVideos = new Mongo.Collection('interviews');
+EmergingVideos = new Mongo.Collection('emerging');
 
 Meteor.publish('videos', function(type) {
   if (type == "topVideos") {
@@ -46,6 +48,8 @@ Meteor.publish('videos', function(type) {
     return LiveVideos.find({});
   } else if (type == 'interviews') {
     return InterviewVideos.find({});
+  } else if (type == 'emerging') {
+    return EmergingVideos.find({});
   }
   return [];
 });

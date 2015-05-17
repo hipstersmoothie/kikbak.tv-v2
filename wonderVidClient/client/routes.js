@@ -9,6 +9,7 @@ HipHopVideos = new Mongo.Collection('hipHop');
 ElectronicVideos = new Mongo.Collection('electronic');
 LiveVideos = new Mongo.Collection('live');
 InterviewVideos = new Mongo.Collection('interviews');
+EmergingVideos = new Mongo.Collection('emerging');
 
 Router.route('/', {
   layoutTemplate: 'layout',
@@ -62,6 +63,17 @@ Router.route('/electronic', {
   },
   data: function() {
     return updateGrid('Electronic', ElectronicVideos);
+  }
+});  
+
+Router.route('/emerging', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    return  Meteor.subscribe('videos', 'emerging');
+  },
+  data: function() {
+    return updateGrid('Emerging', EmergingVideos);
   }
 });  
 

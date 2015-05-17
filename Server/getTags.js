@@ -20,7 +20,8 @@ var checkElectronic = function(text, youTubeDescription, uploader, title) {
 
 var checkInterview = function(text, youTubeDescription, uploader, title) {
 	var tags = [];
-	if (text.indexOf('interview') > -1 || text.indexOf('Interview') > -1 || title.toLowerCase() == "SwaysUniverse" || uploader == 'NPR Music')
+	if (text.indexOf('interview') > -1 || text.indexOf('Interview') > -1 || title.toLowerCase() == "SwaysUniverse" 
+		|| uploader == 'NPR Music' || title.toLowerCase().indexOf('documentary') > -1)
 		tags = ["Interview"];
 	return tags;
 }
@@ -39,7 +40,8 @@ var checkLive = function(text, youTubeDescription, uploader, title) {
 
 var checkMusicVideo = function(text, youTubeDescription, uploader, title) {
 	var tags = [];
-	if (title.toLowerCase().indexOf('official video') > -1 || title.toLowerCase().indexOf('music video') > -1) {
+	if (title.toLowerCase().indexOf('official video') > -1 || title.toLowerCase().indexOf('music video') > -1
+	 || uploader.toLowerCase().indexOf('vevo') > -1) {
 		tags = ["Music Video"];
 	}
 	return tags;

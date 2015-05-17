@@ -30,15 +30,22 @@ var startExpress = function() {
 	});
 
 	app.get('/videos', function (req, res) {
-		db.videos.find({tags : {$nin : ["Interview", "Trailer"]}}, function(err, videos) {
+		db.videos.find({tags : {$nin : ["Live", "Interview", "Trailer"]}}, function(err, videos) {
 			console.log('newVids');
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
 	});
 
+	app.get('/emerging', function (req, res) {
+		db.videos.find({tags : {$nin : ["Live", "Interview", "Trailer"]}}, function(err, videos) {
+			wonderRank.hipsterSort(videos);
+			res.send(videos.splice(0,100));
+		});
+	});
+
 	app.get('/videos-hip-hop', function (req, res) {
-		db.videos.find({tags: {$nin : ["Interview", "Trailer"], $in: ["Hip Hop"]}}, function(err, videos) {
+		db.videos.find({tags: {$nin : ["Live", "Interview", "Trailer"], $in: ["Hip Hop"]}}, function(err, videos) {
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
@@ -52,7 +59,7 @@ var startExpress = function() {
 	});
 
 	app.get('/interviews', function (req, res) {
-		db.videos.find({tags: "Interview"}, function(err, videos) {
+		db.videos.find({tags: {$nin : ["Music Video", "Trailer"], $in: ["Interview"]}}, function(err, videos) {
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
@@ -66,7 +73,7 @@ var startExpress = function() {
 	});
 
 	app.get('/trailers', function (req, res) {
-		db.videos.find({tags: "Trailer"}, function(err, videos) {
+		db.videos.find({tags: {$nin : ["Music Video"], $in: ["Trailer"]}}, function(err, videos) {
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
