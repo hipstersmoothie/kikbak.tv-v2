@@ -180,7 +180,7 @@ body {
 	float: right;
 	margin: 0;
 	height: 100%;
-  	padding-top: 4%;
+  	padding-top: 3%;
 	-webkit-column-gap: 0;
 	-moz-column-gap: 0;
 	column-gap: 0;
@@ -196,7 +196,6 @@ body {
 
 .navbar-inverse {
 	margin-left: 0;
-	height: 7%;
 	position: fixed;
 	width: 100%;
 }
