@@ -70,8 +70,8 @@ body{
   height: 30px;
   position: absolute;
   /* float: right; */
-  right: -30px;
-  top: 30px;
+  right: 0px;
+  top: 50px;
 }
 
 .minimizePlayer{  
@@ -112,7 +112,7 @@ body{
 	height: 80vh;
 	float: left;
 	display: none;
-	position: absolute;
+	position: fixed;
 	right: 20%;
 	z-index: 3;
 }
