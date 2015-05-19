@@ -116,7 +116,7 @@ Template.gridThumbs.helpers({
 	},
 	isLiked: function() {
 		var likes = _.map(Session.get('userLikes'), function(like) {
-			return like.contentDetails.videoId
+			return like.videoId;
 		});
 		return likes.indexOf(this.videoId) > -1;
 	},
@@ -182,18 +182,18 @@ Template.gridThumbs.events({
     	}
     },
 		'click .like': function() {
-			var likes = _.map(Session.get('userLikes'), function(like) {
-				return like.contentDetails.videoId
+			var likesIds = _.map(Session.get('userLikes'), function(like) {
+				return like.videoId;
 			});
-			var index = likes.indexOf(this.videoId);
-
+			var likes = Session.get('userLikes');
+			var index = likesIds.indexOf(this.videoId);
 
 			if(index > -1) {
 				likes.splice(index, 1);
 				Session.set('userLikes', likes);
 				Meteor.call('likeVideo', this.videoId, 'dislike');
 			} else {
-				likes.push(this.videoId)
+				likes.push(this)
 				Session.set('userLikes', likes);
 				Meteor.call('likeVideo', this.videoId, 'like');
 			}	

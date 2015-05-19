@@ -81,7 +81,7 @@ Router.route('/likes', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
-    //return Meteor.subscribe('likes',);
+    //return Meteor.subscribe('userData');
   },
   data: function() {
     Session.set('videos', null);
