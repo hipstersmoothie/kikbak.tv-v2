@@ -89,7 +89,7 @@ body{
   position: absolute;
   /* float: right; */
   right: 0;
-  top: -30px;
+  top: -35px;
   display: none;
 }
 
@@ -98,7 +98,7 @@ body{
   height: 30px;
   position: absolute;
   /* float: right; */
-  top: -30px;
+  top: -35px;
   display: none;
   left: 0;
 }
@@ -117,6 +117,13 @@ body{
 	z-index: 3;
 }
 
+.like {
+	width: 40px;
+  float: right;
+  background-color: white;
+}
+
+
 .tuckedLeft{
 	transition: translate3d 0.5s ease-out;
 	-webkit-transform: translate3d(-1440px, 0px, 0px);
@@ -131,8 +138,8 @@ body{
 
 .single{
 	opacity: 1;
-	width: 280px;
-	height: 205px;
+	width: 100%;
+ 	height: 125px;
 	display: inline-block;
     background-repeat: no-repeat;
     background: #252525;
@@ -144,7 +151,7 @@ body{
 	font-size: 10px;
 	/*opacity: 0;*/
 	width: 100%;
-	height: 100%;
+	height: 114%;
 	text-align: center;
 
 	background-repeat: no-repeat;
@@ -195,10 +202,10 @@ body{
 	overflow: hidden;
 	color: white;
 	font-size: 12px;
-    margin: 150px 20px 0 0;
+    margin: 44% 0px 0 0;
   	padding: 10px;
 	width: 100%;
-	height: 54px;
+	height: 25%;
 	background-color: rgba(0,0,0,0.7);
 }
 
@@ -216,10 +223,11 @@ body {
 
 .container{
 	width: 100%;
-	height: 90%;
 	display: inline-block;
 	float: right;
 	margin: 0;
+	height: 100%;
+  	padding-top: 4%;
 	-webkit-column-gap: 0;
 	-moz-column-gap: 0;
 	column-gap: 0;
@@ -235,7 +243,8 @@ body {
 
 .navbar-inverse {
 	margin-left: 0;
-	height: 7%
+	position: fixed;
+	width: 100%;
 }
 
 /*.navbar-inverse {
@@ -276,9 +285,9 @@ body {
 	border: 3px #31C663 solid
 }
 
-
-
-
+.heart-red {
+	background-color: red;
+}
 
 ::-webkit-scrollbar {
     width: 3px;

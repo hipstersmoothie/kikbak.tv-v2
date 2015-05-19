@@ -16,3 +16,6 @@ alethes:lodash
 iron:router
 mrt:gsap
 mquandalle:jade
+accounts-ui
+accounts-google
+service-configuration

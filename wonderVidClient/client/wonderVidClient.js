@@ -1,12 +1,32 @@
 Meteor.startup(function () {
   // code to run on server at startup
-  Session.set('videoId', null);
 	Session.set('currentVideo', null);
+	Session.set('userLikes', []);
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
 	Session.setDefault('playerPushedTop', true);
+	Accounts.ui.config({
+    requestPermissions: {
+      google: ['https://www.googleapis.com/auth/youtube']
+    }
+  })
+  if(Meteor.user())
+		Meteor.call('likedVideos', function(err, res) {
+			if(!err) {
+				Session.set('userLikes', res);
+			}
+		});
 });
+
+Accounts.onLogin(function() {
+	Meteor.call('likedVideos', function(err, res) {
+		if(!err) {
+			Session.set('userLikes', res);
+		}
+	}); 
+});
+
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png", tlMinimize = null, tlDropdown = null;;
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
@@ -19,17 +39,20 @@ Template.gridThumbs.rendered = function() {
 Template.header.helpers({
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
-				{type:"Emerging", className: "emergingVideos"},
-             	{type:"Hip Hop", className: "hipHopVideos"},
-             	{type:"Electronic", className: "electronicVideos"},
-             	{type:"Interviews", className: "interviewVideos"},
-             	{type:"Live", className: "liveVideos"}];
+						{type:"Emerging", className: "emergingVideos"},
+            {type:"Hip Hop", className: "hipHopVideos"},
+           	{type:"Electronic", className: "electronicVideos"},
+           	{type:"Interviews", className: "interviewVideos"},
+           	{type:"Live", className: "liveVideos"}];
 	},
 	selectedGenre: function() {
 		return Session.get('selectedGenre');
 	},
 	currentVideo: function() {
 		return Session.get('currentVideo');
+	},
+	stateImage: function () {
+		return Session.get("stateImage");
 	}
 });
 
@@ -81,25 +104,25 @@ Template.header.events({
     "click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
 		video.prevVideo();	
-    }
-});
-
-Template.header.helpers({
-	stateImage: function () {
-		return Session.get("stateImage");
-	}
+    },
+  'click .likedVideos' : function() {
+  	Router.go('/likes');
+  }
 });
 
 Template.gridThumbs.helpers({
   isSelected: function () {
-  	return Session.equals("videoId", this.videoId);
+		return Session.get('currentVideo').videoId == this.videoId
+	},
+	isLiked: function() {
+		var likes = _.map(Session.get('userLikes'), function(like) {
+			return like.contentDetails.videoId
+		});
+		return likes.indexOf(this.videoId) > -1;
 	},
 	rank: function(){
 		return CurrentVideos.findOne({videoId:this.videoId}).rank;
 	},
-	backgroundImage: function () {
-		return CurrentVideos.findOne({videoId:Session.get('videoId')}).thumbnail.high.url;
-    },
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
 	},
@@ -112,12 +135,15 @@ Template.gridThumbs.helpers({
 		else
 			return "overlayBack"
 	}
-
 });
 
 Template.gridThumbs.events({
-    "click .single": function () {
-      	Session.set('videoId', this.videoId);
+    "click .single": function (event) {
+    	if (event.target.classList[0] == 'like' || event.target.nodeName == 'P')
+    		return
+      var index = Session.get('playlist').indexOf(this.videoId);
+      var thisVid = Session.get('videos')[index];
+      Session.set('currentVideo', thisVid);
     	if(video == null){
       		console.log("First: " + (this.rank - 1));
 
@@ -165,7 +191,6 @@ Template.gridThumbs.events({
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
 		}else
 			tlMinimize.restart();
-
 		Session.set('playerPushedTop', true);
 		document.getElementById("minimizePlayer").style.display = "none";
 		document.getElementById("togglePlayer").style.display = "none";
@@ -188,7 +213,24 @@ Template.gridThumbs.events({
 		document.getElementById("togglePlayer").style.display = "none";
 		document.getElementById("closePlayer").style.display = "inline-block";
 		document.getElementById("expandPlayer").style.display = "inline-block";
-    }
+    },
+	'click .like': function() {
+		var likes = _.map(Session.get('userLikes'), function(like) {
+			console.log(like);
+			return like.contentDetails.videoId
+		});
+		var index = likes.indexOf(this.videoId);
+
+		if(index > -1) {
+			likes.splice(index, 1);
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', this.videoId, 'dislike');
+		} else {
+			likes.push(this.videoId)
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', this.videoId, 'like');
+		}	
+	}
   });
 
 renderVids = function(rank) {
@@ -204,12 +246,11 @@ renderVids = function(rank) {
           event.target.cuePlaylist(Session.get('playlist'),rank);
       },
 			onStateChange: function (event) {
-				if(event.data == YT.PlayerState.PLAYING) {
-					var playlist = Session.get('playlist'),
-							match = event.target.getVideoUrl().match(/[?&]v=([^&]+)/),
-							index = playlist.indexOf(match[1]);
+				var playlist = Session.get('playlist'),
+						match = event.target.getVideoUrl().match(/[?&]v=([^&]+)/),
+						index = playlist.indexOf(match[1]);
 
-					Session.set('videoId', playlist[index]);
+				if(event.data == YT.PlayerState.PLAYING) {
 					Session.set('currentVideo', Session.get('videos')[index]);
 					Session.set("stateImage",pauseButton);
 				} else if (event.data == YT.PlayerState.PAUSED) {

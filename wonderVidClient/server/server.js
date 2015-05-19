@@ -1,8 +1,18 @@
-  Meteor.startup(function () {
+Meteor.startup(function () {
   // code to run on server at startup
   updateAll();
   var minutes = 30, the_interval = minutes * 60 * 1000;
   Meteor.setInterval(updateAll, the_interval);
+
+  ServiceConfiguration.configurations.remove({
+    service: "google"
+  });
+  ServiceConfiguration.configurations.insert({
+    service: "google",
+    clientId: "1017109112095-csl2k4dhc0nckga4t9n8b3pundgciqan.apps.googleusercontent.com",
+    loginStyle: "popup",
+    secret: "nHYeC7HtGr4IEqIZhdPGBGeb"
+  });
 });
 
 var updateAll = function() {
@@ -52,6 +62,35 @@ Meteor.publish('videos', function(type) {
     return EmergingVideos.find({});
   }
   return [];
+});
+
+Meteor.methods({
+  likeVideo: function(id, like) {
+    var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
+    Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=' + like + '&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken, function(err, res) {
+      console.log(err, res) // 204 means good
+    })
+  },
+  likedVideos: function() {
+    var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
+    var likeList = Meteor.http.get('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
+    var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
+    likePlaylist.data.items = _.map(likePlaylist.data.items, function(item, index) {
+      item.title = item.snippet.title;
+      item.videoId = item.contentDetails.videoId
+      item.thumbnail = {};
+      item.thumbnail.medium = {},
+      item.rank = index + 1;
+      if(item.snippet.thumbnails)
+        item.thumbnail.medium.url  = item.snippet.thumbnails.medium.url;
+
+      return item;
+    });
+    if (likePlaylist.data.items)
+      return likePlaylist.data.items;
+    else
+      return [];
+  }
 });
 
 videoData = [

@@ -77,6 +77,33 @@ Router.route('/emerging', {
   }
 });  
 
+Router.route('/likes', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    //return Meteor.subscribe('likes',);
+  },
+  data: function() {
+    Session.set('videos', null);
+    Session.set('selectedGenre', 'Likes');
+    // CurrentVideos = collection;
+    var videos = Session.get('userLikes');
+    // videos = _.values(videos).sort(function(a, b) {
+    //   return a.rank - b.rank;
+    // });
+    var templateData = { videos: videos  };
+    // console.log(videos)
+    // CurrentVideos = !CurrentVideos ? new Mongo.Collection('userLikes') : CurrentVideos.remove({});
+    Session.set('playlist', _.map(videos, function(video) {
+      //CurrentVideos.insert(video);
+      return video.contentDetails.videoId;
+    }));// 
+    Session.set('videos', videos);
+    console.log(templateData)
+    return templateData;
+  }
+}); 
+
 var updateGrid = function(genre, collection) {
   Session.set('videos', null);
   Session.set('selectedGenre', genre);
