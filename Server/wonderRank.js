@@ -64,7 +64,7 @@ var hipMult = function(days) {
 
 var ifMusicVideo = function(video) {
 	if(video.tags && video.tags.indexOf("Music Video") > -1)
-		return 5;
+		return 2;
 	return 1;
 }
 var sort = function(videos) {
