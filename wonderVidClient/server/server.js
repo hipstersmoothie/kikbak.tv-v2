@@ -74,7 +74,18 @@ Meteor.methods({
   likedVideos: function() {
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
     var likeList = Meteor.http.get('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
-    var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
+    var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
+    likePlaylist.data.items = _.map(likePlaylist.data.items, function(item, index) {
+      item.title = item.snippet.title;
+      item.videoId = item.contentDetails.videoId
+      item.thumbnail = {};
+      item.thumbnail.medium = {},
+      item.rank = index + 1;
+      if(item.snippet.thumbnails)
+        item.thumbnail.medium.url  = item.snippet.thumbnails.medium.url;
+
+      return item;
+    });
     if (likePlaylist.data.items)
       return likePlaylist.data.items;
     else

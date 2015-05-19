@@ -11,17 +11,20 @@ Meteor.startup(function () {
       google: ['https://www.googleapis.com/auth/youtube']
     }
   })
-
+  if(Meteor.user())
+		Meteor.call('likedVideos', function(err, res) {
+			if(!err) {
+				Session.set('userLikes', res);
+			}
+		});
 });
 
 Accounts.onLogin(function() {
 	Meteor.call('likedVideos', function(err, res) {
 		if(!err) {
-			Session.set('userLikes',  _.map(res, function(like) {
-				return like.contentDetails.videoId
-			}));
+			Session.set('userLikes', res);
 		}
-	});
+	}); 
 });
 
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
@@ -36,17 +39,20 @@ Template.gridThumbs.rendered = function() {
 Template.header.helpers({
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
-				{type:"Emerging", className: "emergingVideos"},
-             	{type:"Hip Hop", className: "hipHopVideos"},
-             	{type:"Electronic", className: "electronicVideos"},
-             	{type:"Interviews", className: "interviewVideos"},
-             	{type:"Live", className: "liveVideos"}];
+						{type:"Emerging", className: "emergingVideos"},
+            {type:"Hip Hop", className: "hipHopVideos"},
+           	{type:"Electronic", className: "electronicVideos"},
+           	{type:"Interviews", className: "interviewVideos"},
+           	{type:"Live", className: "liveVideos"}];
 	},
 	selectedGenre: function() {
 		return Session.get('selectedGenre');
 	},
 	currentVideo: function() {
 		return Session.get('currentVideo');
+	},
+	stateImage: function () {
+		return Session.get("stateImage");
 	}
 });
 
@@ -98,25 +104,21 @@ Template.header.events({
     "click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
 		video.prevVideo();	
-    }
-});
-
-Template.header.helpers({
-	stateImage: function () {
-		return Session.get("stateImage");
-	}
+    },
+  'click .likedVideos' : function() {
+  	Router.go('/likes');
+  }
 });
 
 Template.gridThumbs.helpers({
   isSelected: function () {
-  	var vid = Session.get('currentVideo')
-  	if (vid) 
-			return vid.videoId == this.videoId
-		else
-			return false;
+		return Session.get('currentVideo').videoId == this.videoId
 	},
 	isLiked: function() {
-		return Session.get('userLikes').indexOf(this.videoId) > -1;
+		var likes = _.map(Session.get('userLikes'), function(like) {
+			return like.contentDetails.videoId
+		});
+		return likes.indexOf(this.videoId) > -1;
 	},
 	rank: function(){
 		return CurrentVideos.findOne({videoId:this.videoId}).rank;
@@ -180,8 +182,11 @@ Template.gridThumbs.events({
     	}
     },
 		'click .like': function() {
-			var likes = Session.get('userLikes');
+			var likes = _.map(Session.get('userLikes'), function(like) {
+				return like.contentDetails.videoId
+			});
 			var index = likes.indexOf(this.videoId);
+
 
 			if(index > -1) {
 				likes.splice(index, 1);
