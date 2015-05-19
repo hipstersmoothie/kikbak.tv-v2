@@ -146,16 +146,21 @@ body{
 	background-color: rgba(0,0,0,0.7);
 }
 
+html {
+	height: 100%;
+}
 
+body {
+	height: 100%;
+}
 
 .single:hover .overlay{
 	display: inline-block;
 }
 
 .container{
-	overflow: scroll;
 	width: 100%;
-	height: 90vh;
+	height: 90%;
 	display: inline-block;
 	float: right;
 	margin: 0;
@@ -168,8 +173,13 @@ body{
 
 }
 
+.gridMaxedOut {
+	height: 100%;
+}
+
 .navbar-inverse {
 	margin-left: 0;
+	height: 7%
 }
 
 /*.navbar-inverse {

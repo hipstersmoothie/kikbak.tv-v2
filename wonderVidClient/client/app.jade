@@ -18,13 +18,14 @@ template(name='gridThumbs')
 	.togglePlayer
 		img(src="images/arrow.png")
 
-	.container(class="{{gridResized}}")
-		+each videos
-			.single(id="#{this._id}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.medium.url}')")
-				.overlay(class="{{#if isSelected}}selected{{/if}}")
-					.rank
-						p #{rank}
-					p.descriptionText #{this.title}
+	.container
+		div(class="{{gridResized}}")
+			+each videos
+				.single(id="#{this._id}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.medium.url}')")
+					.overlay(class="{{#if isSelected}}selected{{/if}}")
+						.rank
+							p #{rank}
+						p.descriptionText #{this.title}
 
 template(name="loading")
 	.wrap2
