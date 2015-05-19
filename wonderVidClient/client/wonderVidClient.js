@@ -1,7 +1,7 @@
 Meteor.startup(function () {
   // code to run on server at startup
 	Session.set('currentVideo', null);
-	Session.set('userLikes', null);
+	Session.set('userLikes', []);
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
@@ -180,7 +180,18 @@ Template.gridThumbs.events({
     	}
     },
 		'click .like': function() {
-			Meteor.call('likeVideo', this.videoId);
+			var likes = Session.get('userLikes');
+			var index = likes.indexOf(this.videoId);
+
+			if(index > -1) {
+				likes.splice(index, 1);
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', this.videoId, 'dislike');
+			} else {
+				likes.push(this.videoId)
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', this.videoId, 'like');
+			}	
 		}
   });
 
