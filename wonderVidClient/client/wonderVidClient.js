@@ -1,4 +1,5 @@
 Session.setDefault('videoId', null);
+Session.setDefault('currentVideo', null);
 Session.setDefault('stateImage', 'playButton.png');
 Session.setDefault('selectedGenre', 'Top Videos');
 Session.setDefault('gridPushedRight', "gridMaxedOut");
@@ -22,6 +23,9 @@ Template.header.helpers({
 	},
 	selectedGenre: function() {
 		return Session.get('selectedGenre');
+	},
+	currentVideo: function() {
+		return Session.get('currentVideo');
 	}
 });
 
@@ -159,6 +163,7 @@ renderVids = function(rank) {
 	    },
 		events: {
 			onReady: function (event) {
+				Session.set('currentVideo', Session.get('videos')[0]);
                 event.target.cuePlaylist(Session.get('playlist'),rank);
             },
 			onStateChange: function (event) {
@@ -169,10 +174,10 @@ renderVids = function(rank) {
 				} else if (event.data == YT.PlayerState.ENDED) {
 					var playlist = Session.get('playlist'),
 						index = playlist.indexOf(Session.get('videoId'));
-				    if(index + 1 >= playlist.length)
-				    	Session.set('videoId', playlist[0]);
-				    else
-				    	Session.set('videoId', playlist[index+1]);
+
+					index = index + 1 >= playlist.length ? 0 : index + 1;
+				    Session.set('videoId', playlist[index]);
+				   	Session.set('currentVideo', Session.get('videos')[index]);				    
 				} else if (event.data == YT.PlayerState.CUED) {
 					event.target.playVideo();
 				}

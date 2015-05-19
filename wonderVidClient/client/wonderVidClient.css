@@ -118,8 +118,20 @@ body{
 	-o-transition: background-color 0.25s ease-out;
 }
 
-.overlay:hover{
+.navbar .nav,
+.navbar .nav > li {
+  float:none;
+  display:inline-block;
+  *display:inline; /* ie7 fix */
+  *zoom:1; /* hasLayout ie7 trigger */
+  vertical-align: top;
+}
 
+.navbar-collapse {
+  text-align:center;
+}
+
+.overlay:hover{
    background-color: rgba(49,198,99,0.5); 
 }
 
@@ -128,6 +140,10 @@ body{
 	color: white;
 	float: left;
 	padding: 10px;
+}
+
+.rank p {
+	margin: -10px -5px 0px;
 }
 
 .description{
