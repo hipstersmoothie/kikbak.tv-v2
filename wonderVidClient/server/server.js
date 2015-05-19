@@ -66,14 +66,16 @@ Meteor.publish('videos', function(type) {
 
 Meteor.methods({
   likeVideo: function(id) {
-    YoutubeApi.authenticate({
-        type: "oauth",
-        token: Meteor.user().services.google.accessToken
-    });
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
     Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=like&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken, function(err, res) {
       console.log(err, res) // 204 means good
     })
+  },
+  likedVideos: function() {
+    // var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
+    // Meteor.http.post('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key{{'+apiKey+'}', function(err, res) {
+    //   console.log(err, res) // 204 means good
+    // })
   }
 });
 

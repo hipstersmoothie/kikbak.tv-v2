@@ -12,6 +12,11 @@ Meteor.startup(function () {
   })
 
 });
+
+Accounts.onLogin(function() {
+	Meteor.call('likedVideos');
+});
+
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
