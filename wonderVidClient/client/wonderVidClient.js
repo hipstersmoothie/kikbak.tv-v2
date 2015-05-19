@@ -1,6 +1,5 @@
 Meteor.startup(function () {
   // code to run on server at startup
-  Session.set('videoId', null);
 	Session.set('currentVideo', null);
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
@@ -91,13 +90,22 @@ Template.header.helpers({
 
 Template.gridThumbs.helpers({
   isSelected: function () {
-  	return Session.equals("videoId", this.videoId);
+  	var vid = Session.get('currentVideo')
+  	if (vid) 
+			return vid.videoId == this.videoId
+		else
+			return false;
 	},
 	rank: function(){
 		return CurrentVideos.findOne({videoId:this.videoId}).rank;
 	},
 	backgroundImage: function () {
-		return CurrentVideos.findOne({videoId:Session.get('videoId')}).thumbnail.high.url;
+		var vid = Session.get('currentVideo');
+		var current = CurrentVideos.findOne({videoId:vid ? vid.videoId : ""});
+		if (current) 
+			return current.thumbnail.high.url;
+		else 
+			return "";
     },
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
@@ -110,7 +118,9 @@ Template.gridThumbs.helpers({
 
 Template.gridThumbs.events({
     "click .single": function () {
-      	Session.set('videoId', this.videoId);
+      var index = Session.get('playlist').indexOf(this.videoId);
+      var thisVid = Session.get('videos')[index];
+      Session.set('currentVideo', thisVid);
     	if(video == null){
       		console.log("First: " + (this.rank - 1));
 			Session.set('gridPushedRight', "gridPushedRight");
@@ -169,12 +179,11 @@ renderVids = function(rank) {
           event.target.cuePlaylist(Session.get('playlist'),rank);
       },
 			onStateChange: function (event) {
-				if(event.data == YT.PlayerState.PLAYING) {
-					var playlist = Session.get('playlist'),
-							match = event.target.getVideoUrl().match(/[?&]v=([^&]+)/),
-							index = playlist.indexOf(match[1]);
+				var playlist = Session.get('playlist'),
+						match = event.target.getVideoUrl().match(/[?&]v=([^&]+)/),
+						index = playlist.indexOf(match[1]);
 
-					Session.set('videoId', playlist[index]);
+				if(event.data == YT.PlayerState.PLAYING) {
 					Session.set('currentVideo', Session.get('videos')[index]);
 					Session.set("stateImage",pauseButton);
 				} else if (event.data == YT.PlayerState.PAUSED) {
