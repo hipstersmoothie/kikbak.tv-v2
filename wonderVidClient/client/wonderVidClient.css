@@ -71,7 +71,7 @@ body{
   position: absolute;
   /* float: right; */
   right: -30px;
-  top: 0;
+  top: 30px;
 }
 
 .minimizePlayer{  

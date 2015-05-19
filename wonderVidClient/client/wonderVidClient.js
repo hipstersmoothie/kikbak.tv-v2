@@ -6,6 +6,7 @@ Meteor.startup(function () {
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
 	Session.setDefault('playerPushedTop', true);
+	Session.setDefault('playerMinimized', false);
 	Accounts.ui.config({
     requestPermissions: {
       google: ['https://www.googleapis.com/auth/youtube']
@@ -96,6 +97,20 @@ Template.header.events({
 			video.pauseVideo();
 			Session.set('stateImage', playButtonn);
 		}
+		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
+			tlDropdown.restart();
+			Session.set('playerPushedTop', false);
+				// tlDropdown = new TimelineLite();
+				// document.getElementById("playerContainer").style.display = "block";
+				// tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
+				// tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
+				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
+			
+			document.getElementById("minimizePlayer").style.display = "inline-block";
+			document.getElementById("togglePlayer").style.display = "inline-block";
+			document.getElementById("closePlayer").style.display = "none";
+			document.getElementById("expandPlayer").style.display = "none";
+		}
     },
     "click .nextButton": function () {
 		Session.set('stateImage', pauseButton);
@@ -116,7 +131,7 @@ Template.gridThumbs.helpers({
 	},
 	isLiked: function() {
 		var likes = _.map(Session.get('userLikes'), function(like) {
-			return like.contentDetails.videoId
+			return like.videoId;
 		});
 		return likes.indexOf(this.videoId) > -1;
 	},
@@ -130,7 +145,7 @@ Template.gridThumbs.helpers({
 		return Session.get('gridPushedRight');
 	},
 	overlayPopped: function() {
-		if(Session.equals('playerPushedTop', false))
+		if(Session.equals('playerPushedTop', false) && Session.equals('playerMinimized', false))
 			return "overlayFront"
 		else
 			return "overlayBack"
@@ -154,7 +169,11 @@ Template.gridThumbs.events({
 				document.getElementById("playerContainer").style.display = "block";
 				tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
 				tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
-				TweenLite.to(".togglePlayer", 0.5, { rotation:90});
+				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
+			document.getElementById("minimizePlayer").style.display = "inline-block";
+			document.getElementById("togglePlayer").style.display = "inline-block";
+			document.getElementById("closePlayer").style.display = "none";
+			document.getElementById("expandPlayer").style.display = "none";
 			}
 
 			// Session.set('gridPushedRight', "gridPushedRight");
@@ -182,8 +201,9 @@ Template.gridThumbs.events({
     	if(Session.equals('playerPushedTop', false)){
 			Session.set('playerPushedTop', true);
 			tlDropdown.reverse();
-			TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:270});
+			// TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:270});
 		}
+		Session.set('playerMinimized', false);
     },
     "click .minimizePlayer": function () {
     	if(tlMinimize == null){
@@ -191,7 +211,7 @@ Template.gridThumbs.events({
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
 		}else
 			tlMinimize.restart();
-		Session.set('playerPushedTop', true);
+		Session.set('playerMinimized', true);
 		document.getElementById("minimizePlayer").style.display = "none";
 		document.getElementById("togglePlayer").style.display = "none";
 		document.getElementById("closePlayer").style.display = "inline-block";
@@ -200,6 +220,7 @@ Template.gridThumbs.events({
     "click .expandPlayer": function () {
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
+		Session.set('playerMinimized', false);
 		document.getElementById("minimizePlayer").style.display = "inline-block";
 		document.getElementById("togglePlayer").style.display = "inline-block";
 		document.getElementById("closePlayer").style.display = "none";
@@ -209,28 +230,30 @@ Template.gridThumbs.events({
 		tlDropdown.reverse();
 		tlMinimize.reverse().delay(0.5);
 		Session.set('playerPushedTop', true);
+		Session.set('playerMinimized', false);
+		video.pauseVideo();
 		document.getElementById("minimizePlayer").style.display = "none";
 		document.getElementById("togglePlayer").style.display = "none";
 		document.getElementById("closePlayer").style.display = "inline-block";
 		document.getElementById("expandPlayer").style.display = "inline-block";
     },
-	'click .like': function() {
-		var likes = _.map(Session.get('userLikes'), function(like) {
-			console.log(like);
-			return like.contentDetails.videoId
-		});
-		var index = likes.indexOf(this.videoId);
+    'click .like': function() {
+			var likesIds = _.map(Session.get('userLikes'), function(like) {
+				return like.videoId;
+			});
+			var likes = Session.get('userLikes');
+			var index = likesIds.indexOf(this.videoId);
 
-		if(index > -1) {
-			likes.splice(index, 1);
-			Session.set('userLikes', likes);
-			Meteor.call('likeVideo', this.videoId, 'dislike');
-		} else {
-			likes.push(this.videoId)
-			Session.set('userLikes', likes);
-			Meteor.call('likeVideo', this.videoId, 'like');
-		}	
-	}
+			if(index > -1) {
+				likes.splice(index, 1);
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', this.videoId, 'dislike');
+			} else {
+				likes.push(this)
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', this.videoId, 'like');
+			}	
+		}
   });
 
 renderVids = function(rank) {

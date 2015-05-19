@@ -64,6 +64,14 @@ Meteor.publish('videos', function(type) {
   return [];
 });
 
+// Meteor.publish("userData", function () {
+//   if (this.userId) {
+//     return Meteor.users.find({_id: this.userId});
+//   } else {
+//     this.ready();
+//   }
+// });
+
 Meteor.methods({
   likeVideo: function(id, like) {
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
