@@ -179,34 +179,16 @@ renderVids = function(rank) {
 					Session.set("stateImage",pauseButton);
 				} else if (event.data == YT.PlayerState.PAUSED) {
 					Session.set("stateImage",playButton);
-				} else if (event.data == YT.PlayerState.ENDED) {
-					var playlist = Session.get('playlist'),
-						index = playlist.indexOf(Session.get('videoId'));
-
-					nextVideo(playlist, index);    
 				} else if (event.data == YT.PlayerState.CUED) {
 					event.target.playVideo();
 				}
 			},
 			onError: function(errorCode) { //video unavailable
-				if(errorCode.data == 100 || errorCode.data == 150) {
-		       var playlist = Session.get('playlist'),
-							match = video.getVideoUrl().match(/[?&]v=([^&]+)/),
-							videoId = match[1],
-							index = playlist.indexOf(videoId);
-
-					nextVideo(playlist, index);
+				if(errorCode.data == 100 || errorCode.data == 150)
 				  video.nextVideo();
-		    }
 			}
 		} 
     });
     video = videoTmp;
     YT.load();   	
 };
-
-var nextVideo = function(playlist, index) {
-	index = index + 1 >= playlist.length ? 0 : index + 1;
-	Session.set('videoId', playlist[index]);
-	Session.set('currentVideo', Session.get('videos')[index]);
-}
