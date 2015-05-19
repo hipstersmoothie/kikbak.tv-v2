@@ -72,10 +72,13 @@ Meteor.methods({
     })
   },
   likedVideos: function() {
-    // var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
-    // Meteor.http.post('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key{{'+apiKey+'}', function(err, res) {
-    //   console.log(err, res) // 204 means good
-    // })
+    var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
+    var likeList = Meteor.http.get('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
+    var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
+    if (likePlaylist.data.items)
+      return likePlaylist.data.items;
+    else
+      return [];
   }
 });
 

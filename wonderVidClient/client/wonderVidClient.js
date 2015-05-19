@@ -1,6 +1,7 @@
 Meteor.startup(function () {
   // code to run on server at startup
 	Session.set('currentVideo', null);
+	Session.set('userLikes', null);
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
@@ -14,7 +15,11 @@ Meteor.startup(function () {
 });
 
 Accounts.onLogin(function() {
-	Meteor.call('likedVideos');
+	var likes = Meteor.call('likedVideos', function(err, res) {
+		if(!err) {
+			Session.set('userLikes', res);
+		}
+	});
 });
 
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
