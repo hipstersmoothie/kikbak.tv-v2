@@ -5,8 +5,9 @@ Meteor.startup(function () {
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
+	Session.setDefault('playerPushedTop', true);
 });
-var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
+var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png", tlMinimize = null, tlDropdown = null;;
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.gridThumbs.rendered = function() {
@@ -104,6 +105,12 @@ Template.gridThumbs.helpers({
 	},
 	gridResized: function() {
 		return Session.get('gridPushedRight');
+	},
+	overlayPopped: function() {
+		if(Session.equals('playerPushedTop', false))
+			return "overlayFront"
+		else
+			return "overlayBack"
 	}
 
 });
@@ -113,46 +120,74 @@ Template.gridThumbs.events({
       	Session.set('videoId', this.videoId);
     	if(video == null){
       		console.log("First: " + (this.rank - 1));
-			Session.set('gridPushedRight', "gridPushedRight");
-			TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
-			TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
-			TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
-			TweenLite.to(".togglePlayer", 0, {display:'inline-block'});
-			TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
-    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
+
+			if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+
+				Session.set('playerPushedTop', false);
+				tlDropdown = new TimelineLite();
+				document.getElementById("playerContainer").style.display = "block";
+				tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
+				tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
+				TweenLite.to(".togglePlayer", 0.5, { rotation:90});
+			}
+
+			// Session.set('gridPushedRight', "gridPushedRight");
+			// TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
+			// TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
+			// TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
+			// TweenLite.to(".togglePlayer", 0, {display:'inline-block'});
+			// TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
+   //  		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
       		renderVids(this.rank - 1);
 		}else{
       		console.log("after: " + (this.rank - 1));
-			Session.set('playerTuckedLeft', "");
-			Session.set('gridPushedRight', "gridPushedRight");
-    		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
-    		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
-    		TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
-    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
-    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
+      		tlDropdown.restart();
+			// Session.set('playerTuckedLeft', "");
+			// Session.set('gridPushedRight', "gridPushedRight");
+   //  		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
+   //  		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
+   //  		TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
+   //  		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
+   //  		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
     		video.playVideoAt(this.rank - 1);
 		}
     },
     "click .togglePlayer": function () {
-    	if(Session.get('playerTuckedLeft') == "tuckedLeft"){
-			Session.set('playerTuckedLeft', "");
-			Session.set('gridPushedRight', "gridPushedRight");
-    		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
-    		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
-    		TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
-    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
-    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"})
+    	if(Session.equals('playerPushedTop', false)){
+			Session.set('playerPushedTop', true);
+			tlDropdown.reverse();
+			TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:270});
+		}
+    },
+    "click .minimizePlayer": function () {
+    	if(tlMinimize == null){
+			tlMinimize = new TimelineLite();
+			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+		}else
+			tlMinimize.restart();
 
-    	}else{
-			Session.set('playerTuckedLeft', ".tuckedLeft");
-			setTimeout(function() {
-				Session.set('gridPushedRight', "gridMaxedOut");
-			}, 500);
-			TweenLite.to(".togglePlayer", 0.5, { x:-screen.width/1.56, y:0,z:0, rotation:180});
-    		TweenLite.to(".playerContainer", 0.5, { x:-screen.width, y:0,z:0, display:'none'});
-    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"94%"}).delay(0.5);
-    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"})
-    	}
+		Session.set('playerPushedTop', true);
+		document.getElementById("minimizePlayer").style.display = "none";
+		document.getElementById("togglePlayer").style.display = "none";
+		document.getElementById("closePlayer").style.display = "inline-block";
+		document.getElementById("expandPlayer").style.display = "inline-block";
+    },
+    "click .expandPlayer": function () {
+		tlMinimize.reverse();
+		Session.set('playerPushedTop', false);
+		document.getElementById("minimizePlayer").style.display = "inline-block";
+		document.getElementById("togglePlayer").style.display = "inline-block";
+		document.getElementById("closePlayer").style.display = "none";
+		document.getElementById("expandPlayer").style.display = "none";
+    },
+    "click .closePlayer": function () {
+		tlDropdown.reverse();
+		tlMinimize.reverse().delay(0.5);
+		Session.set('playerPushedTop', true);
+		document.getElementById("minimizePlayer").style.display = "none";
+		document.getElementById("togglePlayer").style.display = "none";
+		document.getElementById("closePlayer").style.display = "inline-block";
+		document.getElementById("expandPlayer").style.display = "inline-block";
     }
   });
 

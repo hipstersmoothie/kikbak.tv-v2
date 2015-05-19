@@ -9,14 +9,19 @@ template(name="layout")
 
 template(name='gridThumbs')
 	+header
-	.blackOverlay
+	.blackOverlay(class="{{overlayPopped}}")
 	.appBody(style="background-repeat: no-repeat; background-image:url('#{backgroundImage}')")
 	
-	.playerContainer
+	.playerContainer(id="playerContainer")
 		#player
-
-	.togglePlayer
-		img(src="images/arrow.png")
+		.togglePlayer(id="togglePlayer")
+			img(src="images/arrow.png")
+		.minimizePlayer(id="minimizePlayer")
+			img(src="images/minimize.png")
+		.closePlayer(id="closePlayer")
+			img(src="images/cancel.png")
+		.expandPlayer(id="expandPlayer")
+			img(src="images/expand.png")
 
 	.container
 		div(class="{{gridResized}}")

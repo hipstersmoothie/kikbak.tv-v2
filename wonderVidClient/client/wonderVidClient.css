@@ -20,6 +20,13 @@ body{
 	position: fixed;
 	right: 0;
 	top:0;
+}
+
+.overlayFront{
+	z-index: 2;
+}
+
+.overlayBack{
 	z-index: -1;
 }
 
@@ -55,15 +62,45 @@ body{
 }
 .navbar {
 	margin: 0;
+	z-index: 5;
 }
+
 .togglePlayer{  
 	width: 30px;
   height: 30px;
   position: absolute;
   /* float: right; */
-  right: 30%;
-  top: 45%;
+  right: -30px;
+  top: 0;
+}
+
+.minimizePlayer{  
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  /* float: right; */
+  right: 0;
+  bottom: 0;
+}
+
+.closePlayer{  
+	width: 30px;
+  height: 30px;
+  position: absolute;
+  /* float: right; */
+  right: 0;
+  top: -30px;
   display: none;
+}
+
+.expandPlayer{  
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  /* float: right; */
+  top: -30px;
+  display: none;
+  left: 0;
 }
 
 .playerContainer{
@@ -75,6 +112,9 @@ body{
 	height: 80vh;
 	float: left;
 	display: none;
+	position: absolute;
+	right: 20%;
+	z-index: 3;
 }
 
 .tuckedLeft{
