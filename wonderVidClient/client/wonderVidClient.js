@@ -1,8 +1,11 @@
-Session.setDefault('videoId', null);
-Session.setDefault('currentVideo', null);
-Session.setDefault('stateImage', 'playButton.png');
-Session.setDefault('selectedGenre', 'Top Videos');
-Session.setDefault('gridPushedRight', "gridMaxedOut");
+Meteor.startup(function () {
+  // code to run on server at startup
+  Session.set('videoId', null);
+	Session.set('currentVideo', null);
+	Session.setDefault('stateImage', 'playButton.png');
+	Session.setDefault('selectedGenre', 'Top Videos');
+	Session.setDefault('gridPushedRight', "gridMaxedOut");
+});
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
@@ -13,7 +16,7 @@ Template.gridThumbs.rendered = function() {
 }
 
 Template.header.helpers({
-	genres: function() {
+	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
 				{type:"Emerging", className: "emergingVideos"},
              	{type:"Hip Hop", className: "hipHopVideos"},
@@ -87,8 +90,8 @@ Template.header.helpers({
 });
 
 Template.gridThumbs.helpers({
-    isSelected: function () {
-  		return Session.equals("videoId", this.videoId);
+  isSelected: function () {
+  	return Session.equals("videoId", this.videoId);
 	},
 	rank: function(){
 		return CurrentVideos.findOne({videoId:this.videoId}).rank;
@@ -163,11 +166,16 @@ renderVids = function(rank) {
 	    },
 		events: {
 			onReady: function (event) {
-				Session.set('currentVideo', Session.get('videos')[0]);
-                event.target.cuePlaylist(Session.get('playlist'),rank);
-            },
+          event.target.cuePlaylist(Session.get('playlist'),rank);
+      },
 			onStateChange: function (event) {
 				if(event.data == YT.PlayerState.PLAYING) {
+					var playlist = Session.get('playlist'),
+							match = event.target.getVideoUrl().match(/[?&]v=([^&]+)/),
+							index = playlist.indexOf(match[1]);
+
+					Session.set('videoId', playlist[index]);
+					Session.set('currentVideo', Session.get('videos')[index]);
 					Session.set("stateImage",pauseButton);
 				} else if (event.data == YT.PlayerState.PAUSED) {
 					Session.set("stateImage",playButton);
@@ -175,15 +183,30 @@ renderVids = function(rank) {
 					var playlist = Session.get('playlist'),
 						index = playlist.indexOf(Session.get('videoId'));
 
-					index = index + 1 >= playlist.length ? 0 : index + 1;
-				    Session.set('videoId', playlist[index]);
-				   	Session.set('currentVideo', Session.get('videos')[index]);				    
+					nextVideo(playlist, index);    
 				} else if (event.data == YT.PlayerState.CUED) {
 					event.target.playVideo();
 				}
+			},
+			onError: function(errorCode) { //video unavailable
+				if(errorCode.data == 100 || errorCode.data == 150) {
+		       var playlist = Session.get('playlist'),
+							match = video.getVideoUrl().match(/[?&]v=([^&]+)/),
+							videoId = match[1],
+							index = playlist.indexOf(videoId);
+
+					nextVideo(playlist, index);
+				  video.nextVideo();
+		    }
 			}
 		} 
     });
     video = videoTmp;
     YT.load();   	
 };
+
+var nextVideo = function(playlist, index) {
+	index = index + 1 >= playlist.length ? 0 : index + 1;
+	Session.set('videoId', playlist[index]);
+	Session.set('currentVideo', Session.get('videos')[index]);
+}
