@@ -15,9 +15,11 @@ Meteor.startup(function () {
 });
 
 Accounts.onLogin(function() {
-	var likes = Meteor.call('likedVideos', function(err, res) {
+	Meteor.call('likedVideos', function(err, res) {
 		if(!err) {
-			Session.set('userLikes', res);
+			Session.set('userLikes',  _.map(res, function(like) {
+				return like.contentDetails.videoId
+			}));
 		}
 	});
 });
@@ -112,6 +114,9 @@ Template.gridThumbs.helpers({
 			return vid.videoId == this.videoId
 		else
 			return false;
+	},
+	isLiked: function() {
+		return Session.get('userLikes').indexOf(this.videoId) > -1;
 	},
 	rank: function(){
 		return CurrentVideos.findOne({videoId:this.videoId}).rank;

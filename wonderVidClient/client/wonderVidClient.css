@@ -245,9 +245,9 @@ body {
 	border: 3px #31C663 solid
 }
 
-
-
-
+.heart-red {
+	background-color: red;
+}
 
 ::-webkit-scrollbar {
     width: 3px;

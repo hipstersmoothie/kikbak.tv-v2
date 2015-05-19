@@ -25,7 +25,7 @@ template(name='gridThumbs')
 					.overlay(class="{{#if isSelected}}selected{{/if}}")
 						.rank
 							p #{rank}
-						.like
+						.like(class="{{#if isLiked}}heart-red{{/if}}")
 							p like
 						p.descriptionText #{this.title}
 
