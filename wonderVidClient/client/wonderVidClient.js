@@ -1,6 +1,7 @@
 Session.setDefault('videoId', null);
 Session.setDefault('stateImage', 'playButton.png');
 Session.setDefault('selectedGenre', 'Top Videos');
+Session.setDefault('gridPushedRight', "gridMaxedOut");
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
@@ -93,7 +94,11 @@ Template.gridThumbs.helpers({
     },
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
+	},
+	gridResized: function() {
+		return Session.get('gridPushedRight');
 	}
+
 });
 
 Template.gridThumbs.events({
@@ -101,35 +106,45 @@ Template.gridThumbs.events({
       	Session.set('videoId', this.videoId);
     	if(video == null){
       		console.log("First: " + (this.rank - 1));
+			Session.set('gridPushedRight', "gridPushedRight");
 			TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
 			TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
 			TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
 			TweenLite.to(".togglePlayer", 0, {display:'inline-block'});
 			TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
+    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
       		renderVids(this.rank - 1);
 		}else{
       		console.log("after: " + (this.rank - 1));
 			Session.set('playerTuckedLeft', "");
+			Session.set('gridPushedRight', "gridPushedRight");
     		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
     		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
-    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
     		TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
+    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
+    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
     		video.playVideoAt(this.rank - 1);
 		}
     },
     "click .togglePlayer": function () {
     	if(Session.get('playerTuckedLeft') == "tuckedLeft"){
 			Session.set('playerTuckedLeft', "");
+			Session.set('gridPushedRight', "gridPushedRight");
     		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
     		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
-    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
     		TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
+    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
+    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"})
 
     	}else{
-			Session.set('playerTuckedLeft', "tuckedLeft");
+			Session.set('playerTuckedLeft', ".tuckedLeft");
+			setTimeout(function() {
+				Session.set('gridPushedRight', "gridMaxedOut");
+			}, 500);
 			TweenLite.to(".togglePlayer", 0.5, { x:-screen.width/1.56, y:0,z:0, rotation:180});
     		TweenLite.to(".playerContainer", 0.5, { x:-screen.width, y:0,z:0, display:'none'});
-    		TweenLite.to(".container", 0.5, { width:"94%"}).delay(0.5);
+    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"94%"}).delay(0.5);
+    		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"})
     	}
     }
   });
