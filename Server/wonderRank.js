@@ -42,6 +42,26 @@ var hipsterViewMult = function(views) {
 		return 1;
 }
 
+var hipMult = function(days) {
+	if (days <= 1)
+		return 15;
+	else if (days <= 2)
+		return 13;
+	else if (days <= 3)
+		return 11;
+	else if (days <= 4)
+		return 8;
+	else if (days <= 5)
+		return 5;
+	else if (days <= 6)
+		return 3;
+	else if (days <= 7)
+		return 1;
+	else {
+		return 0;
+	}
+}
+
 var ifMusicVideo = function(video) {
 	if(video.tags && video.tags.indexOf("Music Video") > -1)
 		return 5;
@@ -74,12 +94,17 @@ var hipsterSort = function(videos) {
 		var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
 		var adg1 = multiplier(date1);
 		var adg2 = multiplier(date2);
+
+		var post1 = (Date.now() - a.dateFound)/day;
+		var post2 = (Date.now() - b.dateFound)/day;
+		var padg1 = hipMult(post1);
+		var padg2 = hipMult(post2);
 		
 		var hipsterViewMult1 = hipsterViewMult(parseInt(a.oldStats.viewCount));
 		var hipsterViewMult2 = hipsterViewMult(parseInt(b.oldStats.viewCount));
 
-		a.wonderRank = dampen(a.foundOn.length) * adg1 * hipsterViewMult1 * ifMusicVideo(a);
-		b.wonderRank = dampen(b.foundOn.length) * adg2 * hipsterViewMult2 * ifMusicVideo(b);
+		a.wonderRank = adg1 * padg1 * hipsterViewMult1 * ifMusicVideo(a);
+		b.wonderRank = adg2 * padg2 * hipsterViewMult2 * ifMusicVideo(b);
 
 		return a.wonderRank - b.wonderRank;
 	}).reverse();
