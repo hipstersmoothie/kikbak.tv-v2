@@ -1,8 +1,18 @@
-  Meteor.startup(function () {
+Meteor.startup(function () {
   // code to run on server at startup
   updateAll();
   var minutes = 30, the_interval = minutes * 60 * 1000;
   Meteor.setInterval(updateAll, the_interval);
+
+  ServiceConfiguration.configurations.remove({
+    service: "google"
+  });
+  ServiceConfiguration.configurations.insert({
+    service: "google",
+    clientId: "1017109112095-csl2k4dhc0nckga4t9n8b3pundgciqan.apps.googleusercontent.com",
+    loginStyle: "popup",
+    secret: "nHYeC7HtGr4IEqIZhdPGBGeb"
+  });
 });
 
 var updateAll = function() {
@@ -52,6 +62,19 @@ Meteor.publish('videos', function(type) {
     return EmergingVideos.find({});
   }
   return [];
+});
+
+Meteor.methods({
+  likeVideo: function(id) {
+    YoutubeApi.authenticate({
+        type: "oauth",
+        token: Meteor.user().services.google.accessToken
+    });
+    var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
+    Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=like&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken, function(err, res) {
+      console.log(err, res) // 204 means good
+    })
+  }
 });
 
 videoData = [

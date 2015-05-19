@@ -25,6 +25,8 @@ template(name='gridThumbs')
 					.overlay(class="{{#if isSelected}}selected{{/if}}")
 						.rank
 							p #{rank}
+						.like
+							p like
 						p.descriptionText #{this.title}
 
 template(name="loading")

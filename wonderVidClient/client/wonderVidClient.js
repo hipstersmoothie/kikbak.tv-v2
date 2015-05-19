@@ -4,6 +4,13 @@ Meteor.startup(function () {
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
+
+	Accounts.ui.config({
+    requestPermissions: {
+      google: ['https://www.googleapis.com/auth/youtube']
+    }
+  })
+
 });
 var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png";
 
@@ -105,11 +112,12 @@ Template.gridThumbs.helpers({
 	gridResized: function() {
 		return Session.get('gridPushedRight');
 	}
-
 });
 
 Template.gridThumbs.events({
-    "click .single": function () {
+    "click .single": function (event) {
+    	if (event.target.classList[0] == 'like' || event.target.nodeName == 'P')
+    		return
       var index = Session.get('playlist').indexOf(this.videoId);
       var thisVid = Session.get('videos')[index];
       Session.set('currentVideo', thisVid);
@@ -155,7 +163,10 @@ Template.gridThumbs.events({
     		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"94%"}).delay(0.5);
     		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"})
     	}
-    }
+    },
+		'click .like': function() {
+			Meteor.call('likeVideo', this.videoId);
+		}
   });
 
 renderVids = function(rank) {
