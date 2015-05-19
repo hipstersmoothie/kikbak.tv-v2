@@ -50,6 +50,7 @@ body{
   /* float: right; */
   right: 30%;
   top: 45%;
+  display: none;
 }
 
 .playerContainer{
@@ -59,7 +60,8 @@ body{
 	margin-left: 20px;
 	width: 68%;
 	height: 80vh;
-	display: inline-block;
+	float: left;
+	display: none;
 }
 
 .tuckedLeft{
@@ -89,7 +91,7 @@ body{
 .overlay{
 	font-size: 10px;
 	/*opacity: 0;*/
-	width: 96%;
+	width: 100%;
 	height: 100%;
 	text-align: center;
 
@@ -126,7 +128,7 @@ body{
 
 .container{
 	overflow: scroll;
-	width: 27%;
+	width: 100%;
 	height: 80vh;
 	display: inline-block;
 	float: right;

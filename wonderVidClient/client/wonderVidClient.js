@@ -5,9 +5,9 @@ var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png"
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.gridThumbs.rendered = function() {
-	setTimeout(function() {
-		renderVids();
-	}, 1500)
+	// setTimeout(function() {
+	// 	renderVids();
+	// }, 1500)
 }
 
 Template.header.helpers({
@@ -72,10 +72,6 @@ Template.header.events({
     "click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
 		video.prevVideo();	
-    },
-    "click .prevButton": function () {
-		Session.set('stateImage', pauseButton);
-		video.prevVideo();	
     }
 });
 
@@ -103,7 +99,23 @@ Template.gridThumbs.helpers({
 Template.gridThumbs.events({
     "click .single": function () {
       	Session.set('videoId', this.videoId);
-		video.playVideoAt(this.rank - 1);
+    	if(video == null){
+      		console.log("First: " + (this.rank - 1));
+			TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
+			TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
+			TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
+			TweenLite.to(".togglePlayer", 0, {display:'inline-block'});
+			TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
+      		renderVids(this.rank - 1);
+		}else{
+      		console.log("after: " + (this.rank - 1));
+			Session.set('playerTuckedLeft', "");
+    		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
+    		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
+    		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
+    		TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
+    		video.playVideoAt(this.rank - 1);
+		}
     },
     "click .togglePlayer": function () {
     	if(Session.get('playerTuckedLeft') == "tuckedLeft"){
@@ -122,18 +134,17 @@ Template.gridThumbs.events({
     }
   });
 
-renderVids = function() {
+renderVids = function(rank) {
 	Session.set("stateImage",pauseButton);	
-	Session.set("videoId", Session.get('playlist')[0]);
 	videoTmp = new YT.Player("player", {
-        loadPlaylist:{
+        cuePlaylist:{
 	        listType: 'playlist',
 	        list: Session.get('playlist'),
-	        index: 0,
+	        index: rank,
 	    },
 		events: {
 			onReady: function (event) {
-                event.target.loadPlaylist(Session.get('playlist'));
+                event.target.cuePlaylist(Session.get('playlist'),rank);
             },
 			onStateChange: function (event) {
 				if(event.data == YT.PlayerState.PLAYING) {
@@ -147,6 +158,8 @@ renderVids = function() {
 				    	Session.set('videoId', playlist[0]);
 				    else
 				    	Session.set('videoId', playlist[index+1]);
+				} else if (event.data == YT.PlayerState.CUED) {
+					event.target.playVideo();
 				}
 			}
 		} 
