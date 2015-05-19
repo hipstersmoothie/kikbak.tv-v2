@@ -99,14 +99,6 @@ Template.gridThumbs.helpers({
 	rank: function(){
 		return CurrentVideos.findOne({videoId:this.videoId}).rank;
 	},
-	backgroundImage: function () {
-		var vid = Session.get('currentVideo');
-		var current = CurrentVideos.findOne({videoId:vid ? vid.videoId : ""});
-		if (current) 
-			return current.thumbnail.high.url;
-		else 
-			return "";
-    },
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
 	},
