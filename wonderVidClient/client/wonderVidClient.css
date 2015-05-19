@@ -53,7 +53,9 @@ body{
 	-moz-columns: 5;
 	 columns: 5;
 }
-
+.navbar {
+	margin: 0;
+}
 .togglePlayer{  
 	width: 30px;
   height: 30px;
@@ -89,10 +91,9 @@ body{
 
 .single{
 	opacity: 1;
-	width: 250px;
-	height: 200px;
+	width: 280px;
+	height: 205px;
 	display: inline-block;
-	margin: 10px 0px;
     background-repeat: no-repeat;
     background: #252525;
     /*border: 1px white solid;*/
@@ -135,11 +136,13 @@ body{
 }
 
 .descriptionText{
+	overflow: hidden;
 	color: white;
 	font-size: 12px;
     margin: 150px 20px 0 0;
   	padding: 10px;
 	width: 100%;
+	height: 54px;
 	background-color: rgba(0,0,0,0.7);
 }
 
@@ -152,7 +155,7 @@ body{
 .container{
 	overflow: scroll;
 	width: 100%;
-	height: 89vh;
+	height: 90vh;
 	display: inline-block;
 	float: right;
 	margin: 0;
