@@ -175,7 +175,6 @@ Template.gridThumbs.events({
 			} else {
 				Session.set('currentVideo', thisVid);
 			}
-
 			
 			console.log("First: " + index);
 			if(tlDropdown == null || Session.equals('playerPushedTop', true)){
@@ -318,6 +317,7 @@ renderVids = function() {
 				if(nextList) {
 					event.target.cuePlaylist(nextList);
 					Session.set('currentVideo', Session.get('videos')[0]);
+					nextList = null;
 				}
 				else
 					Session.set('currentVideo', nextVid);
