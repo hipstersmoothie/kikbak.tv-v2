@@ -18,7 +18,7 @@ Router.route('/', {
     return  Meteor.subscribe('videos', 'topVideos');
   },
   data: function() {
-    return updateGrid('Top Videos', TopVideos, this);
+    return updateGrid('Top Videos', TopVideos, this, '/');
   }
 }); 
 
@@ -29,7 +29,7 @@ Router.route('/hipHop', {
     return  Meteor.subscribe('videos', 'hipHop');
   },
   data: function() {
-    return updateGrid('Hip Hop', HipHopVideos, this);
+    return updateGrid('Hip Hop', HipHopVideos, this, '/hipHop');
   }
 }); 
 
@@ -116,9 +116,10 @@ var updateGrid = function(genre, collection, route) {
     Session.set('playlist', vidIds);
     Session.set('videos', videos);
     if (video) {
-        console.log('here', genre);
-        nextList = vidIds;
-        //video.cuePlaylist(vidIds);
+      nextList = {
+        videoIds : vidIds,
+        name : Router.current().route.getName()
+      };
     }
     CurrentVideos = collection;
     return templateData;

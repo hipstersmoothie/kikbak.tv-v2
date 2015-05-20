@@ -2,6 +2,7 @@ Meteor.startup(function () {
 	// code to run on server at startup
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
+	Session.set('playerObj', null);
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
@@ -18,6 +19,10 @@ Meteor.startup(function () {
 				Session.set('userLikes', res);
 			}
 		});
+
+	setTimeout(function() {
+		renderVids();
+	}, 1500)
 });
 
 Accounts.onLogin(function() {
@@ -34,14 +39,6 @@ var playButton = "playButton.png",
 		tlDropdown = null, ytPlaylist = [];
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
-Template.gridThumbs.rendered = function() {
-	setTimeout(function() {
-		renderVids();	
-		Session.set('playerPushedTop', true);
-		Session.set('playerMinimized', false);
-	}, 1500)
-}
-
 Template.header.helpers({
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
@@ -293,7 +290,7 @@ Template.gridThumbs.events({
 var findVid = function(videoId) {
 	var thisVid = null;
 	_.forEach(Session.get('videos'), function(video) {
-		console.log(video.videoId, videoId)
+		// console.log(video.videoId, videoId)
 		if(video.videoId == videoId) {
 			thisVid = video;
 			return false;
@@ -324,8 +321,14 @@ renderVids = function() {
 				//event.target.playVideo();
 			} else if (event.data == YT.PlayerState.ENDED) {
 				if(nextList) {
-					event.target.cuePlaylist(nextList);
-					Session.set('currentVideo', Session.get('videos')[0]);
+					if (video.route != nextList.name) { // new page play first
+						event.target.loadPlaylist(nextList.videoIds);
+						Session.set('currentVideo', Session.get('videos')[0]);
+					} else { // reload on same page, play next rank. SHOULD try to find id first then play rank if it can find it
+						event.target.loadPlaylist(nextList.videoIds, Session.get('currentVideo').rank);
+						Session.set('currentVideo', Session.get('videos')[Session.get('currentVideo').rank]);
+					}
+					video.route = nextList.name;
 					nextList = null;
 				} else {
 					var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
@@ -340,5 +343,7 @@ renderVids = function() {
 	} 
 	});
 	video = videoTmp;
+	video.route = Router.current().route.getName();
+
 	YT.load();   	
 };
