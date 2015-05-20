@@ -177,10 +177,9 @@ body {
 		width: 100%;
 		height: 100%;
 		text-align: center;
-
 		background-repeat: no-repeat;
-			background-size: 75px;
-			background-image: url('/images/rankBackground.png');
+		background-size: 75px;
+		background-image: url('/images/rankBackground.png');
 		display: inline-block;
 		transition: background-color 0.25s ease-out;
 		-webkit-transition: background-color 0.25s ease-out;
@@ -214,6 +213,7 @@ body {
 		}
 
 		.heart-red {
+			opacity: 1;
 			background-image: url('/images/likeSelected.png');
 		}
 
@@ -222,9 +222,8 @@ body {
 			color: white;
 			font-size: 12px;
 				/*margin: 44% 0px 0 0;*/
-				padding: 10px;
+			padding: 2px;
 			width: 100%;
-			height: 31px;
 			background-color: rgba(0,0,0,0.7);
 		}
 	}
@@ -234,6 +233,10 @@ body {
 }
 
 @media screen and ( max-width: 530px ){
+	.descriptionText{
+		font-size: 10px
+	}
+
 	.gridMaxedOut{
 		-webkit-column-width:  220px;
 		-moz-column-width:  220px;
@@ -329,6 +332,7 @@ body {
 	margin: 2px 0 0 0px;
 	width: 48px;
 	height: 48px;
+	display: none;
 }
 
 ::-webkit-scrollbar {

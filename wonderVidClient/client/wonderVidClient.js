@@ -191,6 +191,10 @@ Template.gridThumbs.events({
 					document.getElementById("closePlayer").style.display = "none";
 					document.getElementById("expandPlayer").style.display = "none";
 					document.getElementById("downArrow").style.display = "inline-block"
+
+					document.getElementById("playButton").style.display = "inline-block";
+					document.getElementById("prevButton").style.display = "inline-block";
+					document.getElementById("nextButton").style.display = "inline-block";
 				}
 				renderVids(index);
 			} else{

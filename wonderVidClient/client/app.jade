@@ -33,7 +33,8 @@ template(name='gridThumbs')
 						.rank
 							p #{rank}
 						.like(class="{{#if isLiked}}heart-red{{/if}}")
-						p.descriptionText #{this.title}
+						.descriptionText
+							p #{this.title}
 
 template(name="loading")
 	.wrap2
