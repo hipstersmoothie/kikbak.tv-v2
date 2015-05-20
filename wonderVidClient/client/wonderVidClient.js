@@ -127,7 +127,7 @@ Template.header.events({
 
 Template.gridThumbs.helpers({
   isSelected: function () {
-		return Session.get('currentVideo').videoId == this.videoId
+		return Session.get('currentVideo') ? Session.get('currentVideo').videoId == this.videoId : false;
 	},
 	isLiked: function() {
 		var likes = _.map(Session.get('userLikes'), function(like) {
