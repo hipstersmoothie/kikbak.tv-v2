@@ -15,6 +15,11 @@ template(name='gridThumbs')
 		img(src="/images/downArrow.png")
 			
 	.playerContainer(id="playerContainer")
+		.playerSideBar(id="playerSideBar")
+			.sideTitle 
+				{{currentVideo.title}}
+			.sideDescription 
+				{{currentVideo.description}}
 		#player
 		.togglePlayer(id="togglePlayer")
 			img(src="images/arrow.png")

@@ -113,18 +113,18 @@ Template.header.events({
 			document.getElementById("closePlayer").style.display = "none";
 			document.getElementById("expandPlayer").style.display = "none";
 		}
-		},
-		"click .nextButton": function () {
-			Session.set('stateImage', pauseButton);
-			video.nextVideo();	
-		},
-		"click .prevButton": function () {
-			Session.set('stateImage', pauseButton);
-			video.previousVideo();	
-	    },
-			'click .likedVideos' : function() {
-			Router.go('/likes');
-		}
+	},
+	"click .nextButton": function () {
+		Session.set('stateImage', pauseButton);
+		video.nextVideo();	
+	},
+	"click .prevButton": function () {
+		Session.set('stateImage', pauseButton);
+		video.previousVideo();	
+    },
+		'click .likedVideos' : function() {
+		Router.go('/likes');
+	}
 });
 
 Template.gridThumbs.helpers({
@@ -151,6 +151,9 @@ Template.gridThumbs.helpers({
 			return "overlayFront"
 		else
 			return "overlayBack"
+	},
+	currentVideo: function() {
+		return Session.get('currentVideo');
 	}
 });
 
@@ -184,7 +187,8 @@ Template.gridThumbs.events({
 					tlDropdown = new TimelineLite();
 					document.getElementById("playerContainer").style.display = "block";
 					tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
-					tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
+					tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeInOut, x:0, y: 0, z: 0});
+					tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeInOut, left: "0%"});
 					// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
 					document.getElementById("minimizePlayer").style.display = "inline-block";
 					document.getElementById("togglePlayer").style.display = "inline-block";
@@ -219,15 +223,17 @@ Template.gridThumbs.events({
 		},
 		"click .minimizePlayer": function () {
 			if(tlMinimize == null){
-			tlMinimize = new TimelineLite();
-			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
-		}else
-			tlMinimize.restart();
+				tlMinimize = new TimelineLite();
+				tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+			}else
+				tlMinimize.restart();
+			
 			Session.set('playerMinimized', true);
 			document.getElementById("minimizePlayer").style.display = "none";
 			document.getElementById("togglePlayer").style.display = "none";
 			document.getElementById("closePlayer").style.display = "inline-block";
 			document.getElementById("expandPlayer").style.display = "inline-block";
+			document.getElementById("playerSideBar").style.display = "none";
 		},
 		"click .expandPlayer": function () {
 			tlMinimize.reverse();
@@ -237,6 +243,7 @@ Template.gridThumbs.events({
 			document.getElementById("togglePlayer").style.display = "inline-block";
 			document.getElementById("closePlayer").style.display = "none";
 			document.getElementById("expandPlayer").style.display = "none";
+			document.getElementById("playerSideBar").style.display = "inline-block";
 		},
 		"click .closePlayer": function () {
 			tlDropdown.reverse();
@@ -275,6 +282,7 @@ Template.gridThumbs.events({
 			document.getElementById("togglePlayer").style.display = "inline-block";
 			document.getElementById("closePlayer").style.display = "none";
 			document.getElementById("expandPlayer").style.display = "none";
+			document.getElementById("playerSideBar").style.display = "inline-block";
 		}
 	},
 });
