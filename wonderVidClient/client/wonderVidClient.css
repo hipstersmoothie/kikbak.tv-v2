@@ -60,6 +60,7 @@ body{
 	-moz-columns: 5;
 	 columns: 5;
 }
+
 .navbar {
 	margin: 0;
 	z-index: 5;
@@ -118,9 +119,15 @@ body{
 }
 
 .like {
-	width: 40px;
+	width: 30px;
+	height: 30px;
   float: right;
-  background-color: white;
+  background-image: url('/images/likeNone.png');
+}
+
+
+.heart-red {
+	background-image: url('/images/likeSelected.png');
 }
 
 
@@ -283,10 +290,6 @@ body {
 
 .selected {
 	border: 3px #31C663 solid
-}
-
-.heart-red {
-	background-color: red;
 }
 
 ::-webkit-scrollbar {
