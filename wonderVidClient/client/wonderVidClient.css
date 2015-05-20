@@ -55,12 +55,6 @@ body{
 	 columns: 200px;
 }
 
-.gridMaxedOut{
-	-webkit-columns: 5;
-	-moz-columns: 5;
-	 columns: 5;
-}
-
 .navbar {
 	margin: 0;
 	z-index: 5;
@@ -119,10 +113,10 @@ body{
 }
 
 .like {
-	width: 30px;
-	height: 30px;
-  float: right;
-  background-image: url('/images/likeNone.png');
+	width: 24px;
+	height: 24px;
+	float: right;
+	background-image: url('/images/likeNone.png');
 }
 
 
@@ -146,19 +140,73 @@ body{
 .single{
 	opacity: 1;
 	width: 100%;
- 	height: 125px;
+ 	height: 100%;
 	display: inline-block;
     background-repeat: no-repeat;
     background: #252525;
     /*border: 1px white solid;*/
 }
 
+.gridMaxedOut{
+	-webkit-columns: 25;
+	-moz-columns: 25;
+	 columns: 25;
+	-webkit-column-width: 35vh;
+	-moz-column-width: 35vh;
+	 /*width: 35vh;*/
+	-webkit-column-gap: 0;
+	-moz-column-gap: 0;
+	 gap: 0;
+}
+
+@media screen and ( max-width: 530px ){
+	.gridMaxedOut{
+		-webkit-column-width:  220px;
+		-moz-column-width:  220px;
+		 column-width:  220px;
+	}
+}
+
+@media screen and ( max-height: 405px ){
+	.gridMaxedOut{
+		-webkit-column-width:  70vh;
+		-moz-column-width:  70vh;
+		 column-width:  70vh;
+	}
+}
+
+@media screen and ( max-height: 300px ){
+	.gridMaxedOut{
+		-webkit-column-width:  100vh;
+		-moz-column-width:  100vh;
+		 column-width:  100vh;
+	}
+}
+
+@media screen and ( min-height: 300px ){
+    .single{
+	 	height: 50%;
+	}
+}
+
+@media screen and ( min-height: 405px ){
+    .single{
+	 	height: 33%;
+	}
+}
+
+@media screen and ( min-height: 605px ){
+    .single{
+	 	height: 25%;
+	 	width: 100%;
+	}
+}
 
 .overlay{
 	font-size: 10px;
 	/*opacity: 0;*/
 	width: 100%;
-	height: 114%;
+	height: 100%;
 	text-align: center;
 
 	background-repeat: no-repeat;
@@ -200,6 +248,10 @@ body{
 	margin: -10px -5px 0px;
 }
 
+p {
+	margin: 0;
+}
+
 .description{
 	position: fixed;
 	/*color: black;*/
@@ -209,10 +261,10 @@ body{
 	overflow: hidden;
 	color: white;
 	font-size: 12px;
-    margin: 44% 0px 0 0;
+    /*margin: 44% 0px 0 0;*/
   	padding: 10px;
 	width: 100%;
-	height: 25%;
+	height: 31px;
 	background-color: rgba(0,0,0,0.7);
 }
 
@@ -234,7 +286,7 @@ body {
 	float: right;
 	margin: 0;
 	height: 100%;
-  	padding-top: 4%;
+  	padding-top: 50px;
 	-webkit-column-gap: 0;
 	-moz-column-gap: 0;
 	column-gap: 0;
@@ -252,6 +304,7 @@ body {
 	margin-left: 0;
 	position: fixed;
 	width: 100%;
+	height: 50px;
 }
 
 /*.navbar-inverse {
@@ -278,6 +331,18 @@ body {
 .navbar-inverse .navbar-brand {
   color: #31C663;
   font-size: 24px;
+}
+
+.downArrow{
+  margin: 2px 0 0 0;
+  width: 64px;
+  height: 64px;
+  opacity: 1;
+  position: fixed;
+  top: 50px;
+  left: 45%;
+  display: none;
+  z-index: 1;
 }
 
 .nextButton,
@@ -323,7 +388,7 @@ body {
   background: rgba(229, 94, 45, .8); /* Gecko Browsers */
 }
 
-@media screen and (max-width:1350px) {
+/*@media screen and (max-width:1350px) {
 	.gridMaxedOut{
 		-webkit-columns: 4;
 		-moz-columns: 4;
@@ -346,4 +411,4 @@ body {
 		 columns: 2;
 	}
 }
-
+*/
