@@ -11,6 +11,7 @@ var http = require('http'),
 		router = require('./router');
  
 var youTube = new YouTube();
+var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
 youTube.setKey('AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg');
 var app = router();
 http.createServer(app).listen(app.get('port'), function(){
@@ -113,11 +114,14 @@ var newVid = function(vidId, url, blog, $) {
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('(audio)') == -1 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('[audio]') == -1 
-			&& result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {// && (result['items'][0]['snippet']['title'].indexOf('Trailer') == -1 || result['items'][0]['snippet']['title'].indexOf('music') != -1) //weirdness to remove trailers
-			console.log('adding', url, vidId); 
+			&& result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {
+			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)//dont add old videos
+				return;
 			
+			console.log('adding', url, vidId, (Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day); 
 			db.videos.update({ videoId : vidId }, {
 				$setOnInsert: {
+					youTubePostDate : result['items'][0]['snippet']['publishedAt'],
 					videoId : vidId,
 					foundOn : [blog],
 					dateFound : _.now(),
@@ -146,6 +150,12 @@ var updateStats = function(video) {
 	var vidId = video.videoId;
 	youTube.getById(vidId, function(error, result) {
 		if(result && result['items'] && result['items'][0]) {
+			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS) {
+				db.videos.remove({ videoId : vidId });
+				console.log('removed', vidId, (Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day);
+				return;
+			}
+
 			var oldStats = video.oldStats;
 			var newStats = result['items'][0]['statistics'];
 			var newViews = (parseInt(newStats.viewCount) - parseInt(oldStats.viewCount));
