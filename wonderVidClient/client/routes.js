@@ -84,7 +84,7 @@ Router.route('/likes', {
   waitOn: function() {
     return [function() {
       return Session.get('userLikes').length > 0;
-    }]//Meteor.subscribe('userData');
+    }]
   },
   data: function() {
     Session.set('videos', null);
@@ -92,13 +92,14 @@ Router.route('/likes', {
 
     var videos = Session.get('userLikes');
     _.forEach(videos, function(video) {
+      delete video._id;
       LikedVideos.update({rank: video.rank}, video, {upsert:true})
     });
     CurrentVideos = LikedVideos;
     var templateData = { videos: videos  };
 
     Session.set('playlist', _.map(videos, function(video) {
-      return video.contentDetails.videoId;
+      return video.videoId;
     }));
     Session.set('videos', videos);
     return templateData;
@@ -109,13 +110,9 @@ var updateGrid = function(genre, collection) {
   Session.set('videos', null);
   Session.set('selectedGenre', genre);
   CurrentVideos = collection;
-  var videos = collection.find({}, {sort:{rank:1}}).collection._docs._map;
-  videos = _.values(videos).sort(function(a, b) {
-    return a.rank - b.rank;
-  });
+  var videos = collection.find({}, {sort:{rank:1}}).fetch();
   var templateData = { videos: videos  };
-  console.log(videos)
-  Session.set('playlist', _.pluck(videos, 'videoId'));// 
+  Session.set('playlist', _.pluck(videos, 'videoId'));
   Session.set('videos', videos);
   return templateData;
 }

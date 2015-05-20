@@ -28,7 +28,9 @@ Accounts.onLogin(function() {
 	}); 
 });
 
-var video = null, playButton = "playButton.png", pauseButton = "pauseButton.png", tlMinimize = null, tlDropdown = null;;
+video = null, playButton = "playButton.png", 
+		pauseButton = "pauseButton.png", tlMinimize = null, 
+		tlDropdown = null, ytPlaylist = [];
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.gridThumbs.rendered = function() {
@@ -157,45 +159,44 @@ Template.gridThumbs.events({
     	if (event.target.classList[0] == 'like' || event.target.nodeName == 'P')
     		return
       var index = Session.get('playlist').indexOf(this.videoId);
-      var thisVid = Session.get('videos')[index];
-      Session.set('currentVideo', thisVid);
-    	if(video == null){
-      		console.log("First: " + (this.rank - 1));
+      var thisVid = null, thisId = this.videoId;
+      _.forEach(Session.get('videos'), function(video) {
+      	if(video.videoId == thisId) {
+      		thisVid = video;
+      		return false;
+      	}
+      })
+      console.log(thisVid)
+      
+      if (index == -1) {
+      	Session.set('currentVideo', Session.get('videos')[thisVid.rank + 1]);
+      	video.playVideoAt(thisVid.rank);
+      	return;
+      } else {
+      	Session.set('currentVideo', thisVid);
+      }
 
-			if(tlDropdown == null || Session.equals('playerPushedTop', true)){
 
-				Session.set('playerPushedTop', false);
-				tlDropdown = new TimelineLite();
-				document.getElementById("playerContainer").style.display = "block";
-				tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
-				tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
-				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
-			document.getElementById("minimizePlayer").style.display = "inline-block";
-			document.getElementById("togglePlayer").style.display = "inline-block";
-			document.getElementById("closePlayer").style.display = "none";
-			document.getElementById("expandPlayer").style.display = "none"; 
+    	if (video == null){
+      	console.log("First: " + index);
+				if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+					Session.set('playerPushedTop', false);
+					tlDropdown = new TimelineLite();
+					document.getElementById("playerContainer").style.display = "block";
+					tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
+					tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
+					// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
+					document.getElementById("minimizePlayer").style.display = "inline-block";
+					document.getElementById("togglePlayer").style.display = "inline-block";
+					document.getElementById("closePlayer").style.display = "none";
+					document.getElementById("expandPlayer").style.display = "none"; 
+				}
+      	renderVids(index);
+			} else{
+      	console.log("after: " + index);
+      	tlDropdown.restart();
+     		video.playVideoAt(index);
 			}
-
-			// Session.set('gridPushedRight', "gridPushedRight");
-			// TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
-			// TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
-			// TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
-			// TweenLite.to(".togglePlayer", 0, {display:'inline-block'});
-			// TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
-   //  		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
-      		renderVids(this.rank - 1);
-		}else{
-      		console.log("after: " + (this.rank - 1));
-      		tlDropdown.restart();
-			// Session.set('playerTuckedLeft', "");
-			// Session.set('gridPushedRight', "gridPushedRight");
-   //  		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
-   //  		TweenLite.to(".playerContainer", 0.5, {ease: Expo.easeOut, x:0, y:0,z:0}).delay(0.5);
-   //  		TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:360});
-   //  		TweenLite.to(".container", 0.5, {ease: Expo.easeOut, width:"27%"});
-   //  		TweenLite.to(".descriptionText", 0.5, { margin: "124px 20px 20px 0"});
-    		video.playVideoAt(this.rank - 1);
-		}
     },
     "click .togglePlayer": function () {
     	if(Session.equals('playerPushedTop', false)){
@@ -249,45 +250,61 @@ Template.gridThumbs.events({
 				Session.set('userLikes', likes);
 				Meteor.call('likeVideo', this.videoId, 'dislike');
 			} else {
-				likes.push(this)
+				likes.unshift(this);
 				Session.set('userLikes', likes);
 				Meteor.call('likeVideo', this.videoId, 'like');
 			}	
 		}
   });
 
+var findVid = function(videoId) {
+	var thisVid = null;
+	_.forEach(Session.get('videos'), function(video) {
+		console.log(video.videoId, videoId)
+  	if(video.videoId == videoId) {
+  		thisVid = video;
+  		return false;
+  	}
+	});
+	return thisVid;
+}
+
+var firstPlay = true;
 renderVids = function(rank) {
 	Session.set("stateImage",pauseButton);	
 	videoTmp = new YT.Player("player", {
-        cuePlaylist:{
-	        listType: 'playlist',
-	        list: Session.get('playlist'),
-	        index: rank,
-	    },
-		events: {
-			onReady: function (event) {
-          event.target.cuePlaylist(Session.get('playlist'),rank);
-      },
-			onStateChange: function (event) {
-				var playlist = Session.get('playlist'),
-						match = event.target.getVideoUrl().match(/[?&]v=([^&]+)/),
-						index = playlist.indexOf(match[1]);
-
-				if(event.data == YT.PlayerState.PLAYING) {
-					Session.set('currentVideo', Session.get('videos')[index]);
-					Session.set("stateImage",pauseButton);
-				} else if (event.data == YT.PlayerState.PAUSED) {
-					Session.set("stateImage",playButton);
-				} else if (event.data == YT.PlayerState.CUED) {
-					event.target.playVideo();
-				}
-			},
-			onError: function(errorCode) { //video unavailable
-				if(errorCode.data == 100 || errorCode.data == 150)
-				  video.nextVideo();
+      cuePlaylist:{
+        listType: 'playlist',
+        list: Session.get('playlist'),
+        index: rank,
+    },
+	events: {
+		onReady: function (event) {
+        event.target.cuePlaylist(Session.get('playlist'),rank);
+    },
+		onStateChange: function (event) {
+			if (firstPlay && event.data == YT.PlayerState.PLAYING) {
+				firstPlay = false;
+				Session.set('playlist', video.getPlaylist());
 			}
-		} 
-    });
-    video = videoTmp;
-    YT.load();   	
+			if(event.data == YT.PlayerState.PLAYING) {
+				//Session.set('currentVideo', Session.get('videos')[index]);
+				Session.set("stateImage",pauseButton);
+			} else if (event.data == YT.PlayerState.PAUSED) {
+				Session.set("stateImage",playButton);
+			} else if (event.data == YT.PlayerState.CUED) {
+				event.target.playVideo();
+			} else if (event.data == YT.PlayerState.ENDED) {
+				var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
+				Session.set('currentVideo', nextVid);
+			}
+		},
+		onError: function(errorCode) { //video unavailable
+			if(errorCode.data == 100 || errorCode.data == 150)
+			  video.nextVideo();
+		}
+	} 
+  });
+  video = videoTmp;
+  YT.load();   	
 };

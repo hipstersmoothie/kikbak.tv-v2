@@ -15,7 +15,7 @@ youTube.setKey('AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg');
 var app = router();
 http.createServer(app).listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
-	compileVideos();
+	//compileVideos();
 });
 
 var compileVideos = function() {
