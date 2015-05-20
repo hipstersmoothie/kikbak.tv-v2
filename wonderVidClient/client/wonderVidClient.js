@@ -173,7 +173,7 @@ Template.gridThumbs.events({
 			document.getElementById("minimizePlayer").style.display = "inline-block";
 			document.getElementById("togglePlayer").style.display = "inline-block";
 			document.getElementById("closePlayer").style.display = "none";
-			document.getElementById("expandPlayer").style.display = "none";
+			document.getElementById("expandPlayer").style.display = "none"; 
 			}
 
 			// Session.set('gridPushedRight', "gridPushedRight");

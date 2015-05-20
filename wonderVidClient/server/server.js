@@ -48,6 +48,7 @@ InterviewVideos = new Mongo.Collection('interviews');
 EmergingVideos = new Mongo.Collection('emerging');
 
 Meteor.publish('videos', function(type) {
+  console.log(type);
   if (type == "topVideos") {
     return TopVideos.find({});
   } else if (type == 'hipHop') {
@@ -64,13 +65,13 @@ Meteor.publish('videos', function(type) {
   return [];
 });
 
-// Meteor.publish("userData", function () {
-//   if (this.userId) {
-//     return Meteor.users.find({_id: this.userId});
-//   } else {
-//     this.ready();
-//   }
-// });
+Meteor.publish("userData", function () {
+  if (this.userId) {
+    return Meteor.users.find({_id: this.userId});
+  } else {
+    this.ready();
+  }
+});
 
 Meteor.methods({
   likeVideo: function(id, like) {

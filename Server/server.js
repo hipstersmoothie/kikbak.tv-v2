@@ -71,7 +71,7 @@ var handlePost = function($, blog) {
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
 			tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $, "")
-			//addToDb(iframe.attribs.src, blog, $);
+			addToDb(iframe.attribs.src, blog, $);
 		}
 	});
 }

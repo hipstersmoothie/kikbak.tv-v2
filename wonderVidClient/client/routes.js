@@ -70,36 +70,37 @@ Router.route('/emerging', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
-    return  Meteor.subscribe('videos', 'emerging');
+    return Meteor.subscribe('videos', 'emerging');
   },
   data: function() {
     return updateGrid('Emerging', EmergingVideos);
   }
 });  
 
+LikedVideos = new Mongo.Collection();
 Router.route('/likes', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
-    //return Meteor.subscribe('userData');
+    return [function() {
+      return Session.get('userLikes').length > 0;
+    }]//Meteor.subscribe('userData');
   },
   data: function() {
     Session.set('videos', null);
     Session.set('selectedGenre', 'Likes');
-    // CurrentVideos = collection;
+
     var videos = Session.get('userLikes');
-    // videos = _.values(videos).sort(function(a, b) {
-    //   return a.rank - b.rank;
-    // });
+    _.forEach(videos, function(video) {
+      LikedVideos.update({rank: video.rank}, video, {upsert:true})
+    });
+    CurrentVideos = LikedVideos;
     var templateData = { videos: videos  };
-    // console.log(videos)
-    // CurrentVideos = !CurrentVideos ? new Mongo.Collection('userLikes') : CurrentVideos.remove({});
+
     Session.set('playlist', _.map(videos, function(video) {
-      //CurrentVideos.insert(video);
       return video.contentDetails.videoId;
-    }));// 
+    }));
     Session.set('videos', videos);
-    console.log(templateData)
     return templateData;
   }
 }); 
