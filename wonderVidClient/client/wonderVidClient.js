@@ -120,9 +120,9 @@ Template.header.events({
 		Session.set('stateImage', pauseButton);
 		video.prevVideo();	
     },
-  'click .likedVideos' : function() {
-  	Router.go('/likes');
-  }
+	  'click .likedVideos' : function() {
+	  	Router.go('/likes');
+  	}
 });
 
 Template.gridThumbs.helpers({
@@ -163,17 +163,19 @@ Template.gridThumbs.events({
       		console.log("First: " + (this.rank - 1));
 
 			if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+	  			Session.set('playerPushedTop', false);
+	  			Session.set('playerMinimized', false);
 
-				Session.set('playerPushedTop', false);
 				tlDropdown = new TimelineLite();
 				document.getElementById("playerContainer").style.display = "block";
-				tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
+				tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
 				tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
 				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
 			document.getElementById("minimizePlayer").style.display = "inline-block";
 			document.getElementById("togglePlayer").style.display = "inline-block";
 			document.getElementById("closePlayer").style.display = "none";
 			document.getElementById("expandPlayer").style.display = "none";
+			document.getElementById("downArrow").style.display = "inline-block";
 			}
 
 			// Session.set('gridPushedRight', "gridPushedRight");
@@ -187,6 +189,13 @@ Template.gridThumbs.events({
 		}else{
       		console.log("after: " + (this.rank - 1));
       		tlDropdown.restart();
+	  		Session.set('playerPushedTop', false);
+	  		Session.set('playerMinimized', false);
+
+			document.getElementById("minimizePlayer").style.display = "inline-block";
+			document.getElementById("togglePlayer").style.display = "inline-block";
+			document.getElementById("closePlayer").style.display = "none";
+			document.getElementById("expandPlayer").style.display = "none";
 			// Session.set('playerTuckedLeft', "");
 			// Session.set('gridPushedRight', "gridPushedRight");
    //  		TweenLite.to(".playerContainer", 0.5, {display:'inline-block'}).delay(0.5);
@@ -228,7 +237,7 @@ Template.gridThumbs.events({
     },
     "click .closePlayer": function () {
 		tlDropdown.reverse();
-		tlMinimize.reverse().delay(0.5);
+		tlMinimize.reverse().delay(1.5);
 		Session.set('playerPushedTop', true);
 		Session.set('playerMinimized', false);
 		video.pauseVideo();
@@ -238,22 +247,38 @@ Template.gridThumbs.events({
 		document.getElementById("expandPlayer").style.display = "inline-block";
     },
     'click .like': function() {
-			var likesIds = _.map(Session.get('userLikes'), function(like) {
-				return like.videoId;
-			});
-			var likes = Session.get('userLikes');
-			var index = likesIds.indexOf(this.videoId);
+		var likesIds = _.map(Session.get('userLikes'), function(like) {
+			return like.videoId;
+		});
+		var likes = Session.get('userLikes');
+		var index = likesIds.indexOf(this.videoId);
 
-			if(index > -1) {
-				likes.splice(index, 1);
-				Session.set('userLikes', likes);
-				Meteor.call('likeVideo', this.videoId, 'dislike');
-			} else {
-				likes.push(this)
-				Session.set('userLikes', likes);
-				Meteor.call('likeVideo', this.videoId, 'like');
-			}	
+		if(index > -1) {
+			likes.splice(index, 1);
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', this.videoId, 'dislike');
+		} else {
+			likes.push(this)
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', this.videoId, 'like');
+		}	
+	},
+    "click .downArrow": function () {
+		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
+			tlDropdown.restart();
+			Session.set('playerPushedTop', false);
+				// tlDropdown = new TimelineLite();
+				// document.getElementById("playerContainer").style.display = "block";
+				// tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
+				// tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
+				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
+			
+			document.getElementById("minimizePlayer").style.display = "inline-block";
+			document.getElementById("togglePlayer").style.display = "inline-block";
+			document.getElementById("closePlayer").style.display = "none";
+			document.getElementById("expandPlayer").style.display = "none";
 		}
+    },
   });
 
 renderVids = function(rank) {

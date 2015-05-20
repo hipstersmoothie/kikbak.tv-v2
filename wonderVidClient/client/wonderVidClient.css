@@ -119,10 +119,10 @@ body{
 }
 
 .like {
-	width: 30px;
-	height: 30px;
-  float: right;
-  background-image: url('/images/likeNone.png');
+	width: 24px;
+	height: 24px;
+	float: right;
+	background-image: url('/images/likeNone.png');
 }
 
 
@@ -278,6 +278,18 @@ body {
 .navbar-inverse .navbar-brand {
   color: #31C663;
   font-size: 24px;
+}
+
+.downArrow{
+  margin: 2px 0 0 0;
+  width: 64px;
+  height: 64px;
+  opacity: 1;
+  position: fixed;
+  top: 50px;
+  left: 45%;
+  display: none;
+  z-index: 1;
 }
 
 .nextButton,
