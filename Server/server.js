@@ -66,32 +66,32 @@ var tagVideo = function(vidId, html, $) {
 	});
 }
 
-var handlePost = function($, blog) {
+var handlePost = function($, blog, link) {
 	var iframes = $('iframe');
 
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
 			tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $, "")
-			addToDb(iframe.attribs.src, blog, $);
+			addToDb(iframe.attribs.src, blog, $, link);
 		}
 	});
 }
 
-var addToDb = function(url, blog, $) {
+var addToDb = function(url, blog, $, link) {
 	var vidId = getYouTubeID(url);
 	db.videos.find({ videoId : vidId }, function(err, video) {  
 		if (err) {
 			console.log('addToDb', err);
 		} else {
 			if (video.length > 0)
-				updateVid(video, blog, vidId, $);
+				updateVid(video, blog, vidId, $, link);
 			else
-				newVid(vidId, url, blog, $);
+				newVid(vidId, url, blog, $, link);
 		}
 	});
 }
 
-var updateVid = function(vidList, blog, vidId, $) {
+var updateVid = function(vidList, blog, vidId, $, link) {
 	video = vidList[0];
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
 	if (!_.includes(foundUrls, blog.url)) {
@@ -105,10 +105,13 @@ var updateVid = function(vidList, blog, vidId, $) {
 		db.videos.update({ videoId : vidId }, {$addToSet: {
 			tags : {$each:tags}
 		}});
+		db.videos.update({ videoId : vidId }, {$addToSet: {
+			origPosts : link
+		}});
 	}
 }
 
-var newVid = function(vidId, url, blog, $) {
+var newVid = function(vidId, url, blog, $, url) {
 	youTube.getById(vidId, function(error, result) {
 		if(result && result['items'] && result['items'].length > 0 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
@@ -124,6 +127,7 @@ var newVid = function(vidId, url, blog, $) {
 					youTubePostDate : result['items'][0]['snippet']['publishedAt'],
 					videoId : vidId,
 					foundOn : [blog],
+					origPosts : [link],
 					dateFound : _.now(),
 					thumbnail : youtubeThumbnail(url),
 					title : result['items'][0]['snippet']['title'],
@@ -183,7 +187,7 @@ var getHtml = function(post, blog) {
 		if(!error){
 			// Next, we'll utilize the cheerio library on the returned html which will essentially give us jQuery functionalit
 			var $ = cheerio.load(response);
-			handlePost($, blog);
+			handlePost($, blog, post.link);
 		} else {
 			//console.log("getHtml", blog, post.link, error);
 		}
