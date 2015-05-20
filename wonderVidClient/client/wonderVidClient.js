@@ -127,7 +127,7 @@ Template.header.events({
 
 Template.gridThumbs.helpers({
   isSelected: function () {
-		return Session.get('currentVideo').videoId == this.videoId
+		return Session.get('currentVideo') ? Session.get('currentVideo').videoId == this.videoId : false;
 	},
 	isLiked: function() {
 		var likes = _.map(Session.get('userLikes'), function(like) {
@@ -175,7 +175,7 @@ Template.gridThumbs.events({
 			document.getElementById("togglePlayer").style.display = "inline-block";
 			document.getElementById("closePlayer").style.display = "none";
 			document.getElementById("expandPlayer").style.display = "none";
-			document.getElementById("downArrow").style.display = "inline-block";
+			document.getElementById("downArrow").style.display = "inline-block"
 			}
 
 			// Session.set('gridPushedRight', "gridPushedRight");
