@@ -103,12 +103,6 @@ Template.header.events({
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
-				// tlDropdown = new TimelineLite();
-				// document.getElementById("playerContainer").style.display = "block";
-				// tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.width/2, z: 0});
-				// tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
-				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
-			
 			document.getElementById("minimizePlayer").style.display = "inline-block";
 			document.getElementById("togglePlayer").style.display = "inline-block";
 			document.getElementById("closePlayer").style.display = "none";
@@ -123,7 +117,7 @@ Template.header.events({
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
     },
-		'click .likedVideos' : function() {
+	'click .likedVideos' : function() {
 		Router.go('/likes');
 	}
 });
@@ -187,7 +181,7 @@ Template.gridThumbs.events({
 				document.getElementById("playerContainer").style.display = "block";
 				tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
 				tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeInOut, x:0, y: 0, z: 0});
-				tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeInOut, left: "0%"});
+				tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
 				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
 				document.getElementById("minimizePlayer").style.display = "inline-block";
 				document.getElementById("togglePlayer").style.display = "inline-block";
@@ -198,9 +192,9 @@ Template.gridThumbs.events({
 				document.getElementById("playButton").style.display = "inline-block";
 				document.getElementById("prevButton").style.display = "inline-block";
 				document.getElementById("nextButton").style.display = "inline-block";
-			
+				video.playVideo();
 				//renderVids(index);
-				video.playVideoAt(index)
+				video.playVideoAt(index);
 			} else{
 				console.log("after: " + index);
 				tlDropdown.restart();
