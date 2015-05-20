@@ -118,7 +118,7 @@ Template.header.events({
     },
     "click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
-		video.prevVideo();	
+		video.previousVideo();	
     },
 	  'click .likedVideos' : function() {
 	  	Router.go('/likes');
