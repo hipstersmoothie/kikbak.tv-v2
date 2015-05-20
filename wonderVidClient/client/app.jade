@@ -5,15 +5,15 @@ head
 body
 
 template(name="layout")
+	+header
+	+player
 	+yield
 
-template(name='gridThumbs')
-	+header
+template(name='player')
 	.blackOverlay(class="#{overlayPopped}")
 	.appBody
 	.downArrow(id="downArrow")
 		img(src="/images/downArrow.png")
-			
 	.playerContainer(id="playerContainer")
 		#player
 		.togglePlayer(id="togglePlayer")
@@ -25,6 +25,7 @@ template(name='gridThumbs')
 		.expandPlayer(id="expandPlayer")
 			img(src="images/expand.png")
 
+template(name='gridThumbs')
 	.container
 		div(class="{{gridResized}}")
 			+each videos
