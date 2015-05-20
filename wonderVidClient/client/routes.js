@@ -18,7 +18,7 @@ Router.route('/', {
     return  Meteor.subscribe('videos', 'topVideos');
   },
   data: function() {
-    return updateGrid('Top Videos', TopVideos);
+    return updateGrid('Top Videos', TopVideos, this);
   }
 }); 
 
@@ -29,7 +29,7 @@ Router.route('/hipHop', {
     return  Meteor.subscribe('videos', 'hipHop');
   },
   data: function() {
-    return updateGrid('Hip Hop', HipHopVideos);
+    return updateGrid('Hip Hop', HipHopVideos, this);
   }
 }); 
 
@@ -40,7 +40,7 @@ Router.route('/interviews', {
     return  Meteor.subscribe('videos', 'interviews');
   },
   data: function() {
-    return updateGrid('Interviews', InterviewVideos);
+    return updateGrid('Interviews', InterviewVideos, this);
   }
 });
 
@@ -51,7 +51,7 @@ Router.route('/live', {
     return  Meteor.subscribe('videos', 'live');
   },
   data: function() {
-   return updateGrid('Live', LiveVideos);
+   return updateGrid('Live', LiveVideos, this);
   }
 });
 
@@ -62,7 +62,7 @@ Router.route('/electronic', {
     return  Meteor.subscribe('videos', 'electronic');
   },
   data: function() {
-    return updateGrid('Electronic', ElectronicVideos);
+    return updateGrid('Electronic', ElectronicVideos, this);
   }
 });  
 
@@ -73,7 +73,7 @@ Router.route('/emerging', {
     return Meteor.subscribe('videos', 'emerging');
   },
   data: function() {
-    return updateGrid('Emerging', EmergingVideos);
+    return updateGrid('Emerging', EmergingVideos, this);
   }
 });  
 
@@ -106,13 +106,21 @@ Router.route('/likes', {
   }
 }); 
 
-var updateGrid = function(genre, collection) {
-  Session.set('videos', null);
-  Session.set('selectedGenre', genre);
-  CurrentVideos = collection;
-  var videos = collection.find({}, {sort:{rank:1}}).fetch();
-  var templateData = { videos: videos  };
-  Session.set('playlist', _.pluck(videos, 'videoId'));
-  Session.set('videos', videos);
-  return templateData;
+var updateGrid = function(genre, collection, route) {
+  if (route.ready()) {
+    Session.set('videos', null);
+    Session.set('selectedGenre', genre);
+    var videos = collection.find({}, {sort:{rank:1}}).fetch();
+    var vidIds = _.pluck(videos, 'videoId');
+    var templateData = { videos: videos  };
+    Session.set('playlist', vidIds);
+    Session.set('videos', videos);
+    if (video) {
+        console.log('here', genre);
+        nextList = vidIds;
+        //video.cuePlaylist(vidIds);
+    }
+    CurrentVideos = collection;
+    return templateData;
+  }
 }

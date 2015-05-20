@@ -28,15 +28,16 @@ Accounts.onLogin(function() {
 	}); 
 });
 
-video = null, playButton = "playButton.png", 
+video = null;
+var playButton = "playButton.png", 
 		pauseButton = "pauseButton.png", tlMinimize = null, 
 		tlDropdown = null, ytPlaylist = [];
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.gridThumbs.rendered = function() {
-	// setTimeout(function() {
-	// 	renderVids();
-	// }, 1500)
+	setTimeout(function() {
+		renderVids();
+	}, 1500)
 }
 
 Template.header.helpers({
@@ -175,28 +176,29 @@ Template.gridThumbs.events({
 				Session.set('currentVideo', thisVid);
 			}
 
-			if (video == null){
-				console.log("First: " + index);
-				if(tlDropdown == null || Session.equals('playerPushedTop', true)){
-					Session.set('playerPushedTop', false);
-					Session.set('playerMinimized', false);
+			
+			console.log("First: " + index);
+			if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+				Session.set('playerPushedTop', false);
+				Session.set('playerMinimized', false);
 
-					tlDropdown = new TimelineLite();
-					document.getElementById("playerContainer").style.display = "block";
-					tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
-					tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
-					// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
-					document.getElementById("minimizePlayer").style.display = "inline-block";
-					document.getElementById("togglePlayer").style.display = "inline-block";
-					document.getElementById("closePlayer").style.display = "none";
-					document.getElementById("expandPlayer").style.display = "none";
-					document.getElementById("downArrow").style.display = "inline-block"
+				tlDropdown = new TimelineLite();
+				document.getElementById("playerContainer").style.display = "block";
+				tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
+				tlDropdown.to(".playerContainer", 0.5, {x:0, y: 0, z: 0});
+				// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
+				document.getElementById("minimizePlayer").style.display = "inline-block";
+				document.getElementById("togglePlayer").style.display = "inline-block";
+				document.getElementById("closePlayer").style.display = "none";
+				document.getElementById("expandPlayer").style.display = "none";
+				document.getElementById("downArrow").style.display = "inline-block"
 
-					document.getElementById("playButton").style.display = "inline-block";
-					document.getElementById("prevButton").style.display = "inline-block";
-					document.getElementById("nextButton").style.display = "inline-block";
-				}
-				renderVids(index);
+				document.getElementById("playButton").style.display = "inline-block";
+				document.getElementById("prevButton").style.display = "inline-block";
+				document.getElementById("nextButton").style.display = "inline-block";
+			
+				//renderVids(index);
+				video.playVideoAt(index)
 			} else{
 				console.log("after: " + index);
 				tlDropdown.restart();
@@ -291,18 +293,13 @@ var findVid = function(videoId) {
 	return thisVid;
 }
 
-var firstPlay = true;
-renderVids = function(rank) {
+firstPlay = true, nextList = null;
+renderVids = function() {
 	Session.set("stateImage",pauseButton);	
 	videoTmp = new YT.Player("player", {
-			cuePlaylist:{
-				listType: 'playlist',
-				list: Session.get('playlist'),
-				index: rank,
-		},
 	events: {
 		onReady: function (event) {
-				event.target.cuePlaylist(Session.get('playlist'),rank);
+				event.target.cuePlaylist(Session.get('playlist'));
 		},
 		onStateChange: function (event) {
 			if (firstPlay && event.data == YT.PlayerState.PLAYING) {
@@ -315,10 +312,15 @@ renderVids = function(rank) {
 			} else if (event.data == YT.PlayerState.PAUSED) {
 				Session.set("stateImage",playButton);
 			} else if (event.data == YT.PlayerState.CUED) {
-				event.target.playVideo();
+				//event.target.playVideo();
 			} else if (event.data == YT.PlayerState.ENDED) {
 				var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
-				Session.set('currentVideo', nextVid);
+				if(nextList) {
+					event.target.cuePlaylist(nextList);
+					Session.set('currentVideo', Session.get('videos')[0]);
+				}
+				else
+					Session.set('currentVideo', nextVid);
 			}
 		},
 		onError: function(errorCode) { //video unavailable
