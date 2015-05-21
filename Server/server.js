@@ -57,7 +57,6 @@ var getShareCounts = function(video) {
 		url: 'https://free.sharedcount.com/url?url=https://www.youtube.com/watch?v=' + video.videoId + '&apikey=e420ebc7ae101c3055a305fa522d65b9075c2edb'
 	}, function(error, response){
 		if(!error){
-			console.log(response);
 			db.videos.update({ videoId : video.videoId }, {$set: {
 				shareCounts : JSON.parse(response)
 			}});
