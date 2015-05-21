@@ -11,7 +11,8 @@ Meteor.startup(function () {
 	Accounts.ui.config({
 		requestPermissions: {
 			google: ['https://www.googleapis.com/auth/youtube']
-		}
+		},
+		requestOfflineToken: {google:true}
 	})
 	if(Meteor.user())
 		Meteor.call('likedVideos', function(err, res) {
@@ -23,6 +24,21 @@ Meteor.startup(function () {
 	setTimeout(function() {
 		renderVids();
 	}, 1500)
+});
+
+var _logout = Meteor.logout;
+Meteor.logout = function customLogout() {
+// Do your thing here
+	Session.set('userLikes', []);
+	_logout.apply(Meteor, arguments);
+}
+
+Accounts.onLogin(function() {
+	Meteor.call('likedVideos', function(err, res) {
+		if(!err) {
+			Session.set('userLikes', res);
+		}
+	}); 
 });
 
 Accounts.onLogin(function() {
