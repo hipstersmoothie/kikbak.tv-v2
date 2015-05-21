@@ -1,3 +1,4 @@
+var base_url = "https://wondervid.herokuapp.com";
 Meteor.startup(function () {
   // code to run on server at startup
   updateAll();
@@ -25,7 +26,7 @@ var updateAll = function() {
 }
 
 var updateThis = function(url, collection) {
-  Meteor.http.get("http://localhost:4000" + url, function(err, res) {
+  Meteor.http.get(base_url + url, function(err, res) {
     _.forEach(res.data, function(node, index) {
       node.rank = index + 1;
       var video = collection.findOne({rank:node.rank})
