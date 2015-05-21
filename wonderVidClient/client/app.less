@@ -1,4 +1,9 @@
 /* CSS declarations go here */
+@reallyTall:   ~"only screen and (min-height: 716px)";
+@tall:   ~"only screen and (min-height: 541px) and (max-height: 715px)";
+@medium:    ~"only screen and (min-height: 300px) and (max-height: 540px)";
+// @short:    ~"only screen and (min-width: 720px) and (max-width: 959px)";
+
 html {
 	height: 100%;
 }
@@ -79,19 +84,19 @@ body {
 	-webkit-column-rule-style: none;
 	-moz-column-rule-style: none;
 	column-rule-style: none;
+}
 
-	.gridMaxedOut{
-		height: 100%;
-		-webkit-columns: 25;
-		-moz-columns: 25;
-		 columns: 25;
-		-webkit-column-width: 35vh;
-		-moz-column-width: 35vh;
-		 /*width: 35vh;*/
-		-webkit-column-gap: 0;
-		-moz-column-gap: 0;
-		 gap: 0;
-	}
+.gridMaxedOut{
+	height: 100%;
+	-webkit-columns: 25;
+	-moz-columns: 25;
+	 columns: 25;
+	-webkit-column-width: 50vh;
+	-moz-column-width: 50vh;
+	 /*width: 50vh;*/
+	-webkit-column-gap: 0;
+	-moz-column-gap: 0;
+	 gap: 0;
 }
 
 .playerContainer{
@@ -243,7 +248,7 @@ body {
 
 		.descriptionText{
 		  position: relative;
-		  bottom: -38%;
+		  bottom: -30%;
 		  height: 30%;
 			overflow: hidden;
 			color: white;
@@ -259,19 +264,11 @@ body {
 	} 
 }
 
-@media screen and ( max-width: 530px ){
-	.descriptionText{
-		font-size: 10px
+@media @medium {
+	.single{
+		height: 50%;
 	}
 
-	.gridMaxedOut{
-		-webkit-column-width:  220px;
-		-moz-column-width:  220px;
-		 column-width:  220px;
-	}
-}
-
-@media screen and ( max-height: 405px ){
 	.gridMaxedOut{
 		-webkit-column-width:  70vh;
 		-moz-column-width:  70vh;
@@ -279,32 +276,77 @@ body {
 	}
 }
 
-@media screen and ( max-height: 300px ){
-	.gridMaxedOut{
-		-webkit-column-width:  100vh;
-		-moz-column-width:  100vh;
-		 column-width:  100vh;
-	}
-}
-
-@media screen and ( min-height: 300px ){
-		.single{
-		height: 50%;
-	}
-}
-
-@media screen and ( min-height: 405px ){
-		.single{
+@media @tall {
+	.single{
 		height: 33%;
 	}
-}
 
-@media screen and ( min-height: 605px ){
-		.single{
-		height: 25%;
-		width: 100%;
+	.gridMaxedOut{
+		-webkit-column-width:  34vh;
+		-moz-column-width:  34vh;
+		 column-width:  34vh;
 	}
 }
+
+@media @reallyTall {
+	.single{
+		height: 25%;
+	}
+
+	.gridMaxedOut{
+		-webkit-column-width:  34vh;
+		-moz-column-width:  34vh;
+		 column-width:  34vh;
+	}
+}
+
+
+// @media screen and ( max-width: 530px ){
+// 	.descriptionText{
+// 		font-size: 10px
+// 	}
+
+// 	.gridMaxedOut{
+// 		-webkit-column-width:  220px;
+// 		-moz-column-width:  220px;
+// 		 column-width:  220px;
+// 	}
+// }
+
+// @media screen and ( max-height: 405px ){
+// 	.gridMaxedOut{
+// 		-webkit-column-width:  70vh;
+// 		-moz-column-width:  70vh;
+// 		 column-width:  70vh;
+// 	}
+// }
+
+// @media screen and ( max-height: 300px ){
+// 	.gridMaxedOut{
+// 		-webkit-column-width:  100vh;
+// 		-moz-column-width:  100vh;
+// 		 column-width:  100vh;
+// 	}
+// }
+
+// @media screen and ( min-height: 300px ){
+// 		.single{
+// 		height: 50%;
+// 	}
+// }
+
+// @media screen and ( min-height: 405px ){
+// 		.single{
+// 		height: 33%;
+// 	}
+// }
+
+// @media screen and ( min-height: 605px ){
+// 	.single{
+// 		height: 25%;
+// 		width: 100%;
+// 	}
+// }
 
 .navbar .nav,
 .navbar .nav > li {
