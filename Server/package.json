@@ -11,6 +11,7 @@
     "gulp-watch": "^4.2.4",
     "lodash": "^3.8.0",
     "mongojs": "0.18.2",
+    "node-schedule": "^0.2.7",
     "parse-rss": "*",
     "request": "^2.55.0",
     "request-enhanced": "^0.1.1",

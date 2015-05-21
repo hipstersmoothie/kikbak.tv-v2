@@ -8,7 +8,8 @@ var http = require('http'),
 		youtubeThumbnail = require('youtube-thumbnail'),
 		YouTube = require('youtube-node'),
 		getTags = require('./getTags'),
-		router = require('./router');
+		router = require('./router'),
+		schedule = require('node-schedule');
  
 var youTube = new YouTube();
 var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
@@ -16,21 +17,26 @@ youTube.setKey('AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg');
 var app = router();
 http.createServer(app).listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
-	compileVideos();
+	startScheduler();
 });
 
-var compileVideos = function() {
-	var minutes = 30, the_interval = minutes * 60 * 1000;
-	db.blogs.find({ }, function(err, myBlogs) {
-		refreshData(myBlogs);
-		setInterval(_.bind(refreshData, null, myBlogs), the_interval);
-	})
+var startScheduler = function() {
+	var scrapeBlogs = new schedule.RecurrenceRule();
+	scrapeBlogs.minute = [29, 59];
+	scrapeBlogs.hour = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 , 20];
+	var j = schedule.scheduleJob(scrapeBlogs, refreshBlogsFeeds);
+
+	var updateYoutubeData = new schedule.RecurrenceRule();
+	updateYoutubeData.minute = [14, 44];
+	updateYoutubeData.hour = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 , 20];
+	var i = schedule.scheduleJob(updateYoutubeData, updateStatsForAllVids);
 }
 
-var refreshData = function(blogs) {
-	console.log('pulling');
-	 _.forEach(blogs, parseFeed);
-	_.delay(updateStatsForAllVids, 15000)
+var refreshBlogsFeeds = function() {
+	console.log('Finding new videos...');
+	db.blogs.find({ }, function(err, blogs) {
+		_.forEach(blogs, parseFeed);
+	});
 }
 
 var updateStatsForAllVids = function() {
