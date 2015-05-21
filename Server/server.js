@@ -102,7 +102,6 @@ var handlePost = function($, blog, link) {
 
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
-			tagVideo(getYouTubeID(iframe.attribs.src), $('p'), $, "")
 			addToDb(iframe.attribs.src, blog, $, link);
 		}
 	});
@@ -125,9 +124,10 @@ var addToDb = function(url, blog, $, link) {
 var updateVid = function(vidList, blog, vidId, $, link) {
 	video = vidList[0];
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
-	if (!_.includes(foundUrls, blog.url)) {
+	if (!_.includes(foundUrls,  blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
-		var tags = getTags($('p'), $, "", "", "");
+		var blogs = blog.tags ? blog.tags : [];
+		var tags = _.union(getTags($('p'), $, "", "", ""), blogs);
 		db.videos.update({ videoId : vidId }, {
 			$addToSet: {
 				foundOn : blog
@@ -142,7 +142,7 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 	}
 }
 
-var newVid = function(vidId, url, blog, $, url) {
+var newVid = function(vidId, url, blog, $, link) {
 	youTube.getById(vidId, function(error, result) {
 		if(result && result['items'] && result['items'].length > 0 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
@@ -152,6 +152,8 @@ var newVid = function(vidId, url, blog, $, url) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)//dont add old videos
 				return;
 			
+			var blogs = blog.tags ? blog.tags : [];
+			var tags =  _.union(getTags($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
 			console.log('adding', url, vidId, (Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day); 
 			db.videos.update({ videoId : vidId }, {
 				$setOnInsert: {
@@ -173,7 +175,7 @@ var newVid = function(vidId, url, blog, $, url) {
 				},
 				$addToSet: {
 					tags : {
-						$each: getTags($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle'])
+						$each: tags
 					}
 				}
 			}, { upsert : true });

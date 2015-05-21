@@ -82,6 +82,9 @@ Router.route('/likes', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
+    if(!Meteor.user())
+      AntiModals.overlay('simpleModal');
+
     return [function() {
       return Session.get('userLikes').length > 0;
     }]

@@ -34,6 +34,7 @@ Meteor.logout = function customLogout() {
 }
 
 Accounts.onLogin(function() {
+	AntiModals.dismissOverlay();
 	Meteor.call('likedVideos', function(err, res) {
 		if(!err) {
 			Session.set('userLikes', res);
@@ -133,7 +134,10 @@ Template.header.events({
 		video.previousVideo();	
     },
 	'click .likedVideos' : function() {
-		Router.go('/likes');
+		if(!Meteor.user())
+			AntiModals.overlay('simpleModal');
+		else
+			Router.go('/likes');
 	}
 });
 
@@ -178,7 +182,7 @@ Template.player.events({
 		if(tlMinimize == null){
 		tlMinimize = new TimelineLite();
 		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
-	}else
+	} else
 		tlMinimize.restart();
 		Session.set('playerMinimized', true);
 		document.getElementById("minimizePlayer").style.display = "none";
@@ -301,20 +305,24 @@ Template.gridThumbs.events({
 		}
 	},
 	'click .like': function() {
-		var likesIds = _.map(Session.get('userLikes'), function(like) {
-			return like.videoId;
-		});
-		var likes = Session.get('userLikes');
-		var index = likesIds.indexOf(this.videoId);
+		if(!Meteor.user())
+			AntiModals.overlay('simpleModal');
+		else {
+			var likesIds = _.map(Session.get('userLikes'), function(like) {
+				return like.videoId;
+			});
+			var likes = Session.get('userLikes');
+			var index = likesIds.indexOf(this.videoId);
 
-		if(index > -1) {
-			likes.splice(index, 1);
-			Session.set('userLikes', likes);
-			Meteor.call('likeVideo', this.videoId, 'dislike');
-		} else {
-			likes.unshift(this);
-			Session.set('userLikes', likes);
-			Meteor.call('likeVideo', this.videoId, 'like');
+			if(index > -1) {
+				likes.splice(index, 1);
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', this.videoId, 'dislike');
+			} else {
+				likes.unshift(this);
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', this.videoId, 'like');
+			}
 		}	
 	}
 });

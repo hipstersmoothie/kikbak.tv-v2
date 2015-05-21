@@ -9,6 +9,15 @@ template(name="layout")
 	+player
 	+yield
 
+template(name="simpleModal")
+	.anti-modal-box
+		.anti-modal-header 
+			.anti-modal-title You're not logged in!
+			.anti-modal-closer &times;
+		.anti-modal-body 
+			p Log in with your google account to like videos and view all your youtube likes.
+			+loginButtons
+
 template(name='player')
 	.blackOverlay(class="#{overlayPopped}")
 	.appBody
