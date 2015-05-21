@@ -1,7 +1,12 @@
 {
   "name": "mongo-server",
   "version": "0.0.1",
-  "private": true,
+  "description": "A top 100 of the newest music videos.",
+  "author": "Andrew",
+  "main": "server.js",
+  "engines": {
+    "node": "0.12.2"
+  },
   "dependencies": {
     "cheerio": "latest",
     "express": "3.3.4",
