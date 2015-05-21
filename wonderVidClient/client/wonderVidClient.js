@@ -6,8 +6,8 @@ Meteor.startup(function () {
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.setDefault('gridPushedRight', "gridMaxedOut");
-	Session.setDefault('playerPushedTop', true);
-	Session.setDefault('playerMinimized', false);
+	Session.set('playerPushedTop', true);
+	Session.set('playerMinimized', false);
 	Accounts.ui.config({
 		requestPermissions: {
 			google: ['https://www.googleapis.com/auth/youtube']
@@ -130,8 +130,24 @@ Template.player.helpers({
 	},
 	currentVideo: function() {
 		return Session.get('currentVideo');
+	},
+	sharedata: function() {
+		var url = 'https://www.youtube.com/watch?v=' + Session.get('currentVideo').videoId;
+		return {
+      facebook: true,
+      twitter: true,
+      pinterest: false,
+      shareData: {
+        url: url,
+        defaultShareText: ' -- Found on WonderVid'
+      }
+    }
 	}
 });
+
+Template.player.onRendered = function() {
+	Socialite.load();
+}
 
 Template.player.events({
 	"click .togglePlayer": function () {

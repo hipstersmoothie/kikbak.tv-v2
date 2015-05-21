@@ -18,7 +18,7 @@ template(name='player')
 		.playerSideBar(id="playerSideBar")
 			.sideTitle 
 				p {{currentVideo.title}} 
-
+			+lmSocialShare opts=sharedata
 			.sideDescription 
 				p {{currentVideo.description}}
 
