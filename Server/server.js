@@ -30,6 +30,10 @@ var startScheduler = function() {
 	updateYoutubeData.minute = [14, 44];
 	updateYoutubeData.hour = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 , 20];
 	var i = schedule.scheduleJob(updateYoutubeData, updateStatsForAllVids);
+
+	var updateShareCounts = new schedule.RecurrenceRule();
+	updateShareCounts.hour = [8, 16];
+	var i = schedule.scheduleJob(updateShareCounts, refreshShareCounts);
 }
 
 var refreshBlogsFeeds = function() {
@@ -39,12 +43,34 @@ var refreshBlogsFeeds = function() {
 	});
 }
 
+var refreshShareCounts = function() {
+	db.videos.find({ }, function(err, videos) {
+		if (err)
+			console.log(err);
+		else 
+			_.forEach(videos, getShareCounts);
+	});
+}
+
+var getShareCounts = function(video) {
+	request.get({
+		url: 'https://free.sharedcount.com/url?url=https://www.youtube.com/watch?v=' + video.videoId + '&apikey=e420ebc7ae101c3055a305fa522d65b9075c2edb'
+	}, function(error, response){
+		if(!error){
+			console.log(response);
+			db.videos.update({ videoId : video.videoId }, {$set: {
+				shareCounts : JSON.parse(response)
+			}});
+		} 
+	})
+}
+
 var updateStatsForAllVids = function() {
 	db.videos.find({ }, function(err, videos) {  	
 		if (err)
 			console.log(err);
 		else 
-		_.forEach(videos, updateStats);
+			_.forEach(videos, updateStats);
 	});
 }
 
@@ -197,5 +223,5 @@ var getHtml = function(post, blog) {
 		} else {
 			//console.log("getHtml", blog, post.link, error);
 		}
-	})
+	});
 }
