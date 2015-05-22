@@ -184,6 +184,15 @@ Template.player.helpers({
 	},
 	pushedTop: function() {
 		return Session.get('playerPushedTop') && Session.get('currentVideo') != null;
+	},
+	formedDate: function() {
+		var dateString = Session.get("currentVideo").youTubePostDate;
+		var year = dateString.substring(0,4);
+		var day = dateString.substring(5,7);
+		var month = dateString.substring(8,10);
+		console.log(dateString);
+		return new Date(year, month, day, 0, 0, 0, 0).toDateString();
+		return dateString;		
 	}
 });
 
@@ -201,12 +210,14 @@ Template.player.events({
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
 		} else
 			tlMinimize.restart();
+		document.getElementById("playerContainer").style.display = "none";
 		Session.set('playerMinimized', true);
 	},
 	"click .expandPlayer": function () {
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
+		document.getElementById("playerContainer").style.display = "block";
 	},
 	"click .closePlayer": function () {
 		tlDropdown.reverse();
@@ -214,11 +225,13 @@ Template.player.events({
 		Session.set('playerPushedTop', true);
 		Session.set('playerMinimized', false);
 		video.pauseVideo();
+
 	},
 	"click .downArrow": function () {
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
+			document.getElementById("playerContainer").style.display = "block";
 		}
 	}
 });
