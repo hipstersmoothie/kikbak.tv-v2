@@ -22,8 +22,7 @@ Meteor.startup(function () {
 
 	setTimeout(function() {
 		renderVids();
-	}, 1500)
-	console.log(less)
+	}, 1500);
 });
 
 var _logout = Meteor.logout;
@@ -129,16 +128,7 @@ Template.header.events({
 	},
 	'click .like': function() {
 		hitLikeButton(Session.get("currentVideo"));
-	},
-	'click .navbar-brand': function() {
-		console.log("GREEN");
-		less.modifyVars({
-		  '@RGBColor': 'green',
-		  '@HexColor': 'green'
-		});
-		less.refresh(true);
-	},
-
+	}
 });
 
 var hitLikeButton = function(video) {
@@ -220,14 +210,14 @@ Template.player.events({
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
 		} else
 			tlMinimize.restart();
-		document.getElementById("playerSideBar").style.display = "none";
+		document.getElementById("playerContainer").style.display = "none";
 		Session.set('playerMinimized', true);
 	},
 	"click .expandPlayer": function () {
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
-		document.getElementById("playerSideBar").style.display = "block";
+		document.getElementById("playerContainer").style.display = "block";
 	},
 	"click .closePlayer": function () {
 		tlDropdown.reverse();
@@ -241,7 +231,7 @@ Template.player.events({
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
-			document.getElementById("playerSideBar").style.display = "block";
+			document.getElementById("playerContainer").style.display = "block";
 		}
 	}
 });
@@ -295,23 +285,16 @@ Template.gridThumbs.events({
 			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
 			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
 
-			video.playVideo();
-			video.playVideoAt(index)
+			Meteor.defer(function () {
+				video.playVideo();
+				video.playVideoAt(index)
+			});
 		} else{
-			if(Session.equals('playerPushedTop', false) && Session.equals('playerMinimized', true)){
-				tlMinimize.reverse();
-				video.playVideoAt(index);
-				Session.set('playerPushedTop', false);
-				Session.set('playerMinimized', false);			
-				document.getElementById("playerSideBar").style.display = "block";
-			}else{
-				console.log("after: " + index);
-				tlDropdown.restart();
-				video.playVideoAt(index);
-				Session.set('playerPushedTop', false);
-				Session.set('playerMinimized', false);
-				document.getElementById("playerSideBar").style.display = "block";
-			}
+			console.log("after: " + index);
+			tlDropdown.restart();
+			video.playVideoAt(index);
+			Session.set('playerPushedTop', false);
+			Session.set('playerMinimized', false);
 		}
 	},
 	'click .like': function() {
