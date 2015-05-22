@@ -73,7 +73,13 @@ Template.header.helpers({
 	},
 	stateImage: function () {
 		return Session.get("stateImage");
-	}
+	},
+	isLiked: function() {
+		var likes = _.map(Session.get('userLikes'), function(like) {
+			return like.videoId;
+		});
+		return likes.indexOf(this.videoId) > -1;
+	},
 });
 
 CurrentVideos = null;
@@ -138,6 +144,27 @@ Template.header.events({
 			AntiModals.overlay('simpleModal');
 		else
 			Router.go('/likes');
+	},
+	'click .likeButton': function() {
+		if(!Meteor.user())
+			AntiModals.overlay('simpleModal');
+		else {
+			var likesIds = _.map(Session.get('userLikes'), function(like) {
+				return like.videoId;
+			});
+			var likes = Session.get('userLikes');
+			var index = likesIds.indexOf(Session.get("currentVideo").videoId);
+
+			if(index > -1) {
+				likes.splice(index, 1);
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', Session.get("currentVideo").videoId, 'dislike');
+			} else {
+				likes.unshift(Session.get("currentVideo"));
+				Session.set('userLikes', likes);
+				Meteor.call('likeVideo', Session.get("currentVideo").videoId, 'like');
+			}
+		}	
 	}
 });
 
