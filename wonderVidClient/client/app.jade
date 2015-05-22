@@ -31,6 +31,9 @@ template(name='player')
 				p {{currentVideo.title}}
 			.sideDate
 				p #{formedDate}
+			.sideRank
+				p(class="rankDesc") Wonder Rank:
+				p(class="number") {{currentVideo.wonderRank}}
 			.stats
 				.sideLikes
 					p {{currentVideo.shareCounts.Facebook.total_count}}
