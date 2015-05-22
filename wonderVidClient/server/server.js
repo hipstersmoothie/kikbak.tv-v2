@@ -1,19 +1,30 @@
-var base_url = "https://wondervid.herokuapp.com";
+var base_url;
 Meteor.startup(function () {
   // code to run on server at startup
-  updateAll();
-  var minutes = 30, the_interval = minutes * 60 * 1000;
-  Meteor.setInterval(updateAll, the_interval);
-
   ServiceConfiguration.configurations.remove({
     service: "google"
   });
-  ServiceConfiguration.configurations.insert({
-    service: "google",
-    clientId: "1017109112095-csl2k4dhc0nckga4t9n8b3pundgciqan.apps.googleusercontent.com",
-    loginStyle: "popup",
-    secret: "nHYeC7HtGr4IEqIZhdPGBGeb"
-  });
+  if(Meteor.absoluteUrl() == 'http://localhost:3000/') {
+    base_url = "http://localhost:5000";
+    ServiceConfiguration.configurations.insert({
+      service: "google",
+      clientId: "1017109112095-csl2k4dhc0nckga4t9n8b3pundgciqan.apps.googleusercontent.com",
+      loginStyle: "redirect",
+      secret: "nHYeC7HtGr4IEqIZhdPGBGeb"
+    });
+  } else {
+    base_url = "https://wondervid.herokuapp.com";
+    ServiceConfiguration.configurations.insert({
+      service: "google",
+      clientId: "1017109112095-8jsbj46ehov7pku11e4bu6111cro8tt6.apps.googleusercontent.com",
+      loginStyle: "redirect",
+      secret: "deh7tJKB5kfDCfnGGUo1ZTVc"
+    });
+  }
+
+  updateAll();
+  var minutes = 30, the_interval = minutes * 60 * 1000;
+  Meteor.setInterval(updateAll, the_interval);
 });
 
 var updateAll = function() {
@@ -50,17 +61,17 @@ EmergingVideos = new Mongo.Collection('emerging');
 
 Meteor.publish('videos', function(type) {
   if (type == "topVideos") {
-    return TopVideos.find({});
+    return TopVideos.find({}, {sort:{rank:1}});
   } else if (type == 'hipHop') {
-    return HipHopVideos.find({});
+    return HipHopVideos.find({}, {sort:{rank:1}});
   } else if (type == 'electronic') {
-    return ElectronicVideos.find({});
+    return ElectronicVideos.find({}, {sort:{rank:1}});
   } else if (type == 'live') {
-    return LiveVideos.find({});
+    return LiveVideos.find({}, {sort:{rank:1}});
   } else if (type == 'interviews') {
-    return InterviewVideos.find({});
+    return InterviewVideos.find({}, {sort:{rank:1}});
   } else if (type == 'emerging') {
-    return EmergingVideos.find({});
+    return EmergingVideos.find({}, {sort:{rank:1}});
   }
   return [];
 });
