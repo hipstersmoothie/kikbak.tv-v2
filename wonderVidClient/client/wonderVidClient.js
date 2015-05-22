@@ -152,7 +152,7 @@ Template.player.helpers({
 		return Session.get('currentVideo');
 	},
 	niceDescription: function() {
-		return linkify(Session.get('currentVideo').description);
+		return Session.get('currentVideo').description;
 	},
 	sharedata: function() {
 		var url = 'https://www.youtube.com/watch?v=' + Session.get('currentVideo').videoId;

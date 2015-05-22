@@ -35,7 +35,7 @@ template(name='player')
 					p {{currentVideo.shareCounts.Twitter}} tweets
 			+lmSocialShare opts=sharedata
 			.sideDescription 
-				p {{niceDescription}}
+				p {{#autolink}}{{niceDescription}}{{/autolink}}
 
 		#player
 		.togglePlayer(id="togglePlayer")
