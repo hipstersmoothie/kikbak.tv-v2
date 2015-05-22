@@ -298,11 +298,20 @@ Template.gridThumbs.events({
 			video.playVideo();
 			video.playVideoAt(index)
 		} else{
-			console.log("after: " + index);
-			tlDropdown.restart();
-			video.playVideoAt(index);
-			Session.set('playerPushedTop', false);
-			Session.set('playerMinimized', false);
+			if(Session.equals('playerPushedTop', false) && Session.equals('playerMinimized', true)){
+				tlMinimize.reverse();
+				video.playVideoAt(index);
+				Session.set('playerPushedTop', false);
+				Session.set('playerMinimized', false);			
+				document.getElementById("playerSideBar").style.display = "block";
+			}else{
+				console.log("after: " + index);
+				tlDropdown.restart();
+				video.playVideoAt(index);
+				Session.set('playerPushedTop', false);
+				Session.set('playerMinimized', false);
+				document.getElementById("playerSideBar").style.display = "block";
+			}
 		}
 	},
 	'click .like': function() {
