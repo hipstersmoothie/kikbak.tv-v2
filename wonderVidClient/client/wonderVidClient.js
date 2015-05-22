@@ -227,7 +227,7 @@ Template.player.events({
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
-		document.getElementById("playerContainer").style.display = "block";
+		document.getElementById("playerSideBar").style.display = "block";
 	},
 	"click .closePlayer": function () {
 		tlDropdown.reverse();
@@ -241,7 +241,7 @@ Template.player.events({
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
-			document.getElementById("playerContainer").style.display = "block";
+			document.getElementById("playerSideBar").style.display = "block";
 		}
 	}
 });
