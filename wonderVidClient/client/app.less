@@ -1,7 +1,7 @@
 /* CSS declarations go here */
 @reallyTall:   ~"only screen and (min-height: 716px)";
-@tall:   ~"only screen and (min-height: 541px) and (max-height: 715px)";
-@medium:    ~"only screen and (min-height: 300px) and (max-height: 540px)";
+@tall:   ~"only screen and (min-height: 501px) and (max-height: 715px)";
+@medium:    ~"only screen and (min-height: 300px) and (max-height: 500px)";
 // @short:    ~"only screen and (min-width: 720px) and (max-width: 959px)";
 
 html {
@@ -76,7 +76,7 @@ body {
 	display: inline-block;
 	float: right;
 	margin: 0;
-	height: 91%%;
+	height: 100%;
 	padding-top: 50px;
 	-webkit-column-gap: 0;
 	-moz-column-gap: 0;
@@ -88,12 +88,12 @@ body {
 
 .gridMaxedOut{
 	height: 100%;
-	-webkit-columns: 25;
-	-moz-columns: 25;
-	 columns: 25;
-	-webkit-column-width: 70vh;
-	-moz-column-width: 70vh;
-	 /*width: 70vh;*/
+	-webkit-columns: 100;
+	-moz-columns: 100;
+	 columns: 100;
+	-webkit-column-width: 100vh;
+	-moz-column-width: 100vh;
+	 /*width: 100vh;*/
 	-webkit-column-gap: 0;
 	-moz-column-gap: 0;
 	 gap: 0;
@@ -192,6 +192,7 @@ body {
 	opacity: 1;
 	width: 100%;
 	height: 100%;
+	overflow-y: inherit;
 	display: inline-block;
 		background-repeat: no-repeat;
 		background: #252525;
@@ -266,10 +267,20 @@ body {
 
 @media @medium {
 	.single{
-		height: 50%;
+		overflow-y: hidden;
+		height: 48%;
+		.overlay {
+			.descriptionText {
+
+			}
+		}
 	}
 
 	.gridMaxedOut{
+		-webkit-columns: 50;
+		-moz-columns: 50;
+		 columns: 50;
+
 		-webkit-column-width:  70vh;
 		-moz-column-width:  70vh;
 		 column-width:  70vh;
@@ -278,7 +289,12 @@ body {
 
 @media @tall {
 	.single{
-		height: 33%;
+		height: 32%;
+		.overlay {
+			.descriptionText {
+				bottom: -41%;
+			}
+		}
 	}
 
 	.gridMaxedOut{
@@ -290,10 +306,13 @@ body {
 
 @media @reallyTall {
 	.single{
-		height: 25%;
+		height: 24%;
 	}
 
 	.gridMaxedOut{
+		-webkit-columns: 25;
+		-moz-columns: 25;
+		 columns: 25;
 		-webkit-column-width:  34vh;
 		-moz-column-width:  34vh;
 		 column-width:  34vh;
