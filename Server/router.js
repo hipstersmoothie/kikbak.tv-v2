@@ -10,7 +10,7 @@ var startExpress = function() {
 	app.set('port', process.env.PORT || 5000); 
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.get('/', function (req, res) {
-	  res.send('<html><body><h1>Hello World</h1></body></html>');
+	  res.send('<html><body><h1>API is up.</h1></body></html>');
 	});
 
 	app.get('/videosList', function (req, res) {
@@ -30,7 +30,7 @@ var startExpress = function() {
 	});
 
 	app.get('/videos', function (req, res) {
-		db.videos.find({tags : {$nin : ["Live", "Interview", "Trailer"]}}, function(err, videos) {
+		db.videos.find({}, function(err, videos) {
 			console.log('newVids');
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
@@ -45,14 +45,14 @@ var startExpress = function() {
 	});
 
 	app.get('/videos-hip-hop', function (req, res) {
-		db.videos.find({tags: {$nin : ["Live", "Interview", "Trailer"], $in: ["Hip Hop"]}}, function(err, videos) {
+		db.videos.find({tags: { $in: ["Hip Hop"]}}, function(err, videos) {
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
 	});
 
 	app.get('/electronic', function (req, res) {
-		db.videos.find({tags: {$nin : ["Live", "Interview", "Trailer"], $in: ["Electonic"]}}, function(err, videos) {
+		db.videos.find({tags: { $in: ["Electonic"]}}, function(err, videos) {
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
@@ -78,7 +78,6 @@ var startExpress = function() {
 			res.send(videos.splice(0,100));
 		});
 	});
-
 	return app;
 }
 

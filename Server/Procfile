@@ -1,1 +1,4 @@
 web: node server.js
+parseFeeds: node scheduler.js
+shareCounts: node getShareCounts.js
+updateStats: node updateStats.js

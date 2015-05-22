@@ -1,4 +1,6 @@
 head
+	meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
+	meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1")
 	title wonderVidClient
 	link(href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css')
 body
@@ -14,7 +16,7 @@ template(name="simpleModal")
 			.anti-modal-title You're not logged in!
 			.anti-modal-closer &times;
 		.anti-modal-body 
-			p Log in with your google account to like videos and view all your youtube likes.
+			| Log in with your google account to like videos and view all your youtube likes.
 			+loginButtons
 
 template(name='player')
