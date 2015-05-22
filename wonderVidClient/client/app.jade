@@ -28,11 +28,11 @@ template(name='player')
 		.playerSideBar(id="playerSideBar")
 			.sideTitle
 				p {{currentVideo.title}}
-			.sideLikes
-				p {{currentVideo.oldStats.likeCount}} likes
-			.sideDislikes
-				p {{currentVideo.oldStats.dislikeCount}} dislikes
-			br
+			.stats
+				.sideLikes
+					p {{currentVideo.shareCounts.Facebook.total_count}} shares
+				.sideDislikes
+					p {{currentVideo.shareCounts.Twitter}} tweets
 			+lmSocialShare opts=sharedata
 			.sideDescription 
 				p {{niceDescription}}
