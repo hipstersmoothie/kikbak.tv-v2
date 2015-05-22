@@ -67,7 +67,7 @@ body {
 	position: fixed;
 	top: 50px;
 	left: 45%;
-	display: none;
+	// display: none;
 	z-index: 1;
 }
 
@@ -207,7 +207,7 @@ body {
 		/* float: right; */
 		right: 0;
 		top: -35px;
-		display: none;
+		// display: none;
 	}
 
 	.expandPlayer{  
@@ -216,7 +216,7 @@ body {
 		position: absolute;
 		/* float: right; */
 		top: -35px;
-		display: none;
+		// display: none;
 		left: 0;
 	}
 }
@@ -307,13 +307,16 @@ body {
 }
 
 
-.heart-redHeader {
-	background-image: url('/images/likeSelected.png');
+#headerLike {
+	opacity: 1;
+	margin-top: 10px;
 }
 
-.likeButton {
+.like {
 	width: 24px;
 	height: 24px;
+	float: right;
+    opacity: 0;
 	background-image: url('/images/likeNone.png');
 	margin: 5px;
 	transition: opacity 0.35s ease-out;
@@ -321,6 +324,11 @@ body {
 	-moz-transition: opacity 0.35s ease-out;
 	-ms-transition: opacity 0.35s ease-out;
 	-o-transition: opacity 0.35s ease-out;
+}
+
+.heart-red {
+	opacity: 1;
+	background-image: url('/images/likeSelected.png');
 }
 
 
@@ -488,6 +496,13 @@ body {
 	height: 48px;
 	display: none;
 }
+
+.nextButton,
+.prevButton,
+.playButton {
+	display: inline-block;
+}
+
 
 ::-webkit-scrollbar {
 		width: 3px;

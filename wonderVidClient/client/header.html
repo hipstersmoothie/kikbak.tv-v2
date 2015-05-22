@@ -16,19 +16,22 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav navbar-center">
-          <li>
-            <img id="prevButton" class="navbar-brand prevButton" src="/images/prev.png">
-            <img id="playButton" class="navbar-brand playButton" src="/images/{{stateImage}}">
-            <img id="nextButton" class="navbar-brand nextButton" src="/images/next.png">
-          </li>
-          <li>
-            <a href="">
-              {{currentVideo.title}}
-            </a>
-          </li>
-          <li>
-            <div id="likeButton" class="navbar-brand {{#if isLiked}}heart-redHeader{{/if}} likeButton"></div>
-          </li>
+          {{#if isVideo}}
+            <li>
+              <img id="prevButton" class="navbar-brand prevButton" src="/images/prev.png">
+              <img id="playButton" class="navbar-brand playButton" src="/images/{{stateImage}}">
+              <img id="nextButton" class="navbar-brand nextButton" src="/images/next.png">
+            </li>
+            <li>
+              <a href="">
+                {{currentVideo.title}}
+              </a>
+            </li>
+            <li>
+              <div id="headerLike" class="like {{#if isLiked}}heart-red{{/if}}">
+              </div>
+            </li>
+          {{/if}}
         </ul>
 
 

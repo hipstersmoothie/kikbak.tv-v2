@@ -28,27 +28,22 @@ Meteor.startup(function () {
 
 var _logout = Meteor.logout;
 Meteor.logout = function customLogout() {
-// Do your thing here
 	Session.set('userLikes', []);
 	_logout.apply(Meteor, arguments);
 }
 
 Accounts.onLogin(function() {
 	AntiModals.dismissOverlay();
-	Meteor.call('likedVideos', function(err, res) {
-		if(!err) {
-			Session.set('userLikes', res);
-		}
-	}); 
+	getLikes();
 });
+Accounts.onLogin(getLikes);
 
-Accounts.onLogin(function() {
+var getLikes = function() {
 	Meteor.call('likedVideos', function(err, res) {
-		if(!err) {
+		if(!err) 
 			Session.set('userLikes', res);
-		}
 	}); 
-});
+}
 
 video = null;
 var playButton = "playButton.png", 
@@ -78,40 +73,31 @@ Template.header.helpers({
 		var likes = _.map(Session.get('userLikes'), function(like) {
 			return like.videoId;
 		});
-		return likes.indexOf(this.videoId) > -1;
+		return likes.indexOf(Session.get('currentVideo').videoId) > -1;
 	},
+	isVideo: function() {
+		return Session.get('currentVideo') != null;
+	}
 });
 
 CurrentVideos = null;
 Template.header.events({
 	'click .topVideos': function() {
-		// if(video)
-		// 	video.destroy(); 
 		Router.go('/');
 	},
 	'click .hipHopVideos': function() {
-		// if(video)
-		// 	video.destroy(); 
 		Router.go('/hipHop');
 	},
 	'click .interviewVideos': function() {
-		// if(video)
-		// 	video.destroy(); 
 		Router.go('/interviews');
 	},
 	'click .liveVideos': function() {
-		// if(video)
-		// 	video.destroy(); 
 		Router.go('/live');
 	},
 	'click .electronicVideos': function() {
-		// if(video)
-		// 	video.destroy(); 
 		Router.go('/electronic');
 	},
 	'click .emergingVideos': function() {
-		// if(video)
-		// 	video.destroy(); 
 		Router.go('/emerging');
 	},
 	"click .playButton": function () {
@@ -125,10 +111,6 @@ Template.header.events({
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
-			document.getElementById("minimizePlayer").style.display = "inline-block";
-			document.getElementById("togglePlayer").style.display = "inline-block";
-			document.getElementById("closePlayer").style.display = "none";
-			document.getElementById("expandPlayer").style.display = "none";
 		}
 	},
 	"click .nextButton": function () {
@@ -138,7 +120,7 @@ Template.header.events({
 	"click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
-    },
+  },
 	'click .likedVideos' : function() {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -146,27 +128,31 @@ Template.header.events({
 			Router.go('/likes');
 	},
 	'click .likeButton': function() {
-		if(!Meteor.user())
-			AntiModals.overlay('simpleModal');
-		else {
-			var likesIds = _.map(Session.get('userLikes'), function(like) {
-				return like.videoId;
-			});
-			var likes = Session.get('userLikes');
-			var index = likesIds.indexOf(Session.get("currentVideo").videoId);
-
-			if(index > -1) {
-				likes.splice(index, 1);
-				Session.set('userLikes', likes);
-				Meteor.call('likeVideo', Session.get("currentVideo").videoId, 'dislike');
-			} else {
-				likes.unshift(Session.get("currentVideo"));
-				Session.set('userLikes', likes);
-				Meteor.call('likeVideo', Session.get("currentVideo").videoId, 'like');
-			}
-		}	
+		hitLikeButton(Session.get("currentVideo"));
 	}
 });
+
+var hitLikeButton = function(video) {
+	if(!Meteor.user())
+		AntiModals.overlay('simpleModal');
+	else {
+		var likes = Session.get('userLikes');
+		var likesIds = _.map(likes, function(like) {
+			return like.videoId;
+		});
+		var index = likesIds.indexOf(video.videoId);
+
+		if(index > -1) {
+			likes.splice(index, 1);
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', video.videoId, 'dislike');
+		} else {
+			likes.unshift(video);
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', video.videoId, 'like');
+		}
+	}
+}
 
 Template.player.helpers({
 	overlayPopped: function() {
@@ -176,58 +162,52 @@ Template.player.helpers({
 			return "overlayBack"
 	},
 	currentVideo: function() {
-		return Session.get('currentVideo');
-	},
-	niceDescription: function() {
-		return Session.get('currentVideo').description;
+		return Session.get('currentVideo') ? Session.get('currentVideo') : {description:""};
 	},
 	sharedata: function() {
-		var url = 'https://www.youtube.com/watch?v=' + Session.get('currentVideo').videoId;
-		return {
-      facebook: true,
-      twitter: true,
-      pinterest: false,
-      shareData: {
-        url: url,
-        defaultShareText: ' -- Found on WonderVid'
-      }
-    }
+		var video =  Session.get('currentVideo');
+		if(video) {
+			var url = 'https://www.youtube.com/watch?v=' + Session.get('currentVideo').videoId;
+			return {
+	      facebook: true,
+	      twitter: true,
+	      pinterest: false,
+	      shareData: {
+	        url: url,
+	        defaultShareText: ' -- Found on WonderVid'
+	      }
+	    }
+		} else
+			return {};
+	},
+	minimized:function() {
+		return Session.get('playerMinimized');
+	},
+	pushedTop: function() {
+		return Session.get('playerPushedTop') && Session.get('currentVideo') != null;
 	}
 });
-
-Template.player.onRendered = function() {
-	Socialite.load();
-}
 
 Template.player.events({
 	"click .togglePlayer": function () {
 		if(Session.equals('playerPushedTop', false)){
 			Session.set('playerPushedTop', true);
 			tlDropdown.reverse();
-			// TweenLite.to(".togglePlayer", 0.5, { x:0, y:0,z:0, rotation:270});
 		}
 		Session.set('playerMinimized', false);
 	},
 	"click .minimizePlayer": function () {
 		if(tlMinimize == null){
-		tlMinimize = new TimelineLite();
-		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
-	} else
-		tlMinimize.restart();
+			tlMinimize = new TimelineLite();
+			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+		} else
+			tlMinimize.restart();
 		Session.set('playerMinimized', true);
-		document.getElementById("minimizePlayer").style.display = "none";
-		document.getElementById("togglePlayer").style.display = "none";
-		document.getElementById("closePlayer").style.display = "inline-block";
-		document.getElementById("expandPlayer").style.display = "inline-block";
 	},
 	"click .expandPlayer": function () {
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
-		document.getElementById("minimizePlayer").style.display = "inline-block";
-		document.getElementById("togglePlayer").style.display = "inline-block";
-		document.getElementById("closePlayer").style.display = "none";
-		document.getElementById("expandPlayer").style.display = "none";
 	},
 	"click .closePlayer": function () {
 		tlDropdown.reverse();
@@ -235,20 +215,11 @@ Template.player.events({
 		Session.set('playerPushedTop', true);
 		Session.set('playerMinimized', false);
 		video.pauseVideo();
-		document.getElementById("minimizePlayer").style.display = "none";
-		document.getElementById("togglePlayer").style.display = "none";
-		document.getElementById("closePlayer").style.display = "inline-block";
-		document.getElementById("expandPlayer").style.display = "inline-block";
 	},
 	"click .downArrow": function () {
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
-			
-			document.getElementById("minimizePlayer").style.display = "inline-block";
-			document.getElementById("togglePlayer").style.display = "inline-block";
-			document.getElementById("closePlayer").style.display = "none";
-			document.getElementById("expandPlayer").style.display = "none";
 		}
 	}
 });
@@ -285,18 +256,17 @@ Template.gridThumbs.events({
 				thisVid = video;
 				return false;
 			}
-		})
+		});
 		
 		if (index == -1) {
 			Session.set('currentVideo', Session.get('videos')[thisVid.rank + 1]);
 			video.playVideoAt(thisVid.rank);
 			return;
-		} else {
-			Session.set('currentVideo', thisVid);
 		}
-		
-		console.log("First: " + index);
+
+		Session.set('currentVideo', thisVid);
 		if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+			console.log("First: " + index);
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
 
@@ -306,20 +276,7 @@ Template.gridThumbs.events({
 			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
 			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
 
-			// TweenLite.to(".togglePlayer", 0.5, { rotation:90});
-			document.getElementById("minimizePlayer").style.display = "inline-block";
-			document.getElementById("togglePlayer").style.display = "inline-block";
-			document.getElementById("closePlayer").style.display = "none";
-			document.getElementById("expandPlayer").style.display = "none";
-			document.getElementById("downArrow").style.display = "inline-block"
-			document.getElementById("playerSideBar").style.display = "inline-block";
-
-			document.getElementById("playButton").style.display = "inline-block";
-			document.getElementById("prevButton").style.display = "inline-block";
-			document.getElementById("nextButton").style.display = "inline-block";
 			video.playVideo();
-
-			//renderVids(index);
 			video.playVideoAt(index)
 		} else{
 			console.log("after: " + index);
@@ -327,40 +284,19 @@ Template.gridThumbs.events({
 			video.playVideoAt(index);
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
-			document.getElementById("minimizePlayer").style.display = "inline-block";
-			document.getElementById("togglePlayer").style.display = "inline-block";
-			document.getElementById("closePlayer").style.display = "none";
-			document.getElementById("expandPlayer").style.display = "none";
-
 		}
 	},
 	'click .like': function() {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
-		else {
-			var likesIds = _.map(Session.get('userLikes'), function(like) {
-				return like.videoId;
-			});
-			var likes = Session.get('userLikes');
-			var index = likesIds.indexOf(this.videoId);
-
-			if(index > -1) {
-				likes.splice(index, 1);
-				Session.set('userLikes', likes);
-				Meteor.call('likeVideo', this.videoId, 'dislike');
-			} else {
-				likes.unshift(this);
-				Session.set('userLikes', likes);
-				Meteor.call('likeVideo', this.videoId, 'like');
-			}
-		}	
+		else
+			hitLikeButton(this);
 	}
 });
 
 var findVid = function(videoId) {
 	var thisVid = null;
 	_.forEach(Session.get('videos'), function(video) {
-		// console.log(video.videoId, videoId)
 		if(video.videoId == videoId) {
 			thisVid = video;
 			return false;
@@ -417,22 +353,3 @@ renderVids = function() {
 
 	YT.load();   	
 };
-
-
-function linkify(inputText) {
-    var replacedText, replacePattern1, replacePattern2, replacePattern3;
-
-    //URLs starting with http://, https://, or ftp://
-    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
-
-    //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-    replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
-
-    //Change email addresses to mailto:: links.
-    replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-    replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
-
-    return replacedText;
-}

@@ -22,8 +22,9 @@ template(name="simpleModal")
 template(name='player')
 	.blackOverlay(class="#{overlayPopped}")
 	.appBody 
-	.downArrow(id="downArrow")
-		img(src="/images/downArrow.png")
+	+if pushedTop
+		.downArrow(id="downArrow")
+			img(src="/images/downArrow.png")
 	.playerContainer(id="playerContainer")
 		.playerSideBar(id="playerSideBar")
 			.sideTitle
@@ -35,17 +36,19 @@ template(name='player')
 					p {{currentVideo.shareCounts.Twitter}} tweets
 			+lmSocialShare opts=sharedata
 			.sideDescription 
-				p {{#autolink}}{{niceDescription}}{{/autolink}}
+				p {{#autolink}}{{currentVideo.description}}{{/autolink}}
 
 		#player
-		.togglePlayer(id="togglePlayer")
-			img(src="images/arrow.png")
-		.minimizePlayer(id="minimizePlayer")
-			img(src="images/minimize.png")
-		.closePlayer(id="closePlayer")
-			img(src="images/cancel.png")
-		.expandPlayer(id="expandPlayer")
-			img(src="images/expand.png")
+		+if minimized
+			.closePlayer(id="closePlayer")
+				img(src="images/cancel.png")
+			.expandPlayer(id="expandPlayer")
+				img(src="images/expand.png")
+		else
+			.togglePlayer(id="togglePlayer")
+				img(src="images/arrow.png")
+			.minimizePlayer(id="minimizePlayer")
+				img(src="images/minimize.png")
 
 template(name='gridThumbs')
 	.container
