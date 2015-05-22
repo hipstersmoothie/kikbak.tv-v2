@@ -1,5 +1,5 @@
 var http = require('http'),
-	db = require("./db"),
+	db = require("./../db"),
 	_ = require('lodash'),
 	parser = require('parse-rss'),
 	request = require('request-enhanced'),
@@ -7,7 +7,7 @@ var http = require('http'),
 	getYouTubeID = require('get-youtube-id'),
 	youtubeThumbnail = require('youtube-thumbnail'),
 	YouTube = require('youtube-node'),
-	getTags = require('./getTags');
+	getTags = require('./../getTags');
 
 var youTube = new YouTube();
 var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
@@ -160,6 +160,7 @@ var newVid = function(vidId, url, blog, $, link) {
 var lastPosts;
 setInterval(function() {
 	if (lastPosts == posts) {
+		console.log('searched', posts, 'posts');
 		process.exit();
 	} else {
 		lastPosts = posts

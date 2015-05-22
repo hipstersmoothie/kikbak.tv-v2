@@ -5,7 +5,6 @@ Meteor.startup(function () {
 	Session.set('playerObj', null);
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
-	Session.setDefault('gridPushedRight', "gridMaxedOut");
 	Session.set('playerPushedTop', true);
 	Session.set('playerMinimized', false);
 	Accounts.ui.config({
@@ -239,9 +238,6 @@ Template.gridThumbs.helpers({
 	},
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
-	},
-	gridResized: function() {
-		return Session.get('gridPushedRight');
 	}
 });
 
