@@ -3,6 +3,15 @@
 @tall:   ~"only screen and (min-height: 501px) and (max-height: 715px)";
 @medium:    ~"only screen and (min-height: 300px) and (max-height: 500px)";
 // @short:    ~"only screen and (min-width: 720px) and (max-width: 959px)";
+@GREENHEX: #31C663;
+@GREENRGB: rgba(49,198,99,0.5);
+@GREENTAG: url('/images/rankBackground.png');
+@REDHEX: #D6373A;
+@REDRGB: rgba(214,55,58,0.5);
+@REDTAG: url('/images/rankBackgroundRed.png');
+@HexColor: @REDHEX;
+@RGBColor: @REDRGB;
+@TagColor: @REDTAG;
 
 html {
 	height: 100%;
@@ -182,7 +191,7 @@ body {
 
 		.sideRank{
 			display: inline;
-			color: #31C663;
+			color: @HexColor;
 		  	padding: 5px;
 		  	width: 100%;
 		  	font-size: 14px;
@@ -274,7 +283,7 @@ body {
 }
 
 .overlay:hover{
-	 background-color: rgba(49,198,99,0.5); 
+	 background-color: @RGBColor; 
 }
 
 .single:hover .overlay{
@@ -291,7 +300,7 @@ body {
 		background: #252525;
 		/*border: 1px white solid;*/
 	.selected {
-		border: 3px #31C663 solid
+		border: 3px @HexColor solid
 	}
 
 	.overlay{
@@ -302,7 +311,7 @@ body {
 		text-align: center;
 		background-repeat: no-repeat;
 		background-size: 75px;
-		background-image: url('/images/rankBackground.png');
+		background-image: @TagColor;
 		display: inline-block;
 		transition: background-color 0.25s ease-out;
 		-webkit-transition: background-color 0.25s ease-out;
@@ -383,6 +392,9 @@ body {
 	background-image: url('/images/likeSelected.png');
 }
 
+.face1{
+	background-color: @HexColor;
+}
 
 @media @medium {
 	.single{
@@ -517,7 +529,7 @@ body {
 	border-color: rgba(0,0,0,0);
 }
 .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
-	color: #31C663;
+	color: @HexColor;
 	background-color: rgba(0,0,0,0);
 }
 .dropdown-menu {
@@ -525,13 +537,13 @@ body {
 	border: 0px;
 }
 .dropdown-menu > li > a {
-	color: #31C663;
+	color: @HexColor;
 }
 .navbar-inverse .navbar-nav > li > a {
-	color: #31C663;
+	color: @HexColor;
 }
 .navbar-inverse .navbar-brand {
-	color: #31C663;
+	color: @HexColor;
 	font-size: 24px;
 }
 
@@ -572,7 +584,7 @@ body {
 ::-webkit-scrollbar-thumb {
 		-webkit-border-radius: 15px;
 		border-radius: 15px;
-		background: #31C663; 
+		background: @HexColor; 
 }
 
 ::-webkit-scrollbar-corner,

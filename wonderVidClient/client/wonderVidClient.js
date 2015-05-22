@@ -129,7 +129,16 @@ Template.header.events({
 	},
 	'click .like': function() {
 		hitLikeButton(Session.get("currentVideo"));
-	}
+	},
+	'click .navbar-brand': function() {
+		console.log("GREEN");
+		less.modifyVars({
+		  '@RGBColor': 'green',
+		  '@HexColor': 'green'
+		});
+		less.refresh(true);
+	},
+
 });
 
 var hitLikeButton = function(video) {
