@@ -135,12 +135,16 @@ body {
 		height: 100%;
 		left: 23%;
 		position: absolute;
-		text-align: center;
 		color: white;
 		padding: 50px 10px 0 10px;
 		border-bottom-left-radius: 10px;
 		overflow-y: scroll;
 		background-color: rgba(0, 0, 0, 0.8);
+
+		::-webkit-scrollbar {
+			width: 1px;
+		}
+		 
 
 		.lm-social-share-btn{
  		  display: inline-block;
@@ -179,25 +183,24 @@ body {
 		.sideTitle{
 			font-size: 18px;
 			font-weight: 900;
-		  	text-align: justify;
+		  	text-align: center;
 		}
 
 
 		.sideDate{
-			display: inline;
 			font-size: 12px;
 			color: #888888;
-		  	float: left;
 		  	padding: 5px;
-		  	width: 100%
+		  	width: 100%;
+		  	text-align: center;
 		}
 
 		.sideRank{
-			display: inline;
 			color: @HexColor;
 		  	padding: 5px;
 		  	width: 100%;
 		  	font-size: 14px;
+		  	text-align: center;
 		  	
 		  	.rankDesc{
 		  		margin-bottom: -25px;
@@ -211,6 +214,7 @@ body {
 		.stats {
 			width: 100%;
 			margin: 0;
+  			text-align: center;
 			.sideLikes{
 				  width: 48%;
 				  top: 76px;
@@ -240,7 +244,6 @@ body {
 		.sideDescription{
 			font-size: 14px;
   			margin-top: 25px;
-		  	text-align: justify;
 		  	display: inline-block;
 		  	white-space: pre-wrap;
 		}
@@ -572,7 +575,8 @@ body {
 
 
 ::-webkit-scrollbar {
-		width: 3px;
+		width: 5px;
+		height: 8px;
 }
  
 /* Track */
