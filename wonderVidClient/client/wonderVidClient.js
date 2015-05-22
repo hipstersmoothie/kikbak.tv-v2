@@ -23,6 +23,7 @@ Meteor.startup(function () {
 	setTimeout(function() {
 		renderVids();
 	}, 1500)
+	console.log(less)
 });
 
 var _logout = Meteor.logout;
