@@ -1,7 +1,6 @@
 head
 	title wonderVidClient
 	link(href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css')
-
 body
 
 template(name="layout")
@@ -20,16 +19,21 @@ template(name="simpleModal")
 
 template(name='player')
 	.blackOverlay(class="#{overlayPopped}")
-	.appBody
+	.appBody 
 	.downArrow(id="downArrow")
 		img(src="/images/downArrow.png")
 	.playerContainer(id="playerContainer")
 		.playerSideBar(id="playerSideBar")
-			.sideTitle 
-				p {{currentVideo.title}} 
+			.sideTitle
+				p {{currentVideo.title}}
+			.sideLikes
+				p {{currentVideo.oldStats.likeCount}} likes
+			.sideDislikes
+				p {{currentVideo.oldStats.dislikeCount}} dislikes
+			br
 			+lmSocialShare opts=sharedata
 			.sideDescription 
-				p {{currentVideo.description}}
+				p {{niceDescription}}
 
 		#player
 		.togglePlayer(id="togglePlayer")
