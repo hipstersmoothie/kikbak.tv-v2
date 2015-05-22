@@ -328,7 +328,8 @@ renderVids = function() {
 				Session.set('playlist', video.getPlaylist());
 			}
 			if(event.data == YT.PlayerState.PLAYING) {
-				//Session.set('currentVideo', Session.get('videos')[index]);
+				var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
+				Session.set('currentVideo', nextVid);
 				Session.set("stateImage",pauseButton);
 			} else if (event.data == YT.PlayerState.PAUSED) {
 				Session.set("stateImage",playButton);
