@@ -130,9 +130,8 @@ body {
 		overflow-y: scroll;
 		background-color: rgba(0, 0, 0, 0.8);
 
-
 		.lm-social-share-btn{
- 		  display: block;
+ 		  display: inline-block;
 		  margin-top: 2px;
 		  color: white;
 		  border-radius: 2px;
@@ -140,12 +139,14 @@ body {
 
 		.lm-social-share-facebook{
 		  background-color: #3b5998;
+		  float: left;
 		  padding: 5px 40px;
 		}
 
 		.lm-social-share-twitter{
 		  background-color: #4099ff;
 		  padding: 5px 42px;
+		  float: right;
   		  margin-bottom: 10px;
 		}
 
@@ -155,22 +156,29 @@ body {
 		  	text-align: justify;
 		}
 
-		.sideLikes{
-			font-size: 10px;
-			color: #31c663;
-			float: left;
-		}
+		.stats {
+			width: 100%;
+			.sideLikes{
+				width: 50%;
+				font-size: 10px;
+				color: #31c663;
+				float: left;
+			}
 
-		.sideDislikes{
-			font-size: 10px;
-			color: red;
-			float: left;
-			display: inline-block;
+			.sideDislikes{
+				width: 50%;
+				font-size: 10px;
+				color: red;
+				float: left;
+				display: inline-block;
+			}
 		}
 
 		.sideDescription{
 			font-size: 14px;
 		  	text-align: justify;
+		  	display: inline-block;
+		  	white-space: pre-wrap;
 		}
 	}
 
