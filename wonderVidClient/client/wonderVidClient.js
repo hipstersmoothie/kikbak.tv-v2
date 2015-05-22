@@ -126,7 +126,7 @@ Template.header.events({
 		else
 			Router.go('/likes');
 	},
-	'click .likeButton': function() {
+	'click .like': function() {
 		hitLikeButton(Session.get("currentVideo"));
 	}
 });
