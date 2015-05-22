@@ -220,7 +220,7 @@ Template.player.events({
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
 		} else
 			tlMinimize.restart();
-		document.getElementById("playerContainer").style.display = "none";
+		document.getElementById("playerSideBar").style.display = "none";
 		Session.set('playerMinimized', true);
 	},
 	"click .expandPlayer": function () {
