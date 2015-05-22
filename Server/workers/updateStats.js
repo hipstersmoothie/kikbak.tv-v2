@@ -45,7 +45,6 @@ var updateStats = function(video, index) {
 			var newComments = (parseInt(newStats.commentCount) - parseInt(oldStats.commentCount));
 			// console.log(parseInt(newStats.viewCount), '-', parseInt(oldStats.viewCount), '=', newViews, video.avgViewPerHalfHour, (video.avgViewPerHalfHour + newViews)/2)
 			db.videos.update({ videoId : vidId }, {$set: {
-				youTubePostDate : result['items'][0]['snippet']['publishedAt'],
 				oldStats : newStats,
 				avgViewPerHalfHour : video.avgViewPerHalfHour ? (video.avgViewPerHalfHour + newViews)/2 : newViews,
 				avgLikePerHalfHour : video.avgLikePerHalfHour ? (video.avgLikePerHalfHour + newLikes)/2 : newLikes,

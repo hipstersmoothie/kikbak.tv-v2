@@ -12,7 +12,9 @@ var checkHipHop = function(text, youTubeDescription, uploader, title) {
 var checkElectronic = function(text, youTubeDescription, uploader, title) {
 	var tags = [];
 	if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 || 
-		youTubeDescription.toLowerCase().indexOf('electonic') > -1 || youTubeDescription.toLowerCase().indexOf(' edm') > -1) {
+		youTubeDescription.toLowerCase().indexOf('electonic') > -1 || youTubeDescription.toLowerCase().indexOf(' edm') > -1 ||
+		text.indexOf(' trap') > -1 || text.indexOf(' house') > -1 || text.indexOf(' techno') > -1 || text.indexOf(' dnb') > -1
+		|| text.indexOf(' synth') > -1 || text.indexOf(' dnb') > -1) {
 		tags = ["Electonic"];
 	}
 	return tags;
