@@ -260,6 +260,12 @@ Template.gridThumbs.helpers({
 	},
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
+	},
+	featured: function() {
+		if(this.rank == 1 || (this.rank - 1) % 13 == 0)
+			return "featured"
+
+		return "";
 	}
 });
 
