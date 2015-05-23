@@ -59,22 +59,13 @@ template(name='gridThumbs')
 	.container
 		.flex-container
 			+each videos
-				.flex-items-default.single(id="#{this._id}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.medium.url}')") 
+				.flex-items-default.single(id="#{this._id}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
 					.overlay(class="{{#if isSelected}}selected{{/if}}")
 						.rank
 							p #{rank}
 						.like(class="{{#if isLiked}}heart-red{{/if}}")
 					.descriptionText
 						p #{this.title}
-		//- div(class="gridMaxedOut")
-			+each videos
-				.single(id="#{this._id}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.medium.url}')")
-					.overlay(class="{{#if isSelected}}selected{{/if}}")
-						.rank
-							p #{rank}
-						.like(class="{{#if isLiked}}heart-red{{/if}}")
-						.descriptionText
-							p #{this.title}
 
 template(name="loading")
 	.wrap2
