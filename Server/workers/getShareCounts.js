@@ -22,10 +22,17 @@ var getShareCounts = function(video, index) {
 		pool: {maxSockets: 10}
 	}, function(error, response){
 		if(!error){
+			var oldShares = video.shareCounts ? video.shareCounts : { Facebook : { total_count : 0 }, Twitter : 0 };
+			var newShares = JSON.parse(response);
+			var newFaceBook = parseInt(newShares.Facebook.total_count) - parseInt(oldShares.Facebook.total_count);
+			var newTweets = parseInt(newShares.Twitter) - parseInt(oldShares.Twitter);
 			db.videos.update({ videoId : video.videoId }, {$set: {
-				shareCounts : JSON.parse(response)
+				shareCounts : newShares,
+				avgFaceBookShares : video.avgFaceBookShares ? (video.avgFaceBookShares + newFaceBook)/2 : newFaceBook,
+				avgTweets : video.avgTweets ? (video.avgTweets + newTweets)/2 : newTweets
 			}});
 		} 
+
 		done++;
 		if(vidlength == done) {
 			process.exit();
