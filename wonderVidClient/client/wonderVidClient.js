@@ -243,6 +243,15 @@ Template.player.events({
 			Session.set('playerPushedTop', false);
 			document.getElementById("playerSideBar").style.display = "block";
 		}
+	},
+	"keypress div": function (e) {
+		console.log("keyevent" + e);
+		if(Session.equals('playerPushedTop', false) && Session.equals('playerMinimized', false) && 
+			(e.charCode == 27 || e.charCode == 38)){
+			Session.set('playerPushedTop', true);
+			tlDropdown.reverse();
+			Session.set('playerMinimized', false);
+		}
 	}
 });
 
@@ -382,3 +391,4 @@ renderVids = function() {
 
 	YT.load();   	
 };
+

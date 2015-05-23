@@ -12,9 +12,9 @@
 @REDHEX: #D6373A;
 @REDRGB: rgba(214,55,58,0.5);
 @REDTAG: url('/images/rankBackgroundRed.png');
-@HexColor: @YELLOWHEX;
-@RGBColor: @YELLOWRGB;
-@TagColor: @YELLOWTAG;
+@HexColor: @REDHEX;
+@RGBColor: @REDRGB;
+@TagColor: @REDTAG;
 
 html {
 	height: 100%;
@@ -565,6 +565,17 @@ body {
 	width: 48px;
 	height: 48px;
 	display: none;
+}
+
+#login-buttons .login-button, .accounts-dialog .login-button{
+	background: @HexColor;
+	color: black;
+	border: 1px solid @RGBColor;
+}
+
+#login-buttons .login-button:hover, .accounts-dialog .login-button:hover{
+	background: @HexColor;
+	border: 1px solid @RGBColor;
 }
 
 .nextButton,
