@@ -35,6 +35,46 @@ Meteor.startup(function () {
 			}
 		});
 
+	Mousetrap.bind('esc', function() { 
+		if(Session.get('playerPushedTop') == false) {
+			Session.set('playerPushedTop', true);
+			tlDropdown.reverse();
+			Session.set('playerMinimized', false);
+		}
+	});
+
+	Mousetrap.bind('right', function() { 
+		if(video)
+			video.nextVideo();
+	});
+
+	Mousetrap.bind('left', function() { 
+		if(video)
+			video.previousVideo();
+	});
+
+	Mousetrap.bind('m', function() { 
+		console.log(Session.get('playerMinimized') )
+		if(Session.get('playerMinimized') == false && video) {
+					console.log('here')
+
+			if(tlMinimize == null){
+				tlMinimize = new TimelineLite();
+				tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+			} else
+				tlMinimize.restart();
+			Session.set('playerMinimized', true);
+		}
+	});
+
+	Mousetrap.bind('space', function() { 
+		if(video && video.getPlayerState() == YT.PlayerState.PLAYING)
+			video.pauseVideo();
+		else
+			video.playVideo();
+	});
+
+
 	// run these to set the rest of the colors
 	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
 	setPseudoClass(".login-button", "background", Session.get('color'));
@@ -172,6 +212,28 @@ Template.header.events({
 	},
 	'click .like': function() {
 		hitLikeButton(Session.get("currentVideo"));
+	},
+	'click .navbar-brand': function() {
+		switch(Session.get('color')) {
+			case greenHex:
+				Session.set('color', redHex);
+				Session.set('colorImage', redTag);
+				Session.set('colorRgb', redRgb);
+				break
+			case redHex:
+				Session.set('color', yellowHex);
+				Session.set('colorImage', yellowTag);
+				Session.set('colorRgb', yellowRgb);
+				break
+			case yellowHex:
+				Session.set('color', greenHex);
+				Session.set('colorImage', greenTag);
+				Session.set('colorRgb', greenRgb);
+				break
+			default:
+				break;
+		}
+		setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
 	}
 });
 
@@ -276,15 +338,6 @@ Template.player.events({
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
 			document.getElementById("playerContainer").style.display = "block";
-		}
-	},
-	"keypress div": function (e) {
-		console.log("keyevent" + e);
-		if(Session.equals('playerPushedTop', false) && Session.equals('playerMinimized', false) && 
-			(e.charCode == 27 || e.charCode == 38)){
-			Session.set('playerPushedTop', true);
-			tlDropdown.reverse();
-			Session.set('playerMinimized', false);
 		}
 	}
 });
