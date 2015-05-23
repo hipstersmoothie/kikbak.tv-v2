@@ -36,7 +36,7 @@ Meteor.startup(function () {
 		});
 
 	Mousetrap.bind('esc', function() { 
-		if(Session.get('playerPushedTop') == false) {
+		if(Session.get('playerPushedTop') == false && video) {
 			Session.set('playerPushedTop', true);
 			tlDropdown.reverse();
 			Session.set('playerMinimized', false);
@@ -53,17 +53,26 @@ Meteor.startup(function () {
 			video.previousVideo();
 	});
 
-	Mousetrap.bind('m', function() { 
-		console.log(Session.get('playerMinimized') )
-		if(Session.get('playerMinimized') == false && video) {
-					console.log('here')
+	Mousetrap.bind('down', function() { 
+		if(Session.get('playerPushedTop') == true &&  Session.get('playerMinimized') == false && video) {
+			tlDropdown.restart();
+			Session.set('playerPushedTop', false);
+		}
+	});
 
+	Mousetrap.bind('m', function() { 
+		if(Session.get('playerPushedTop') == false && video) {
 			if(tlMinimize == null){
 				tlMinimize = new TimelineLite();
 				tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
-			} else
-				tlMinimize.restart();
-			Session.set('playerMinimized', true);
+				Session.set('playerMinimized', true);
+			} else if(Session.get('playerMinimized') == true){
+				tlMinimize.reverse();
+				Session.set('playerMinimized', false);
+			} else {
+				tlMinimize.play();
+				Session.set('playerMinimized', true);
+			}
 		}
 	});
 
@@ -73,7 +82,6 @@ Meteor.startup(function () {
 		else
 			video.playVideo();
 	});
-
 
 	// run these to set the rest of the colors
 	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
@@ -260,11 +268,8 @@ var hitLikeButton = function(video) {
 }
 
 Template.player.helpers({
-	overlayPopped: function() {
-		if(Session.equals('playerPushedTop', false) && Session.equals('playerMinimized', false))
-			return "overlayFront"
-		else
-			return "overlayBack"
+	needOverlay: function() {
+		return Session.get('currentVideo') && Session.get('playerMinimized') == false && Session.get('playerPushedTop') == false;
 	},
 	currentVideo: function() {
 		return Session.get('currentVideo') ? Session.get('currentVideo') : {description:""};
@@ -316,14 +321,12 @@ Template.player.events({
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
 		} else
 			tlMinimize.restart();
-		document.getElementById("playerContainer").style.display = "none";
 		Session.set('playerMinimized', true);
 	},
 	"click .expandPlayer": function () {
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
-		document.getElementById("playerContainer").style.display = "block";
 	},
 	"click .closePlayer": function () {
 		tlDropdown.reverse();
@@ -337,7 +340,6 @@ Template.player.events({
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
 			Session.set('playerPushedTop', false);
-			document.getElementById("playerContainer").style.display = "block";
 		}
 	}
 });
