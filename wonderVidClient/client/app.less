@@ -1,7 +1,7 @@
 /* CSS declarations go here */
 @reallyTall:   ~"only screen and (min-height: 716px)";
 @tall:   ~"only screen and (min-height: 501px) and (max-height: 715px)";
-@medium:    ~"only screen and (min-height: 300px) and (max-height: 500px)";
+@medium:    ~"only screen and (min-height: 321px) and (max-height: 500px)";
 // @short:    ~"only screen and (min-width: 720px) and (max-width: 959px)";
 @GREENHEX: #31C663;
 @GREENRGB: rgba(49,198,99,0.5);
@@ -85,31 +85,70 @@ body {
 
 .container{
 	width: 100%;
-	display: inline-block;
-	float: right;
-	margin: 0;
 	height: 100%;
 	padding-top: 50px;
-	-webkit-column-gap: 0;
-	-moz-column-gap: 0;
-	column-gap: 0;
-	-webkit-column-rule-style: none;
-	-moz-column-rule-style: none;
-	column-rule-style: none;
 }
 
-.gridMaxedOut{
+.flex-container {
 	height: 100%;
-	-webkit-columns: 100;
-	-moz-columns: 100;
-	 columns: 100;
-	-webkit-column-width: 100vh;
-	-moz-column-width: 100vh;
-	 /*width: 100vh;*/
-	-webkit-column-gap: 0;
-	-moz-column-gap: 0;
-	 gap: 0;
+	width: 100%;
+    display:flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
 }
+ 
+.flex-items-default {
+  	flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: 100%;
+    width: 139vh;
+    display: flex;
+  	align-items: center;
+  	justify-content: center;  		
+  	position: relative;
+}
+
+@media @medium {
+	.flex-items-default {
+	  	flex-grow: 0;
+	    flex-shrink: 1;
+	    flex-basis: 50%;
+	    width: 79vh;
+	}	
+}
+
+@media @tall {
+	.flex-items-default {
+	  	flex-grow: 0;
+	    flex-shrink: 1;
+	    flex-basis: 33%;
+	    width: 54vh;
+	}	
+}
+
+@media @reallyTall {
+	.flex-items-default {
+	  	flex-grow: 0;
+	    flex-shrink: 1;
+	    flex-basis: 25%;
+	    width: 41vh;
+	}	
+}
+
+.descriptionText{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	text-align: center;
+	color: white;
+	font-size: 12px;
+	padding: 2px;
+	width: 100%;
+	background-color: rgba(0,0,0,0.7);
+}	
 
 .playerContainer{
 	transition: translate3d 0.5s ease-out;
@@ -297,23 +336,19 @@ body {
 }
 
 .single{
-	opacity: 1;
-	width: 100%;
-	height: 100%;
-	overflow-y: inherit;
-	display: inline-block;
-		background-repeat: no-repeat;
-		background: #252525;
-		/*border: 1px white solid;*/
 	.selected {
 		border: 3px @HexColor solid
 	}
 
 	.overlay{
+		position: absolute;
+		top: 0;
+		left: 0;
 		font-size: 10px;
-		/*opacity: 0;*/
+		overflow: hidden;
 		width: 100%;
 		height: 100%;
+		z-index: 1;
 		text-align: center;
 		background-repeat: no-repeat;
 		background-size: 75px;
@@ -336,38 +371,12 @@ body {
 			}
 		}
 
-		.like {
-			width: 24px;
-			height: 24px;
-			float: right;
-		    opacity: 0;
-			background-image: url('/images/likeNone.png');
-			margin: 5px;
-			transition: opacity 0.35s ease-out;
-			-webkit-transition: opacity 0.35s ease-out;
-			-moz-transition: opacity 0.35s ease-out;
-			-ms-transition: opacity 0.35s ease-out;
-			-o-transition: opacity 0.35s ease-out;
-		}
-
 		.heart-red {
 			opacity: 1;
 			background-image: url('/images/likeSelected.png');
 		}
-
-		.descriptionText{
-		  position: relative;
-		  bottom: -39%;
-		  height: 30%;
-			overflow: hidden;
-			color: white;
-			font-size: 12px;
-				/*margin: 44% 0px 0 0;*/
-			padding: 2px;
-			width: 100%;
-			background-color: rgba(0,0,0,0.7);
-		}
 	}
+
 	.overlay:hover .like{
 	   opacity: 1;
 	} 
@@ -398,111 +407,9 @@ body {
 	background-image: url('/images/likeSelected.png');
 }
 
-.face1{
+.face1{ 
 	background-color: @HexColor;
 }
-
-@media @medium {
-	.single{
-		overflow-y: hidden;
-		height: 48%;
-		.overlay {
-			.descriptionText {
-
-			}
-		}
-	}
-
-	.gridMaxedOut{
-		-webkit-columns: 50;
-		-moz-columns: 50;
-		 columns: 50;
-
-		-webkit-column-width:  70vh;
-		-moz-column-width:  70vh;
-		 column-width:  70vh;
-	}
-}
-
-@media @tall {
-	.single{
-		height: 33%;
-		.overlay {
-			.descriptionText {
-				bottom: -41%;
-			}
-		}
-	}
-
-	.gridMaxedOut{
-		-webkit-column-width:  50vh;
-		-moz-column-width:  50vh;
-		 column-width:  50vh;
-	}
-}
-
-@media @reallyTall {
-	.single{
-		height: 25%;
-	}
-
-	.gridMaxedOut{
-		-webkit-columns: 25;
-		-moz-columns: 25;
-		 columns: 25;
-		-webkit-column-width:  34vh;
-		-moz-column-width:  34vh;
-		 column-width:  34vh;
-	}
-}
-
-
-// @media screen and ( max-width: 530px ){
-// 	.descriptionText{
-// 		font-size: 10px
-// 	}
-
-// 	.gridMaxedOut{
-// 		-webkit-column-width:  220px;
-// 		-moz-column-width:  220px;
-// 		 column-width:  220px;
-// 	}
-// }
-
-// @media screen and ( max-height: 405px ){
-// 	.gridMaxedOut{
-// 		-webkit-column-width:  70vh;
-// 		-moz-column-width:  70vh;
-// 		 column-width:  70vh;
-// 	}
-// }
-
-// @media screen and ( max-height: 300px ){
-// 	.gridMaxedOut{
-// 		-webkit-column-width:  100vh;
-// 		-moz-column-width:  100vh;
-// 		 column-width:  100vh;
-// 	}
-// }
-
-// @media screen and ( min-height: 300px ){
-// 		.single{
-// 		height: 50%;
-// 	}
-// }
-
-// @media screen and ( min-height: 405px ){
-// 		.single{
-// 		height: 33%;
-// 	}
-// }
-
-// @media screen and ( min-height: 605px ){
-// 	.single{
-// 		height: 25%;
-// 		width: 100%;
-// 	}
-// }
 
 .navbar .nav,
 .navbar .nav > li {
@@ -528,8 +435,6 @@ body {
 	margin: 0;
 	z-index: 5;
 }
-
-
 
 .navbar-inverse .navbar-toggle {
 	border-color: rgba(0,0,0,0);
