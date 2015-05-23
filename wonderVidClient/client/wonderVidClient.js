@@ -1,8 +1,23 @@
+var greenHex = '#31C663';
+var greenRgb = 'rgba(49,198,99,0.5)';
+var greenTag = "url('/images/rankBackground.png')";
+var yellowHex = '#F7DD72';
+var yellowRgb = 'rgba(247,221,114,0.5)';
+var yellowTag = "url('/images/rankBackgroundYellow.png')";
+var redHex = '#D6373A';
+var redRgb = 'rgba(214,55,58,0.5)';
+var redTag = "url('/images/rankBackgroundRed.png')";
+
 Meteor.startup(function () {
 	// code to run on server at startup
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
 	Session.set('playerObj', null);
+
+	Session.set('color', redHex);
+	Session.set('colorImage', redTag);
+	Session.set('colorRgb', redRgb);
+
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.set('playerPushedTop', true);
@@ -20,10 +35,31 @@ Meteor.startup(function () {
 			}
 		});
 
+	// run these to set the rest of the colors
+	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
+	setPseudoClass(".login-button", "background", Session.get('color'));
+	setPseudoClass(".single-login-button", "border", "1px solid " + Session.get('colorRgb'));
+
 	setTimeout(function() {
 		renderVids();
 	}, 1500);
 });
+
+var setPseudoClass = function (rule, prop, value) {
+    var sheets = document.styleSheets;
+    var slen = sheets.length;
+    for (var i = 0; i < slen; i++) {
+        var rules = document.styleSheets[i].cssRules;
+        if (rules) {
+            var rlen = rules.length;
+            for (var j = 0; j < rlen; j++) {
+                if (rules[j].selectorText && rules[j].selectorText.indexOf(rule) == 0) {
+                    rules[j].style[prop] = value;
+                }
+            }
+        }
+    }
+}
 
 var _logout = Meteor.logout;
 Meteor.logout = function customLogout() {
@@ -50,6 +86,14 @@ var playButton = "playButton.png",
 		tlDropdown = null, ytPlaylist = [];
 
 //==============SET METEOR CALL BACK TO TOPVIDEOS==============
+Template.registerHelper('color', function() {
+     return Session.get('color');
+});
+
+Template.registerHelper('colorImage', function() {
+     return Session.get('colorImage');
+});
+
 Template.header.helpers({
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 

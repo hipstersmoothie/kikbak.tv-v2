@@ -31,7 +31,7 @@ template(name='player')
 				p {{currentVideo.title}}
 			.sideDate
 				p #{formedDate}
-			.sideRank
+			.sideRank(style="color: {{color}};")
 				p(class="rankDesc") Wonder Rank:
 				p(class="number") {{currentVideo.wonderRank}}
 			.stats
@@ -60,7 +60,7 @@ template(name='gridThumbs')
 		.flex-container
 			+each videos
 				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
-					.overlay(class="{{#if isSelected}}selected{{/if}}")
+					.overlay(class="{{#if isSelected}}selected{{/if}}" style="background-image: {{colorImage}};")
 						.rank
 							p #{rank}
 						.like(class="{{#if isLiked}}heart-red{{/if}}")
@@ -70,17 +70,17 @@ template(name='gridThumbs')
 template(name="loading")
 	.wrap2
 		.boxcube2
-			.boxfront.face1
+			.boxfront(style="background-color: {{color}};")
 				| ►
-			.boxback.face1
+			.boxback(style="background-color: {{color}};")
 				| ►
-			.boxtop.face1
+			.boxtop(style="background-color: {{color}};")
 				| ►
-			.boxbottom.face1
+			.boxbottom(style="background-color: {{color}};")
 				| ►
-			.boxleft.face1
+			.boxleft(style="background-color: {{color}};")
 				.face2
 				| ❙ ❙
-			.boxright.face1
+			.boxright(style="background-color: {{color}};")
 				.face2
 				| ❙ ❙
