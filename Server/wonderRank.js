@@ -62,6 +62,15 @@ var hipMult = function(days) {
 	}
 }
 
+var shareRatio = function(video) {
+	if(video.shareCounts.Facebook.total_count == 0) {
+		return 0;
+	} 
+	var faceRate = video.avgFaceBookShares / video.shareCounts.Facebook.total_count;
+	console.log(video.avgFaceBookShares, '/', video.shareCounts.Facebook.total_count, '=', faceRate);
+	return faceRate;
+}
+
 var ifMusicVideo = function(video) {
 	if(video.tags && video.tags.indexOf("Music Video") > -1)
 		return 1.5;
@@ -74,12 +83,14 @@ var sort = function(videos) {
 		var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
 		var adg1 = multiplier(date1);
 		var adg2 = multiplier(date2);
+		var ratio1 = shareRatio(a);
+		var ratio2 = shareRatio(b);
 		var viewMultiplier1 = viewMultiplier(a.oldStats.viewCount);
 		var viewMultiplier2 = viewMultiplier(b.oldStats.viewCount);
-		a.wonderRank = (a.foundOn.length * adg1 * viewMultiplier1 * ifMusicVideo(a));
-		b.wonderRank = (b.foundOn.length * adg2 * viewMultiplier2 * ifMusicVideo(b));
+		a.wonderRank = (a.foundOn.length * adg1 * viewMultiplier1 * ifMusicVideo(a) * ratio1);
+		b.wonderRank = (b.foundOn.length * adg2 * viewMultiplier2 * ifMusicVideo(b) * ratio2);
 
-		return a.wonderRank - b.wonderRank;
+		return (a.wonderRank) - (b.wonderRank);
 	}).reverse();
 }
 

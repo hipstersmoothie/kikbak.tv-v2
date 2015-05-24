@@ -3,12 +3,14 @@ head
 	meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1")
 	title wonderVidClient
 	link(href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css')
+
 body
 
 template(name="layout")
 	+header
 	+player
-	+yield
+	div(style="height:100%")
+		+yield
 
 template(name="simpleModal")
 	.anti-modal-box
