@@ -25,7 +25,7 @@ var posts = 0;
 var parseFeed = function(url) {
 	parser(url, function(err, postsData) {
 		if(err) {
-			// console.log('parseFeed', url, err);
+			console.log('parseFeed', url, err);
 		}
 		else  {
 			_.forEach(postsData, _.bind(getHtml, null, _, url));
@@ -36,7 +36,7 @@ var parseFeed = function(url) {
 var getHtml = function(post, blog) {
 	request.get({
 		url: post.link,
-		maxAttempts:2,
+		maxAttempts:3,
 		pool: {maxSockets: 10}
 	}, function(error, response){
 		// First we'll check to make sure no errors occurred when making the request
@@ -45,7 +45,7 @@ var getHtml = function(post, blog) {
 			var $ = cheerio.load(response);
 			handlePost($, blog, post.link);
 		} else {
-			//console.log("getHtml", blog, post.link, error);
+			console.log("getHtml", blog, post.link, error);
 		}
 	});
 }
@@ -77,8 +77,6 @@ var tagVideo = function(vidId, html, $) {
 
 var addToDb = function(url, blog, $, link) {
 	var vidId = getYouTubeID(url);
-	posts++;
-
 	db.videos.find({ videoId : vidId }, function(err, video) {  
 		if (err) {
 			console.log('addToDb', err);
@@ -110,12 +108,12 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 			origPosts : link
 		}});
 	}
+	posts++;
 }
 
 var newVid = function(vidId, url, blog, $, link) {
 	request.get({
 		url: 'https://www.googleapis.com/youtube/v3/videos?part=statistics%2Csnippet&id=' + vidId  + '&key=' + youtubeKey,
-		maxAttempts:3,
 		pool: {maxSockets: 10}
 	}, function(error, result) {
 		if(result && result['items'] && result['items'].length > 0 
@@ -123,8 +121,10 @@ var newVid = function(vidId, url, blog, $, link) {
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('(audio)') == -1 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('[audio]') == -1 
 			&& result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {
-			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)//dont add old videos
+			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS) {
+				console.log('oldie')
 				return;
+			}
 			
 			var blogs = blog.tags ? blog.tags : [];
 			var tags =  _.union(getTags($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
@@ -153,7 +153,10 @@ var newVid = function(vidId, url, blog, $, link) {
 					}
 				}
 			}, { upsert : true });
+		} else if (error) {
+			console.log(error);
 		}
+		posts++;
 	});
 }
 
@@ -167,4 +170,5 @@ setInterval(function() {
 	}
 }, 30000)
 
+// parseFeed('http://www.iguessimfloating.net/category/video/feed/')
 refreshBlogsFeeds();
