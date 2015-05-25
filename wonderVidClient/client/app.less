@@ -112,6 +112,7 @@ body {
 }
 
 .featured {
+	background-size: initial;
 	width: 115vh !important;
 	flex-basis: 100% !important;
 }
@@ -332,9 +333,7 @@ body {
 	}
 }
 
-.overlay:hover{
-	 background-color: @RGBColor; 
-}
+
 
 .single:hover .overlay{
 	display: inline-block;
@@ -343,6 +342,10 @@ body {
 .single{
 	.selected {
 		border: 3px @HexColor solid
+	}
+
+	.overlay:hover{
+	 	background-color: rgba(255,255,255,0.2); 
 	}
 
 	.overlay{
@@ -477,11 +480,10 @@ body {
 	display: none;
 }
 
-// #login-buttons .login-button, .accounts-dialog .login-button {
-// 	background: @HexColor;
-// 	color: black;
-// 	border: 1px solid @RGBColor;
-// }
+#login-buttons .login-button, .accounts-dialog .login-button {
+	color: black;
+	border: 1px solid @RGBColor;
+}
 
 // #login-buttons .login-button:hover, .accounts-dialog .login-button:hover{
 // 	background: @HexColor;
