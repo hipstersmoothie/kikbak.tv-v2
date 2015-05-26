@@ -29,6 +29,7 @@ var updateStats = function(video, index) {
 		maxAttempts:3,
 		pool: {maxSockets: 10}
 	}, function(error, result){
+		result = JSON.parse(result);
 		if(result && result['items'] && result['items'][0]) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS) {
 				db.videos.remove({ videoId : vidId });
@@ -52,7 +53,7 @@ var updateStats = function(video, index) {
 				avgFavoritePerHalfHour : video.avgFavoritePerHalfHour ? (video.avgFavoritePerHalfHour + newFavorites)/2 : newFavorites,
 				avgCommentPerHalfHour : video.avgCommentPerHalfHour ? (video.avgCommentPerHalfHour + newComments)/2 : newComments
 			}});
-		} 
+		}
 		done++;
 		if(vidlength == done) 
 			process.exit();

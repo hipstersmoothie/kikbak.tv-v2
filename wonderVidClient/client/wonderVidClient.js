@@ -9,6 +9,9 @@ var redRgb = 'rgba(214,55,58,0.5)';
 var redTag = "url('/images/rankBackgroundRed.png')";
 
 Meteor.startup(function () {
+	setTimeout(function() {
+		renderVids();
+	}, 1500);
 	// code to run on server at startup
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
@@ -85,15 +88,8 @@ Meteor.startup(function () {
 
 	// run these to set the rest of the colors
 	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
-	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
-	
-
-
-	setTimeout(function() {
-		renderVids();
-	}, 1500);
+	setPseudoClass(".login-button", "background", Session.get('color'));
+	setPseudoClass(".single-login-button", "border", "1px solid " + Session.get('colorRgb'));
 });
 
 var setPseudoClass = function (rule, prop, value) {

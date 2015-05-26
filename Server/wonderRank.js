@@ -1,8 +1,8 @@
 var multiplier = function(days) {
 	if (days <= 1)
-		return 100;
+		return 200;
 	else if (days <= 2)
-		return 20;
+		return 150;
 	else if (days <= 3)
 		return 10;
 	else if (days <= 7)
@@ -67,35 +67,39 @@ var shareRatio = function(video) {
 		return 0;
 	} 
 	var faceRate = video.avgFaceBookShares / video.shareCounts.Facebook.total_count;
-	console.log(video.avgFaceBookShares, '/', video.shareCounts.Facebook.total_count, '=', faceRate);
+	// console.log(video.avgFaceBookShares, '/', video.shareCounts.Facebook.total_count, '=', faceRate);
 	return faceRate;
 }
 
 var ifMusicVideo = function(video) {
 	if(video.tags && video.tags.indexOf("Music Video") > -1)
-		return 1.5;
+		return 3;
 	return 1;
 }
-var sort = function(videos) {
-	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
-	videos.sort(function(a, b) {
-		var date1 = (Date.now() - Date.parse(a.youTubePostDate))/day;
-		var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
-		var adg1 = multiplier(date1);
-		var adg2 = multiplier(date2);
-		var ratio1 = shareRatio(a);
-		var ratio2 = shareRatio(b);
-		var viewMultiplier1 = viewMultiplier(a.oldStats.viewCount);
-		var viewMultiplier2 = viewMultiplier(b.oldStats.viewCount);
-		a.wonderRank = (a.foundOn.length * adg1 * viewMultiplier1 * ifMusicVideo(a) * ratio1);
-		b.wonderRank = (b.foundOn.length * adg2 * viewMultiplier2 * ifMusicVideo(b) * ratio2);
 
-		return (a.wonderRank) - (b.wonderRank);
-	}).reverse();
+var dampen = function(length, date) {
+	// if (date > 10)
+	// 	return 0.25
+	return length;
 }
 
-var dampen = function(length) {
-	return Math.ceil(length / 2);
+var sort = function(videos) {
+	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
+	if(videos.length > 0)
+		videos.sort(function(a, b) {
+			var date1 = (Date.now() - Date.parse(a.youTubePostDate))/day;
+			var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
+			var adg1 = multiplier(date1);
+			var adg2 = multiplier(date2);
+			// var ratio1 = shareRatio(a);
+			// var ratio2 = shareRatio(b);
+			var viewMultiplier1 = viewMultiplier(a.oldStats.viewCount);
+			var viewMultiplier2 = viewMultiplier(b.oldStats.viewCount);
+			a.wonderRank = (dampen(a.foundOn.length, date1) * adg1 * viewMultiplier1 * ifMusicVideo(a));
+			b.wonderRank = (dampen(b.foundOn.length, date2) * adg2 * viewMultiplier2 * ifMusicVideo(b));
+
+			return (a.wonderRank) - (b.wonderRank);
+		}).reverse();
 }
 
 var hipsterSort = function(videos) {
