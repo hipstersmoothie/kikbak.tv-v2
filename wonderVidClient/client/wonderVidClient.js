@@ -302,12 +302,14 @@ Template.player.helpers({
 		return Session.get('playerPushedTop') && Session.get('currentVideo') != null;
 	},
 	formedDate: function() {
-		var dateString = Session.get("currentVideo").youTubePostDate;
-		var year = dateString.substring(0,4);
-		var day = dateString.substring(5,7);
-		var month = dateString.substring(8,10);
-		return new Date(year, month, day, 0, 0, 0, 0).toDateString();
-		return dateString;		
+		if(Session.get("currentVideo")) {
+			var dateString = Session.get("currentVideo").youTubePostDate;
+			var year = dateString.substring(0,4);
+			var day = dateString.substring(5,7);
+			var month = dateString.substring(8,10);
+			return new Date(year, month, day, 0, 0, 0, 0).toDateString();
+			return dateString;		
+		}
 	}
 });
 
@@ -391,6 +393,8 @@ Template.gridThumbs.events({
 			return;
 		}
 
+		var oldVid = Session.get('currentVideo');
+		Session.set('currentVideo', thisVid);
 		if(tlDropdown == null || Session.equals('playerPushedTop', true)){
 			console.log("First: " + index);
 			Session.set('playerPushedTop', false);
@@ -402,7 +406,7 @@ Template.gridThumbs.events({
 			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
 			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
 
-			if(Session.get('currentVideo') != null)
+			if(oldVid != null)
 				video.playVideoAt(index);
 			else
 				renderVids(index);
@@ -413,8 +417,6 @@ Template.gridThumbs.events({
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
 		}
-		Session.set('currentVideo', thisVid);
-
 	},
 	'click .like': function() {
 		if(!Meteor.user())
