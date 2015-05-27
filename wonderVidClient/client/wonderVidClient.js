@@ -52,6 +52,7 @@ Meteor.startup(function () {
 	Mousetrap.bind('down', function() { 
 		if(Session.get('playerPushedTop') == true &&  Session.get('playerMinimized') == false && video) {
 			tlDropdown.restart();
+			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 			Session.set('playerPushedTop', false);
 		}
 	});
@@ -60,8 +61,10 @@ Meteor.startup(function () {
 		if(Session.get('playerPushedTop') == false && video) {
 			if(tlMinimize == null){
 				tlMinimize = new TimelineLite();
+				tlMinimize.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "23%"});
 				tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
 				Session.set('playerMinimized', true);
+				
 			} else if(Session.get('playerMinimized') == true){
 				tlMinimize.reverse();
 				Session.set('playerMinimized', false);
@@ -174,6 +177,7 @@ var changeColor = function(color) {
 	}
 	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
+	setPseudoClass("#login-buttons .login-button:hover, .accounts-dialog .login-button:hover", "color", Session.get('color'));
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
 	setPseudoClass(".single .selected", "border", "3px solid " + Session.get('color'));
 	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
@@ -239,6 +243,8 @@ Template.header.events({
 		}
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
+			
+			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 			Session.set('playerPushedTop', false);
 		}
 	},
@@ -326,26 +332,36 @@ Template.player.events({
 	"click .minimizePlayer": function () {
 		if(tlMinimize == null){
 			tlMinimize = new TimelineLite();
+			
+			tlMinimize.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "23%"});
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
-		} else
+		} else{
 			tlMinimize.restart();
+			
+		}
 		Session.set('playerMinimized', true);
 	},
 	"click .expandPlayer": function () {
 		tlMinimize.reverse();
+
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
 	},
 	"click .closePlayer": function () {
-		tlDropdown.reverse();
-		tlMinimize.reverse().delay(1.5);
+		setTimeout(function(){
+			tlMinimize.reverse();
+			document.getElementById("playerSideBar").style.left = "23%";
+		}, 500);
 		Session.set('playerPushedTop', true);
 		Session.set('playerMinimized', false);
+		TweenLite.to(".playerContainer", 0.5, {autoAlpha:0, display:"none"});
 		video.pauseVideo();
 	},
 	"click .downArrow": function () {
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			tlDropdown.restart();
+			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+
 			Session.set('playerPushedTop', false);
 		}
 	}
@@ -397,13 +413,17 @@ Template.gridThumbs.events({
 
 		var oldVid = Session.get('currentVideo');
 		Session.set('currentVideo', thisVid);
-		if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+		if(Session.equals('playerMinimized', true)){
+			video.playVideoAt(index);
+
+		}else if(tlDropdown == null || Session.equals('playerPushedTop', true)){
 			console.log("First: " + index);
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
 
+			document.getElementById("playerSideBar").style.left = "23%";
 			tlDropdown = new TimelineLite();
-			document.getElementById("playerContainer").style.display = "block";
+			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 			tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
 			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
 			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
@@ -412,9 +432,12 @@ Template.gridThumbs.events({
 				video.playVideoAt(index);
 			else
 				renderVids(index);
-		} else{
+		}else{
 			console.log("after: " + index);
+
+			document.getElementById("playerSideBar").style.left = "23%";
 			tlDropdown.restart();
+			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 			video.playVideoAt(index);
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
