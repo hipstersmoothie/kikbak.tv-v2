@@ -9,9 +9,9 @@ var redRgb = 'rgba(214,55,58,0.5)';
 var redTag = "url('/images/rankBackgroundRed.png')";
 
 Meteor.startup(function () {
-	setTimeout(function() {
-		renderVids();
-	}, 1500);
+	// setTimeout(function() {
+	// 	renderVids();
+	// }, 1500);
 	// code to run on server at startup
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
@@ -306,7 +306,6 @@ Template.player.helpers({
 		var year = dateString.substring(0,4);
 		var day = dateString.substring(5,7);
 		var month = dateString.substring(8,10);
-		console.log(dateString);
 		return new Date(year, month, day, 0, 0, 0, 0).toDateString();
 		return dateString;		
 	}
@@ -392,7 +391,6 @@ Template.gridThumbs.events({
 			return;
 		}
 
-		Session.set('currentVideo', thisVid);
 		if(tlDropdown == null || Session.equals('playerPushedTop', true)){
 			console.log("First: " + index);
 			Session.set('playerPushedTop', false);
@@ -404,10 +402,10 @@ Template.gridThumbs.events({
 			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
 			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
 
-			Meteor.defer(function () {
-				video.playVideo();
-				video.playVideoAt(index)
-			});
+			if(Session.get('currentVideo') != null)
+				video.playVideoAt(index);
+			else
+				renderVids(index);
 		} else{
 			console.log("after: " + index);
 			tlDropdown.restart();
@@ -415,6 +413,8 @@ Template.gridThumbs.events({
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
 		}
+		Session.set('currentVideo', thisVid);
+
 	},
 	'click .like': function() {
 		if(!Meteor.user())
@@ -436,11 +436,14 @@ var findVid = function(videoId) {
 }
 
 firstPlay = true, nextList = null;
-renderVids = function() {
+renderVids = function(index) {
 	Session.set("stateImage",pauseButton);	
 	videoTmp = new YT.Player("player", {
 	events: {
 		onReady: function (event) {
+			if(index != null)
+				event.target.loadPlaylist(Session.get('playlist'), index);
+			else
 				event.target.cuePlaylist(Session.get('playlist'));
 		},
 		onStateChange: function (event) {

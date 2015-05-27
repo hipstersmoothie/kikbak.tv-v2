@@ -19,11 +19,7 @@ Router.route('/', {
   },
   data: function() {
     return updateGrid('Top Videos', TopVideos, this, '/');
-  },
-  // onAfterAction: function() {
-  //       renderVids();
-  //   this.next()
-  // }
+  }
 }); 
 
 Router.route('/hipHop', {
