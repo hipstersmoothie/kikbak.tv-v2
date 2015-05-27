@@ -144,7 +144,6 @@ Template.registerHelper('colorImage', function() {
      return Session.get('colorImage');
 });
 
-
 var changeColor = function(color) {
 	switch(color) {
 		case "red":
@@ -242,16 +241,16 @@ Template.header.events({
 	"click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
-  	},
+  },
 	"click .red": function () {
 		changeColor("red");	
-  	},
+ 	},
 	"click .green": function () {
 		changeColor("green");	
-  	},
+ 	},
 	"click .yellow": function () {
 		changeColor("yellow");	
-  	},
+ 	},
 	'click .likedVideos' : function() {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -274,7 +273,7 @@ Template.player.helpers({
 	sharedata: function() {
 		var video =  Session.get('currentVideo');
 		if(video) {
-			var url = 'https://www.youtube.com/watch?v=' + Session.get('currentVideo').videoId;
+			var url = 'https://www.youtube.com/watch?v=' + video.videoId;
 			return {
 	      facebook: true,
 	      twitter: true,
@@ -332,7 +331,6 @@ Template.player.events({
 		Session.set('playerPushedTop', true);
 		Session.set('playerMinimized', false);
 		video.pauseVideo();
-
 	},
 	"click .downArrow": function () {
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
@@ -450,11 +448,9 @@ renderVids = function(index) {
 			if(event.data == YT.PlayerState.PLAYING) {
 				var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
 				Session.set('currentVideo', nextVid);
-				Session.set("stateImage",pauseButton);
+				Session.set("stateImage", pauseButton);
 			} else if (event.data == YT.PlayerState.PAUSED) {
-				Session.set("stateImage",playButton);
-			} else if (event.data == YT.PlayerState.CUED) {
-				//event.target.playVideo();
+				Session.set("stateImage", playButton);
 			} else if (event.data == YT.PlayerState.ENDED) {
 				if(nextList) {
 					if (video.route != nextList.name) { // new page play first
@@ -483,4 +479,3 @@ renderVids = function(index) {
 
 	YT.load();   	
 };
-
