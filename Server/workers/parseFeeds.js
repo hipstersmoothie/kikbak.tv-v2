@@ -1,5 +1,5 @@
 var http = require('http'),
-	db = require("./../db"),
+	db = require("./../helpers/db"),
 	_ = require('lodash'),
 	parser = require('parse-rss'),
 	request = require('request-enhanced'),
@@ -7,7 +7,7 @@ var http = require('http'),
 	getYouTubeID = require('get-youtube-id'),
 	youtubeThumbnail = require('youtube-thumbnail'),
 	YouTube = require('youtube-node'),
-	getTags = require('./../getTags');
+	getTags = require('./../helpers/getTags');
 
 var youTube = new YouTube();
 var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
@@ -25,7 +25,7 @@ var posts = 0;
 var parseFeed = function(url) {
 	parser(url, function(err, postsData) {
 		if(err) {
-			// console.log('parseFeed', url, err);
+			console.log('parseFeed', url, err);
 		}
 		else  {
 			_.forEach(postsData, _.bind(getHtml, null, _, url));
@@ -45,7 +45,7 @@ var getHtml = function(post, blog) {
 			var $ = cheerio.load(response);
 			handlePost($, blog, post.link);
 		} else {
-			// console.log("getHtml", blog, post.link, error);
+			console.log("getHtml", blog, post.link, error);
 		}
 	});
 }
@@ -79,7 +79,7 @@ var addToDb = function(url, blog, $, link) {
 	var vidId = getYouTubeID(url);
 	db.videos.find({ videoId : vidId }, function(err, video) {  
 		if (err) {
-			// console.log('addToDb', err);
+			console.log('addToDb', err);
 		} else {
 			if (video.length > 0)
 				updateVid(video, blog, vidId, $, link);
@@ -112,7 +112,6 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 }
 
 var newVid = function(vidId, url, blog, $, link) {
-	console.log(vidId)
 	request.get({
 		url: 'https://www.googleapis.com/youtube/v3/videos?part=statistics%2Csnippet&id=' + vidId  + '&key=' + youtubeKey,
 		maxAttempts:3,
@@ -156,7 +155,7 @@ var newVid = function(vidId, url, blog, $, link) {
 				}
 			}, { upsert : true });
 		} else if (error) {
-			// console.log(error);
+			console.log(error);
 		}
 		posts++;
 	});
@@ -170,7 +169,6 @@ setInterval(function() {
 	} else {
 		lastPosts = posts
 	}
-}, 60000)
+}, 120000)
 
-// parseFeed('http://www.iguessimfloating.net/category/video/feed/')
 refreshBlogsFeeds();

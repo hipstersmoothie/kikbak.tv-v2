@@ -1,6 +1,6 @@
 var express = require('express'),
-    wonderRank = require('./wonderRank'),
-    db = require("./db"),
+    wonderRank = require('./helpers/wonderRank'),
+    db = require("./helpers/db"),
 	_ = require('lodash'),
 	path = require('path');
 
@@ -30,7 +30,11 @@ var startExpress = function() {
 	});
 
 	app.get('/videos', function (req, res) {
-		db.videos.find({}, function(err, videos) {
+		db.videos.find({
+			// tags : { $nin : ["Live"] },
+			title: { $not: /2015/ }
+		}, 
+		function(err, videos) {
 			console.log('newVids');
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));

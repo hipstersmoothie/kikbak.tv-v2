@@ -1,5 +1,5 @@
 var	request = require('request-enhanced'),
-	db = require("./../db"),
+	db = require("./../helpers/db"),
 	_ = require('lodash');
 
 var vidlength, done = 0;

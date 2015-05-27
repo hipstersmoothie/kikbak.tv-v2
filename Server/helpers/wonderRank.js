@@ -73,19 +73,19 @@ var shareRatio = function(video) {
 
 var ifMusicVideo = function(video) {
 	if(video.tags && video.tags.indexOf("Music Video") > -1)
-		return 3;
+		return 2;
 	return 1;
 }
 
 var dampen = function(length, date) {
-	// if (date > 10)
-	// 	return 0.25
+	if (date > 10)
+		return 0.25 * length
 	return length;
 }
 
 var sort = function(videos) {
 	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
-	if(videos.length > 0)
+	if(videos)
 		videos.sort(function(a, b) {
 			var date1 = (Date.now() - Date.parse(a.youTubePostDate))/day;
 			var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
