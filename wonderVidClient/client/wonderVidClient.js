@@ -1,6 +1,9 @@
 var greenHex = '#31C663';
 var greenRgb = 'rgba(49,198,99,0.5)';
 var greenTag = "url('/images/rankBackground.png')";
+var blueHex = '#406EAA';
+var blueRgb = 'rgba(64,110,170,0.5)';
+var blueTag = "url('/images/rankBackgroundBlue.png')";
 var yellowHex = '#F7DD72';
 var yellowRgb = 'rgba(247,221,114,0.5)';
 var yellowTag = "url('/images/rankBackgroundYellow.png')";
@@ -88,7 +91,7 @@ Meteor.startup(function () {
 
 	// run these to set the rest of the colors
 
-	changeColor("red");
+	changeColor("blue");
 });
 
 var setPseudoClass = function (rule, prop, value) {
@@ -222,6 +225,9 @@ Template.header.events({
 	"click .yellow": function () {
 		changeColor("yellow");	
   	},
+	"click .blue": function () {
+		changeColor("blue");	
+  	},
 	'click .likedVideos' : function() {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -244,6 +250,11 @@ var changeColor = function(color) {
 			Session.set('color', yellowHex);
 			Session.set('colorImage', yellowTag);
 			Session.set('colorRgb', yellowRgb);
+			break
+		case "blue":
+			Session.set('color', blueHex);
+			Session.set('colorImage', blueTag);
+			Session.set('colorRgb', blueRgb);
 			break
 		case "green":
 			Session.set('color', greenHex);
