@@ -440,9 +440,8 @@ body {
 	height: 50px;
 }
 
-.navbar {
-	margin: 0;
-	z-index: 5;
+.navbar-header:hover .headerColor{
+	opacity: 1;
 }
 
 .navbar-inverse .navbar-toggle {
@@ -478,6 +477,12 @@ body {
 	display: inline-block;
 	position: absolute;
 	bottom: 2px;
+	opacity: 1;
+	transition: opacity 0.30s ease-in-out;
+	-webkit-transition: opacity 0.30s ease-in-out;
+	-moz-transition: opacity 0.30s ease-in-out;
+	-ms-transition: opacity 0.30s ease-in-out;
+	-o-transition: opacity 0.30s ease-in-out;
 }
 
 .green{
