@@ -22,6 +22,8 @@ template(name="simpleModal")
 			+loginButtons
 
 template(name='player')
+	-function prettyRound(doub){ return doub.toFixed(1); }
+
 	+if needOverlay
 		.blackOverlay(class="overlayFront")
 	.appBody 
@@ -36,7 +38,7 @@ template(name='player')
 				p #{formedDate}
 			.sideRank(style="color: {{color}};")
 				p(class="rankDesc") Wonder Rank:
-				p(class="number") {{currentVideo.wonderRank}}
+				p(class="number") prettyRound({{currentVideo.wonderRank}});
 			.stats
 				.sideLikes
 					p {{currentVideo.shareCounts.Facebook.total_count}}
@@ -87,3 +89,5 @@ template(name="loading")
 			.boxright(style="background-color: {{color}};")
 				.face2
 				| ❙ ❙
+
+

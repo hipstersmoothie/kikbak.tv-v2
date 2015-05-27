@@ -84,12 +84,7 @@ Meteor.startup(function () {
 	});
 
 	// run these to set the rest of the colors
-	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
-	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
-	
-
+	changeColor("red");
 
 	setTimeout(function() {
 		renderVids();
@@ -217,7 +212,16 @@ Template.header.events({
 	"click .prevButton": function () {
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
-  },
+  	},
+	"click .red": function () {
+		changeColor("red");	
+  	},
+	"click .green": function () {
+		changeColor("green");	
+  	},
+	"click .yellow": function () {
+		changeColor("yellow");	
+  	},
 	'click .likedVideos' : function() {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -226,33 +230,35 @@ Template.header.events({
 	},
 	'click .like': function() {
 		hitLikeButton(Session.get("currentVideo"));
-	},
-	'click .navbar-brand': function() {
-		switch(Session.get('color')) {
-			case greenHex:
-				Session.set('color', redHex);
-				Session.set('colorImage', redTag);
-				Session.set('colorRgb', redRgb);
-				break
-			case redHex:
-				Session.set('color', yellowHex);
-				Session.set('colorImage', yellowTag);
-				Session.set('colorRgb', yellowRgb);
-				break
-			case yellowHex:
-				Session.set('color', greenHex);
-				Session.set('colorImage', greenTag);
-				Session.set('colorRgb', greenRgb);
-				break
-			default:
-				break;
-		}
-		setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
-		setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
-		setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
-		setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
 	}
 });
+
+var changeColor = function(color) {
+	switch(color) {
+		case "red":
+			Session.set('color', redHex);
+			Session.set('colorImage', redTag);
+			Session.set('colorRgb', redRgb);
+			break
+		case "yellow":
+			Session.set('color', yellowHex);
+			Session.set('colorImage', yellowTag);
+			Session.set('colorRgb', yellowRgb);
+			break
+		case "green":
+			Session.set('color', greenHex);
+			Session.set('colorImage', greenTag);
+			Session.set('colorRgb', greenRgb);
+			break
+		default:
+			break;
+	}
+	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
+	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
+	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
+	setPseudoClass(".single .selected", "border", "3px solid " + Session.get('color'));
+	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
+}
 
 var hitLikeButton = function(video) {
 	if(!Meteor.user())

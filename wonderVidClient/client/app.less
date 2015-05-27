@@ -93,60 +93,53 @@ body {
 	height: 100%;
 	width: 100%;
     display:flex;
-    display: -webkit-flex;
     flex-direction: column;
-    -webkit-flex-direction: column;
     flex-wrap: wrap;
-    -webkit-flex-wrap: wrap;
     justify-content: flex-start;
-    -webkit-justify-content: flex-start;
     align-content: flex-start;
-    -webkit-align-content: flex-start;
     align-items: flex-start;
-    -webkit-align-items: flex-start;
 }
  
 .flex-items-default {
   	flex-grow: 0;
-  	-webkit-flex-grow: 0;
     flex-shrink: 1;
-    -webkit-flex-shrink: 1;
     flex-basis: 100%;
-    -webkit-flex-basis: 100%;
     width: 139vh;
     display: flex;
-    // display: -webkit-flex;
   	align-items: center;
-  	-webkit-align-items: center;
-  	justify-content: center; 
-  	-webkit-justify-content: center; 		
+  	justify-content: center;  		
   	position: relative;
-  	-webkit-position: relative;
 }
 
 .featured {
 	background-size: initial;
 	width: 115vh !important;
-	-webkit-flex-basis: 100% !important;
+	flex-basis: 100% !important;
 }
 
 @media @medium {
 	.flex-items-default {
-	    -webkit-flex-basis: 50%;
+	  	flex-grow: 0;
+	    flex-shrink: 1;
+	    flex-basis: 50%;
 	    width: 79vh;
 	}	
 }
 
 @media @tall {
 	.flex-items-default {
-	    -webkit-flex-basis: 33%;
+	  	flex-grow: 0;
+	    flex-shrink: 1;
+	    flex-basis: 33%;
 	    width: 54vh;
 	}	
 }
 
 @media @reallyTall {
 	.flex-items-default {
-	    -webkit-flex-basis: 25%;
+	  	flex-grow: 0;
+	    flex-shrink: 1;
+	    flex-basis: 25%;
 	    width: 41vh;
 	}	
 }
@@ -478,6 +471,29 @@ body {
 	text-align: center;
 }
 
+.headerColor{
+	width: 50px;
+	height: 8px;
+	display: inline-block;
+	position: absolute;
+	bottom: 2px;
+}
+
+.green{
+	left: 11px;
+	background-color: @GREENHEX;
+}
+
+.red{
+	left: 61px;
+	background-color: @REDHEX;
+}
+
+.yellow{
+	left: 111px;
+	background-color: @YELLOWHEX;
+}
+
 .nextButton,
 .prevButton,
 .playButton {
@@ -489,7 +505,6 @@ body {
 
 #login-buttons .login-button, .accounts-dialog .login-button {
 	color: black;
-	border: 1px solid @RGBColor;
 }
 
 // #login-buttons .login-button:hover, .accounts-dialog .login-button:hover{
