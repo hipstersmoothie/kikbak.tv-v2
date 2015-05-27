@@ -1,0 +1,42 @@
+template(name="header")
+  nav.navbar.navbar-inverse
+    .container-fluid
+      .navbar-header
+        button.navbar-toggle.collapsed(type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1")
+          span.sr-only Toggle navigation
+          span.icon-bar 
+          span.icon-bar 
+          span.icon-bar 
+        a.navbar-brand(href="#" style="color: {{color}};") wonder.video
+        .headerColor.red
+        .headerColor.green
+        .headerColor.yellow
+
+      .collapse.navbar-collapse#bs-example-navbar-collapse-1
+        ul.nav.navbar-nav.navbar-center
+          +if isVideo
+            li
+              img#prevButton.navbar-brand.prevButton(src="/images/prev.png")
+              img#playButton.navbar-brand.playButton(src="/images/{{stateImage}}")
+              img#nextButton.navbar-brand.nextButton(src="/images/next.png")
+            li
+              a(href="" style="color: {{color}};") {{currentVideo.title}}
+            li
+              #headerLike(class="like {{#if isLiked}}heart-red{{/if}}")
+
+        
+        ul.nav.navbar-nav.navbar-right
+          li
+            a(href="" style="color: {{color}};")
+              +loginButtons
+          li.dropdown
+            a.dropdown-toggle(href="#" style="color: {{color}};" data-toggle="dropdown" role="button" aria-expanded="false") 
+              | {{selectedGenre}}
+              span.caret
+            ul.dropdown-menu(role="menu")
+              each genres
+                li
+                  a(href="#" style="color: {{color}};" class="{{this.className}}" onclick="return false;") {{this.type}}
+              li.divider(role="presentation")
+              li
+                a(href="#" style="color: {{color}};" class="likedVideos" onclick="return false;") Likes
