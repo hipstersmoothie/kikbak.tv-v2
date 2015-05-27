@@ -1,5 +1,5 @@
 var http = require('http'),
-	db = require("./../db"),
+	db = require("./../helpers/db"),
 	_ = require('lodash'),
 	parser = require('parse-rss'),
 	request = require('request-enhanced'),
@@ -7,7 +7,7 @@ var http = require('http'),
 	getYouTubeID = require('get-youtube-id'),
 	youtubeThumbnail = require('youtube-thumbnail'),
 	YouTube = require('youtube-node'),
-	getTags = require('./../getTags');
+	getTags = require('./../helpers/getTags');
 
 var youTube = new YouTube();
 var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
@@ -114,15 +114,16 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 var newVid = function(vidId, url, blog, $, link) {
 	request.get({
 		url: 'https://www.googleapis.com/youtube/v3/videos?part=statistics%2Csnippet&id=' + vidId  + '&key=' + youtubeKey,
+		maxAttempts:3,
 		pool: {maxSockets: 10}
 	}, function(error, result) {
+		result = JSON.parse(result);
 		if(result && result['items'] && result['items'].length > 0 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('(audio)') == -1 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('[audio]') == -1 
 			&& result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS) {
-				console.log('oldie')
 				return;
 			}
 			
@@ -168,7 +169,6 @@ setInterval(function() {
 	} else {
 		lastPosts = posts
 	}
-}, 30000)
+}, 120000)
 
-// parseFeed('http://www.iguessimfloating.net/category/video/feed/')
 refreshBlogsFeeds();
