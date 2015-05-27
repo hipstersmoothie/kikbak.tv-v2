@@ -5,12 +5,9 @@
 # but you can also edit it by hand.
 
 meteor-platform
-insecure
 twbs:bootstrap
 mrt:moment
 http
-hpx7:youtube-iframe-player
-adrianliaw:youtube-iframe-api
 alethes:lodash
 iron:router
 mrt:gsap
@@ -23,3 +20,4 @@ lukemadera:social-share
 anti:modals
 konecty:autolinker
 mousetrap:mousetrap
+hpx7:youtube-iframe-player
