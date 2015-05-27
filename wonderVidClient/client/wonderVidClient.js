@@ -9,22 +9,16 @@ var redRgb = 'rgba(214,55,58,0.5)';
 var redTag = "url('/images/rankBackgroundRed.png')";
 
 Meteor.startup(function () {
-	// setTimeout(function() {
-	// 	renderVids();
-	// }, 1500);
-	// code to run on server at startup
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
-	Session.set('playerObj', null);
-
 	Session.set('color', redHex);
 	Session.set('colorImage', redTag);
 	Session.set('colorRgb', redRgb);
-
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.set('playerPushedTop', true);
 	Session.set('playerMinimized', false);
+
 	Accounts.ui.config({
 		requestPermissions: {
 			google: ['https://www.googleapis.com/auth/youtube']
@@ -32,11 +26,7 @@ Meteor.startup(function () {
 		requestOfflineToken: {google:true}
 	})
 	if(Meteor.user())
-		Meteor.call('likedVideos', function(err, res) {
-			if(!err) {
-				Session.set('userLikes', res);
-			}
-		});
+		getLikes();
 
 	Mousetrap.bind('esc', function() { 
 		if(Session.get('playerPushedTop') == false && video) {
@@ -87,29 +77,19 @@ Meteor.startup(function () {
 	});
 
 	// run these to set the rest of the colors
-
 	changeColor("red");
 });
 
 var setPseudoClass = function (rule, prop, value) {
-    var sheets = document.styleSheets;
-    var slen = sheets.length;
-    for (var i = 0; i < slen; i++) {
-        var rules = document.styleSheets[i].cssRules;
-        if (rules) {
-            var rlen = rules.length;
-            for (var j = 0; j < rlen; j++) {
-                if (rules[j].selectorText && rules[j].selectorText.indexOf(rule) == 0) {
-            		console.log(rules[j].selectorText);
-            		console.log("Old Property " + rules[j].style[prop] + " , New Value: " + value);
-                    rules[j].style[prop] = value;
-            		console.log("New Property " + rules[j].style[prop]);
-                }
-            }
-        }
-    }
+    _.forEach(document.styleSheets, function(sheet) {
+    	_.forEach(sheet.cssRules, function(cssRule) {
+    		if(cssRule.selectorText && cssRule.selectorText.indexOf(rule) == 0)
+                cssRule.style[prop] = value;
+    	});
+    });
 }
 
+// ============== Accounts ============== //
 var _logout = Meteor.logout;
 Meteor.logout = function customLogout() {
 	Session.set('userLikes', []);
@@ -129,12 +109,34 @@ var getLikes = function() {
 	}); 
 }
 
+var hitLikeButton = function(video) {
+	if(!Meteor.user())
+		AntiModals.overlay('simpleModal');
+	else {
+		var likes = Session.get('userLikes');
+		var likesIds = _.map(likes, function(like) {
+			return like.videoId;
+		});
+		var index = likesIds.indexOf(video.videoId);
+
+		if(index > -1) {
+			likes.splice(index, 1);
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', video.videoId, 'dislike');
+		} else {
+			likes.unshift(video);
+			Session.set('userLikes', likes);
+			Meteor.call('likeVideo', video.videoId, 'like');
+		}
+	}
+}
+
+// ============== Helpers ============== //
 video = null;
 var playButton = "playButton.png", 
 		pauseButton = "pauseButton.png", tlMinimize = null, 
 		tlDropdown = null, ytPlaylist = [];
 
-//==============SET METEOR CALL BACK TO TOPVIDEOS==============
 Template.registerHelper('color', function() {
      return Session.get('color');
 });
@@ -143,6 +145,35 @@ Template.registerHelper('colorImage', function() {
      return Session.get('colorImage');
 });
 
+
+var changeColor = function(color) {
+	switch(color) {
+		case "red":
+			Session.set('color', redHex);
+			Session.set('colorImage', redTag);
+			Session.set('colorRgb', redRgb);
+			break
+		case "yellow":
+			Session.set('color', yellowHex);
+			Session.set('colorImage', yellowTag);
+			Session.set('colorRgb', yellowRgb);
+			break
+		case "green":
+			Session.set('color', greenHex);
+			Session.set('colorImage', greenTag);
+			Session.set('colorRgb', greenRgb);
+			break
+		default:
+			break;
+	}
+	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
+	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
+	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
+	setPseudoClass(".single .selected", "border", "3px solid " + Session.get('color'));
+	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
+}
+
+// ============== Header ============== //
 Template.header.helpers({
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
@@ -233,55 +264,7 @@ Template.header.events({
 	}
 });
 
-var changeColor = function(color) {
-	switch(color) {
-		case "red":
-			Session.set('color', redHex);
-			Session.set('colorImage', redTag);
-			Session.set('colorRgb', redRgb);
-			break
-		case "yellow":
-			Session.set('color', yellowHex);
-			Session.set('colorImage', yellowTag);
-			Session.set('colorRgb', yellowRgb);
-			break
-		case "green":
-			Session.set('color', greenHex);
-			Session.set('colorImage', greenTag);
-			Session.set('colorRgb', greenRgb);
-			break
-		default:
-			break;
-	}
-	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
-	setPseudoClass(".single .selected", "border", "3px solid " + Session.get('color'));
-	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
-}
-
-var hitLikeButton = function(video) {
-	if(!Meteor.user())
-		AntiModals.overlay('simpleModal');
-	else {
-		var likes = Session.get('userLikes');
-		var likesIds = _.map(likes, function(like) {
-			return like.videoId;
-		});
-		var index = likesIds.indexOf(video.videoId);
-
-		if(index > -1) {
-			likes.splice(index, 1);
-			Session.set('userLikes', likes);
-			Meteor.call('likeVideo', video.videoId, 'dislike');
-		} else {
-			likes.unshift(video);
-			Session.set('userLikes', likes);
-			Meteor.call('likeVideo', video.videoId, 'like');
-		}
-	}
-}
-
+// ============== Player ============== //
 Template.player.helpers({
 	needOverlay: function() {
 		return Session.get('currentVideo') && Session.get('playerMinimized') == false && Session.get('playerPushedTop') == false;
@@ -360,6 +343,7 @@ Template.player.events({
 	}
 });
 
+// ============== Grid Thumbs ============== //
 Template.gridThumbs.helpers({
 	isSelected: function () {
 		return Session.get('currentVideo') ? Session.get('currentVideo').videoId == this.videoId : false;
@@ -436,6 +420,7 @@ Template.gridThumbs.events({
 	}
 });
 
+// ============== Video Helpers ============== //
 var findVid = function(videoId) {
 	var thisVid = null;
 	_.forEach(Session.get('videos'), function(video) {
