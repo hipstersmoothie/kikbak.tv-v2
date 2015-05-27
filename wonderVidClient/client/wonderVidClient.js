@@ -121,13 +121,12 @@ var hitLikeButton = function(video) {
 
 		if(index > -1) {
 			likes.splice(index, 1);
-			Session.set('userLikes', likes);
 			Meteor.call('likeVideo', video.videoId, 'dislike');
 		} else {
 			likes.unshift(video);
-			Session.set('userLikes', likes);
 			Meteor.call('likeVideo', video.videoId, 'like');
 		}
+		Session.set('userLikes', likes);
 	}
 }
 
