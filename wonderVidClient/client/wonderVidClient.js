@@ -103,7 +103,6 @@ Meteor.logout = function customLogout() {
 }
 
 Accounts.onLogin(function() {
-	AntiModals.dismissOverlay();
 	getLikes();
 });
 Accounts.onLogin(getLikes);
@@ -188,6 +187,16 @@ var changeColor = function(color) {
 	setPseudoClass(".single .selected", "border", "3px solid " + Session.get('color'));
 	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
 }
+
+Template.simpleModal.helpers({
+	loggedIn: function() {
+		AntiModals.dismissAll();
+		if(Meteor.user())
+			return "You're logged in!";
+		else
+			return "You're not logged in!";
+	},
+})
 
 // ============== Header ============== //
 Template.header.helpers({
