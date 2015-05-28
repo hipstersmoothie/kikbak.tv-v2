@@ -115,6 +115,12 @@ var getLikes = function() {
 	}); 
 }
 
+var reRank = function (videos) {
+	_.forEach(videos, function(video, rank) {
+		video.rank = rank + 1;
+	});
+}
+
 var hitLikeButton = function(video) {
 	if(!Meteor.user())
 		AntiModals.overlay('simpleModal');
@@ -132,7 +138,7 @@ var hitLikeButton = function(video) {
 			likes.unshift(video);
 			Meteor.call('likeVideo', video.videoId, 'like');
 		}
-		Session.set('userLikes', likes);
+		Session.set('userLikes', reRank(likes));
 	}
 }
 
