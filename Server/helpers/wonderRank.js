@@ -125,7 +125,20 @@ var hipsterSort = function(videos) {
 	}).reverse();
 }
 
+var topSort = function(videos) {
+	if(videos)
+		videos.sort(function(a, b) {
+			var ratio1 = a.shareCounts ? a.shareCounts.Facebook.total_count +  a.shareCounts.Twitter : 1;
+			var ratio2 = b.shareCounts ? b.shareCounts.Facebook.total_count +  b.shareCounts.Twitter : 1;
+			a.wonderRank = (a.foundOn.length * a.oldStats.viewCount * ratio1) / 100000;
+			b.wonderRank = (b.foundOn.length * b.oldStats.viewCount * ratio2) / 100000;
+
+			return (a.wonderRank) - (b.wonderRank);
+		}).reverse();
+}
+
 module.exports = {
 	defaultSort : sort,
-	hipsterSort : hipsterSort
+	hipsterSort : hipsterSort,
+	topSort: topSort
 }
