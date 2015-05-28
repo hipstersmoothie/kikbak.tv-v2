@@ -457,7 +457,10 @@ Template.gridThumbs.events({
 			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
 			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
 
-			if(oldVid != null)
+			if(nextList) {
+				video.loadPlaylist(nextList.videoIds, index);
+				nextList = null;
+			}	else if(oldVid != null)
 				video.playVideoAt(index);
 			else
 				renderVids(index);
@@ -467,7 +470,13 @@ Template.gridThumbs.events({
 			document.getElementById("playerSideBar").style.left = "23%";
 			tlDropdown.restart();
 			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-			video.playVideoAt(index);
+			if(nextList) {
+				event.loadPlaylist(nextList.videoIds, index);
+				nextList = null;
+				//updateList(video);
+			}
+			else
+				video.playVideoAt(index);
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
 		}
@@ -490,6 +499,18 @@ var findVid = function(videoId) {
 		}
 	});
 	return thisVid;
+}
+
+var updateList = function(event) {
+	if (video.route != nextList.name) { // new page play first
+		event.loadPlaylist(nextList.videoIds);
+		Session.set('currentVideo', Session.get('videos')[0]);
+	} else { // reload on same page, play next rank. SHOULD try to find id first then play rank if it can find it
+		event.loadPlaylist(nextList.videoIds, Session.get('currentVideo').rank);
+		Session.set('currentVideo', Session.get('videos')[Session.get('currentVideo').rank]);
+	}
+	video.route = nextList.name;
+	nextList = null;
 }
 
 firstPlay = true, nextList = null;
@@ -515,17 +536,9 @@ renderVids = function(index) {
 			} else if (event.data == YT.PlayerState.PAUSED) {
 				Session.set("stateImage", playButton);
 			} else if (event.data == YT.PlayerState.ENDED) {
-				if(nextList) {
-					if (video.route != nextList.name) { // new page play first
-						event.target.loadPlaylist(nextList.videoIds);
-						Session.set('currentVideo', Session.get('videos')[0]);
-					} else { // reload on same page, play next rank. SHOULD try to find id first then play rank if it can find it
-						event.target.loadPlaylist(nextList.videoIds, Session.get('currentVideo').rank);
-						Session.set('currentVideo', Session.get('videos')[Session.get('currentVideo').rank]);
-					}
-					video.route = nextList.name;
-					nextList = null;
-				} else {
+				if(nextList)
+					updateList(event.target);
+				else {
 					var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
 					Session.set('currentVideo', nextVid);
 				}
