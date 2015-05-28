@@ -97,10 +97,10 @@ Meteor.methods({
       item.title = item.snippet.title;
       item.videoId = item.contentDetails.videoId
       item.thumbnail = {};
-      item.thumbnail.medium = {},
+      item.thumbnail.high = {},
       item.rank = index + 1;
       if(item.snippet.thumbnails)
-        item.thumbnail.medium.url  = item.snippet.thumbnails.medium.url;
+        item.thumbnail.high.url  = item.snippet.thumbnails.high.url;
 
       return item;
     });
