@@ -22,6 +22,21 @@ template(name="simpleModal")
 			.text-center
 				+loginButtons
 
+template(name="helpModal")
+	.anti-modal-box
+		.anti-modal-header
+			.anti-modal-title(style="color: {{color}};")
+				h2 Shortcuts
+			.anti-modal-closer &times;
+		.anti-modal-body 
+			p Many of the actions you can do in the app can also be done at the press of a key!
+			+each shortcut
+				.keyRow
+					.left
+						span.key {{this.key}}
+					.right
+						p.keyExp {{this.exp}}
+			
 template(name='player')
 	+if needOverlay
 		.blackOverlay(class="overlayFront")

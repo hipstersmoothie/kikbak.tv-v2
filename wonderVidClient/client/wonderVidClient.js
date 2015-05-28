@@ -198,6 +198,17 @@ Template.simpleModal.helpers({
 	},
 })
 
+Template.helpModal.helpers({
+	shortcut: function() {
+		return [{ key:'m', exp:'Minimize the player' },
+						{ key:'esc', exp:'Push the player to the top' },
+						{ key:'down', exp:'Bring the player down from the top' },
+						{ key:'->', exp:'Next song' },
+						{ key:'<-', exp:'Previous song' },
+						{ key:'space', exp:'Pause the song' }];
+	}
+})
+
 // ============== Header ============== //
 Template.header.helpers({
 	genres: function() { 
@@ -230,6 +241,9 @@ Template.header.helpers({
 
 CurrentVideos = null;
 Template.header.events({
+	'click .help': function() {
+		AntiModals.overlay('helpModal');
+	},
 	'click .topVideos': function() {
 		Router.go('/');
 	},
