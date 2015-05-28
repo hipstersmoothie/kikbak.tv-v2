@@ -8,8 +8,8 @@ TopVideos = new Mongo.Collection('videos');
 HipHopVideos = new Mongo.Collection('hipHop');
 ElectronicVideos = new Mongo.Collection('electronic');
 LiveVideos = new Mongo.Collection('live');
-InterviewVideos = new Mongo.Collection('interviews');
 EmergingVideos = new Mongo.Collection('emerging');
+AllStarVideos = new Mongo.Collection('allStar');
 
 Router.route('/', {
   layoutTemplate: 'layout',
@@ -22,6 +22,17 @@ Router.route('/', {
   }
 }); 
 
+Router.route('/allStar', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    return  Meteor.subscribe('videos', 'allStar');
+  },
+  data: function() {
+    return updateGrid('All Star', AllStarVideos, this, '/allStar');
+  }
+});
+
 Router.route('/hipHop', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
@@ -32,17 +43,6 @@ Router.route('/hipHop', {
     return updateGrid('Hip Hop', HipHopVideos, this, '/hipHop');
   }
 }); 
-
-Router.route('/interviews', {
-  layoutTemplate: 'layout',
-  template: 'gridThumbs',
-  waitOn: function() {
-    return  Meteor.subscribe('videos', 'interviews');
-  },
-  data: function() {
-    return updateGrid('Interviews', InterviewVideos, this);
-  }
-});
 
 Router.route('/live', {
   layoutTemplate: 'layout',

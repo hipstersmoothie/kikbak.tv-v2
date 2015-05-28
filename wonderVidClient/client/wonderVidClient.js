@@ -188,9 +188,9 @@ Template.header.helpers({
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
 						{type:"Emerging", className: "emergingVideos"},
+						{type:"All Star", className: "allStarVideos"},
 						{type:"Hip Hop", className: "hipHopVideos"},
 						{type:"Electronic", className: "electronicVideos"},
-						{type:"Interviews", className: "interviewVideos"},
 						{type:"Live", className: "liveVideos"}];
 	},
 	selectedGenre: function() {
@@ -218,11 +218,11 @@ Template.header.events({
 	'click .topVideos': function() {
 		Router.go('/');
 	},
+	'click .allStarVideos': function() {
+		Router.go('/allStar');
+	},
 	'click .hipHopVideos': function() {
 		Router.go('/hipHop');
-	},
-	'click .interviewVideos': function() {
-		Router.go('/interviews');
 	},
 	'click .liveVideos': function() {
 		Router.go('/live');

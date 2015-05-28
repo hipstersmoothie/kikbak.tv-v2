@@ -31,12 +31,21 @@ var startExpress = function() {
 
 	app.get('/videos', function (req, res) {
 		db.videos.find({
-			// tags : { $nin : ["Live"] },
 			title: { $not: /2015/ }
 		}, 
 		function(err, videos) {
 			console.log('newVids');
 			wonderRank.defaultSort(videos);
+			res.send(videos.splice(0,100));
+		});
+	});
+
+	app.get('/allstars', function (req, res) {
+		db.videos.find({
+			title: { $not: /2015/ }
+		}, 
+		function(err, videos) {
+			wonderRank.topSort(videos);
 			res.send(videos.splice(0,100));
 		});
 	});
@@ -62,15 +71,8 @@ var startExpress = function() {
 		});
 	});
 
-	app.get('/interviews', function (req, res) {
-		db.videos.find({tags: {$nin : ["Music Video", "Trailer"], $in: ["Interview"]}}, function(err, videos) {
-			wonderRank.defaultSort(videos);
-			res.send(videos.splice(0,100));
-		});
-	});
-
 	app.get('/live', function (req, res) {
-		db.videos.find({tags: {$nin : ["Music Video", "Trailer"], $in: ["Live"]}}, function(err, videos) {
+		db.videos.find({tags: {$nin : ["Music Video", "Trailer"], $in: ["Interview", "Live"]}}, function(err, videos) {
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
