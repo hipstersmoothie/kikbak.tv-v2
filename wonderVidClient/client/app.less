@@ -15,9 +15,9 @@
 @REDHEX: #D6373A;
 @REDRGB: rgba(214,55,58,0.5);
 @REDTAG: url('/images/rankBackgroundRed.png');
-@HexColor: @REDHEX;
-@RGBColor: @REDRGB;
-@TagColor: @REDTAG;
+@HexColor: @BLUEHEX;
+@RGBColor: @BLUERGB;
+@TagColor: @BLUETAG;
 
 html {
 	height: 100%;
@@ -195,7 +195,7 @@ body {
 		left: 23%;
 		position: absolute;
 		color: white;
-		padding: 50px 10px 0 10px;
+		padding: 70px 10px 0 10px;
 		border-bottom-left-radius: 10px;
 		overflow-y: scroll;
 		background-color: rgba(0, 0, 0, 0.8);
@@ -240,14 +240,15 @@ body {
 		}
 
 		.sideTitle{
-			font-size: 18px;
+			font-size: 34px;
 			font-weight: 900;
 		  	text-align: center;
 		}
 
 
 		.sideDate{
-			font-size: 12px;
+		  	font-size: 14px;
+		 	margin-top: -12px;
 			color: #888888;
 		  	padding: 5px;
 		  	width: 100%;
@@ -277,7 +278,6 @@ body {
 			.sideLikes{
 				  width: 48%;
 				  top: 76px;
-				  height: z;
 				  font-size: 10px;
 				  color: white;
 				  float: left;
@@ -303,6 +303,7 @@ body {
 		.sideDescription{
 			font-size: 14px;
   			margin-top: 25px;
+  			text-align: center;
 		  	display: inline-block;
 		  	white-space: pre-wrap;
 		}
@@ -364,7 +365,7 @@ body {
 
 
 	.overlay:hover .like{
-	 	background-color: rgba(0,0,0,0); 
+	 	background-color: @RGBColor;
 	}
 
 	.overlay{

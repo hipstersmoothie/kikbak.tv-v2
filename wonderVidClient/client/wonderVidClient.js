@@ -315,8 +315,8 @@ Template.player.helpers({
 			var year = dateString.substring(0,4);
 			var day = dateString.substring(5,7);
 			var month = dateString.substring(8,10);
-			return new Date(year, month, day, 0, 0, 0, 0).toDateString();
-			return dateString;		
+			dateString = month + " • " + day + " • " + year;
+			return dateString;
 		}
 	}
 });
