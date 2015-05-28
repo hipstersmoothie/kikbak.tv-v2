@@ -31,7 +31,9 @@ var startExpress = function() {
 
 	app.get('/videos', function (req, res) {
 		db.videos.find({
-			title: { $not: /2015/ }
+			title: { 
+				$not: /2015/
+			}
 		}, 
 		function(err, videos) {
 			console.log('newVids');
@@ -42,7 +44,7 @@ var startExpress = function() {
 
 	app.get('/allstars', function (req, res) {
 		db.videos.find({
-			title: { $not: /2015/ }
+			title: { $not: /(?=2015)(?=Boiler Room)/ }
 		}, 
 		function(err, videos) {
 			wonderRank.topSort(videos);

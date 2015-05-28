@@ -122,7 +122,8 @@ var newVid = function(vidId, url, blog, $, link) {
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('(audio)') == -1 
 			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('[audio]') == -1 
-			&& result['items'][0]['snippet']['channelTitle'] != 'AllHipHopTV') {
+			&& result['items'][0]['snippet']['channelTitle'] != 'Consequence of Sound'
+			&& result['items'][0]['snippet']['channelTitle'] != 'Above Average') {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS) {
 				return;
 			}
