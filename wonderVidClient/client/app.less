@@ -96,34 +96,34 @@ body {
 	height: 100%;
 	width: 100%;
 	display: -webkit-flex;
-    display:flex;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    -webkit-flex-wrap: wrap;
-    flex-wrap: wrap;
-    -webkit-justify-content: flex-start;
-    justify-content: flex-start;
-    -webkit-align-content: flex-start;
-    align-content: flex-start;
-    -webkit-align-items: flex-start;
-    align-items: flex-start;
+		display:flex;
+		-webkit-flex-direction: column;
+		flex-direction: column;
+		-webkit-flex-wrap: wrap;
+		flex-wrap: wrap;
+		-webkit-justify-content: flex-start;
+		justify-content: flex-start;
+		-webkit-align-content: flex-start;
+		align-content: flex-start;
+		-webkit-align-items: flex-start;
+		align-items: flex-start;
 }
  
 .flex-items-default {
-  	-webkit-flex-grow: 0;
-  	flex-grow: 0;
-    -webkit-flex-shrink: 1;
-    flex-shrink: 1;
-    -webkit-flex-basis: 100%;
-    flex-basis: 100%;
-    width: 139vh;
-    // display: flex;
-  	-webkit-align-items: center;
-  	align-items: center;
-  	-webkit-justify-content: center;  
-  	justify-content: center;  		
-  	-webkit-position: relative;
-  	position: relative;
+		-webkit-flex-grow: 0;
+		flex-grow: 0;
+		-webkit-flex-shrink: 1;
+		flex-shrink: 1;
+		-webkit-flex-basis: 100%;
+		flex-basis: 100%;
+		width: 139vh;
+		// display: flex;
+		-webkit-align-items: center;
+		align-items: center;
+		-webkit-justify-content: center;  
+		justify-content: center;  		
+		-webkit-position: relative;
+		position: relative;
 }
 
 .featured {
@@ -135,25 +135,25 @@ body {
 
 @media @medium {
 	.flex-items-default {
-	    -webkit-flex-basis: 50%;
-	    flex-basis: 50%;
-	    width: 79vh;
+			-webkit-flex-basis: 50%;
+			flex-basis: 50%;
+			width: 79vh;
 	}	
 }
 
 @media @tall {
 	.flex-items-default {
 		-webkit-flex-basis: 33%;
-	    flex-basis: 33%;
-	    width: 54vh;
+			flex-basis: 33%;
+			width: 54vh;
 	}	
 }
 
 @media @reallyTall {
 	.flex-items-default {
 		-webkit-flex-basis: 25%;
-	    flex-basis: 25%;
-	    width: 41vh;
+			flex-basis: 25%;
+			width: 41vh;
 	}	
 }
 
@@ -182,11 +182,11 @@ body {
 	z-index: 3;
 
 	#player{
-	  width: 75%;
-	  height: 100%;
-	  right: 40px;
-	  background: black;
-	  position: absolute;
+		width: 75%;
+		height: 100%;
+		right: 40px;
+		background: black;
+		position: absolute;
 	}
 
 	.playerSideBar{
@@ -195,7 +195,7 @@ body {
 		left: 23%;
 		position: absolute;
 		color: white;
-		padding: 70px 10px 0 10px;
+		padding: 70px 20px 0 20px;
 		border-bottom-left-radius: 10px;
 		overflow-y: scroll;
 		background-color: rgba(0, 0, 0, 0.8);
@@ -206,8 +206,8 @@ body {
 		 
 
 		.lm-social-share-btn{
- 		  display: inline-block;
-		  color: white;
+			display: inline-block;
+			color: white;
 			border-bottom-right-radius: 2px;
 			border-bottom-left-radius: 2px;
 			transition: background-color 0.30s ease-in-out;
@@ -218,71 +218,71 @@ body {
 		}
 
 		.lm-social-share-facebook{
-		  background-color: #3b5998;
-		  float: left;
-		  padding: 5px 40px;
-		  width: 48%
+			background-color: #3b5998;
+			float: left;
+			padding: 5px 35px;
+			width: 48%
 		}
 
 		.lm-social-share-twitter{
-		  background-color: #4099ff;
-		  padding: 5px 42px;
-		  float: right;
-		  width: 48%
+			background-color: #4099ff;
+			padding: 5px 38px;
+			float: right;
+			width: 48%
 		}
 
 		.lm-social-share-facebook:hover{
-		  background-color: #304a7f;
+			background-color: #304a7f;
 		}
 
 		.lm-social-share-twitter:hover{
-		  background-color: #3A8AE4;
+			background-color: #3A8AE4;
 		}
 
 		.sideTitle{
-			font-size: 34px;
+			font-size: 25px;
 			font-weight: 900;
-		  	text-align: center;
+				text-align: center;
 		}
 
 
 		.sideDate{
-		  	font-size: 14px;
-		 	margin-top: -12px;
+				font-size: 14px;
+			margin-top: -12px;
 			color: #888888;
-		  	padding: 5px;
-		  	width: 100%;
-		  	text-align: center;
+				padding: 5px;
+				width: 100%;
+				text-align: center;
 		}
 
 		.sideRank{
 			color: @HexColor;
-		  	padding: 5px;
-		  	width: 100%;
-		  	font-size: 14px;
-		  	text-align: center;
-		  	
-		  	.rankDesc{
-		  		margin-bottom: -25px;
-		  	}
+				padding: 5px;
+				width: 100%;
+				font-size: 14px;
+				text-align: center;
+				
+				.rankDesc{
+					margin-bottom: -25px;
+				}
 
-		  	.number{
-		  		font-size: 72px;
-		  	}
+				.number{
+					font-size: 72px;
+				}
 		}
 
 		.stats {
 			width: 100%;
 			margin: 0;
-  			text-align: center;
+				text-align: center;
 			.sideLikes{
-				  width: 48%;
-				  top: 76px;
-				  font-size: 10px;
-				  color: white;
-				  float: left;
-				  background-color: #304a7f;
-				  margin: 0;
+					width: 48%;
+					top: 76px;
+					font-size: 10px;
+					color: white;
+					float: left;
+					background-color: #304a7f;
+					margin: 0;
 			}
 
 			.sideDislikes{
@@ -302,10 +302,15 @@ body {
 
 		.sideDescription{
 			font-size: 14px;
-  			margin-top: 25px;
-  			text-align: center;
-		  	display: inline-block;
-		  	white-space: pre-wrap;
+			margin-top: 25px;
+			text-align: center;
+			display: inline-block;
+			white-space: pre-wrap;
+			width: 100%;
+
+			p {
+				overflow-wrap: break-word;
+			}
 		}
 	}
 
@@ -360,12 +365,12 @@ body {
 	}
 
 	.overlay:hover{
-	 	background-color: rgba(255,255,255,0.2); 
+		background-color: rgba(255,255,255,0.2); 
 	}
 
 
 	.overlay:hover .like{
-	 	background-color: transparent !important;
+		background-color: transparent !important;
 	}
 
 	.overlay{
@@ -406,7 +411,7 @@ body {
 	}
 
 	.overlay:hover .like{
-	   opacity: 1;
+		 opacity: 1;
 	} 
 }
 
@@ -427,13 +432,13 @@ body {
 		.key {
 			float: right;
 			height: 50px;
-		  width: 50px;
-		  background-color: #555;
-		  border-radius: 7px;
-		  line-height: 49px;
-		  text-align: center;
-		  // margin-left: 35%;
-		  margin-top: 5px;
+			width: 50px;
+			background-color: #555;
+			border-radius: 7px;
+			line-height: 49px;
+			text-align: center;
+			// margin-left: 35%;
+			margin-top: 5px;
 		}
 	}
 	
@@ -450,18 +455,18 @@ body {
 
 .help {
 	color: #406EAA;
-  float: left;
-  height: 50px;
-  padding: 15px 15px;
-  font-size: 18px;
-  line-height: 20px;
+	float: left;
+	height: 50px;
+	padding: 15px 15px;
+	font-size: 18px;
+	line-height: 20px;
 }
 
 .like {
 	width: 24px;
 	height: 24px;
 	float: right;
-    opacity: 0;
+		opacity: 0;
 	background-image: url('/images/likeNone.png');
 	margin: 5px;
 	transition: opacity 0.35s ease-out;
@@ -482,8 +487,8 @@ body {
 
 .anti-modal-box, .anti-modal-header {
 	background-color: #222;
- 	border-radius: 10px;
- 	color: white;
+	border-radius: 10px;
+	color: white;
 }
 
 .navbar .nav,
@@ -522,8 +527,8 @@ body {
 }
 
 #login-buttons .login-button:hover, .accounts-dialog .login-button:hover {
-  background: #2D2D2D;
-  color: white;
+	background: #2D2D2D;
+	color: white;
 }
 
 .navbar-inverse .navbar-toggle {

@@ -31,9 +31,10 @@ var startExpress = function() {
 
 	app.get('/videos', function (req, res) {
 		db.videos.find({
-			title: { 
-				$not: /2015/
-			}
+			$and: [
+				{ title: { $not: /2015|Boiler Room|Trailer/ } }, //live
+				{ publishedBy: { $not: /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision/ } } //interviews
+			]
 		}, 
 		function(err, videos) {
 			console.log('newVids');
