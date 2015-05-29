@@ -11,60 +11,6 @@ template(name="layout")
 	div(style="height:100%")
 		+yield
 
-template(name="about")
-	+header
-	.top
-	.pane.topHeight
-		.description.text-center
-			h1(style="color: {{color}};") This is kikbak.tv
-			p We take the hassle out of finding the new music videos on the web.
-	.features
-		.feature.card
-			.icon(style="background-color: {{color}};")
-				|1
-			.description
-				h2.text-center Smart Rankings
-				p kikbak.tv ranks recent Music Videos by combining the Facebook shares, Tweets, blog posts, and average plays of the video.
-		.feature.card
-			.icon(style="background-color: {{color}};")
-				article.clock
-					.hours-container
-						.hours
-					.minutes-container
-						.minutes
-			.description
-				h2.text-center Hourly Results
-				p Our servers are constantly combing the internet for new music videos and share counts. This changes the top 100 hourly. 
-		.feature.card
-			.icon(style="background-color: {{color}};")
-				.left-eye.eye
-				.right-eye.eye
-				.mouth
-			.description
-				h2.text-center Relax
-				p kikbak.tv takes out all the pain of finding new music. Just sit back, watch, and discover!
-	.creators
-		.creator.card.creatorLeft
-			.picLeft.pic
-			.description
-				h2.text-center(style="color: {{color}};") Andrew Lisowski
-				h3 Bio
-				p Lorem ipsum dolor sit amet, accumsan patrioque mediocritatem sit ei. Nonumes adversarium te pri. Sint cetero deterruisset vim in. Sed nibh velit salutandi et, no minimum gloriatur sea, assum percipit et cum. Has ea zril mandamus. Ipsum partem moderatius ius ei, indoctum postulant eu nec, vis in eros hendrerit.
-				h3 Previous Work
-				p Lorem ipsum dolor sit amet, accumsan patrioque mediocritatem sit ei. Nonumes adversarium te pri. Sint cetero deterruisset vim in. Sed nibh velit salutandi et, no minimum gloriatur sea, assum percipit et cum. Has ea zril mandamus. Ipsum partem moderatius ius ei, indoctum postulant eu nec, vis in eros hendrerit.
-		.creator.card.creatorRight
-			.picRight.pic
-			.description
-				h2.text-center(style="color: {{color}};") Emmett Harper
-				h3 Bio
-				p Lorem ipsum dolor sit amet, accumsan patrioque mediocritatem sit ei. Nonumes adversarium te pri. Sint cetero deterruisset vim in. Sed nibh velit salutandi et, no minimum gloriatur sea, assum percipit et cum. Has ea zril mandamus. Ipsum partem moderatius ius ei, indoctum postulant eu nec, vis in eros hendrerit.
-				h3 Previous Work
-				p Lorem ipsum dolor sit amet, accumsan patrioque mediocritatem sit ei. Nonumes adversarium te pri. Sint cetero deterruisset vim in. Sed nibh velit salutandi et, no minimum gloriatur sea, assum percipit et cum. Has ea zril mandamus. Ipsum partem moderatius ius ei, indoctum postulant eu nec, vis in eros hendrerit.
-	.pane.bottom
-		.description.text-center
-			h1 Start Exploring!
-			button.goBack(style="background-color: {{color}};") Back to kikbak.tv
-
 template(name="simpleModal")
 	.anti-modal-box
 		.anti-modal-header 
