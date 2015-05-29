@@ -11,6 +11,43 @@ template(name="layout")
 	div(style="height:100%")
 		+yield
 
+template(name="about")
+	+header
+	.top
+	.pane.topHeight
+		.description.text-center
+			h1(style="color: {{color}};") This is kikbak.tv
+			p We take the hassle out of finding the new music videos on the web.
+	.features
+		.feature
+			.icon(style="background-color: {{color}};")
+				|1
+			.description
+				h2.text-center Smart Rankings
+				p kikbak.tv ranks recent Music Videos by combining the Facebook shares, Tweets, blog posts, and average plays of the video.
+		.feature
+			.icon(style="background-color: {{color}};")
+				article.clock
+					.hours-container
+						.hours
+					.minutes-container
+						.minutes
+			.description
+				h2.text-center Hourly Results
+				p Our servers are constantly combing the internet for new music videos and share counts. This changes the top 100 hourly. 
+		.feature
+			.icon(style="background-color: {{color}};")
+				.left-eye.eye
+				.right-eye.eye
+				.mouth
+			.description
+				h2.text-center Relax
+				p kikbak.tv takes out all the pain of finding new music. Just sit back, watch, and discover!
+	.pane.bottom
+		.description.text-center
+			h1 Start Exploring!
+			button.goBack(style="background-color: {{color}};") Back to kikbak.tv
+
 template(name="simpleModal")
 	.anti-modal-box
 		.anti-modal-header 
@@ -28,9 +65,9 @@ template(name="helpModal")
 				h2 What is kikbak.tv?
 			.anti-modal-closer &times;
 		.anti-modal-body 
-			p kikbak.tv combs the internet for the newest coolest music videos everyday, then combines them into a list. 
-			| This is list updates as the day goes on, as videos are posted on blogs and watched we update the list. Check
-			| back throughout the day for updates!
+			p 
+				| kikbak.tv combs the internet for the newest coolest music videos everyday. Find out more
+				a.about(href='/about') here
 			h3 Shortcuts
 			p Many of the actions you can do in the app can also be done at the press of a key!
 			+each shortcut

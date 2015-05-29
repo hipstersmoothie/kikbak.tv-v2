@@ -11,6 +11,14 @@ LiveVideos = new Mongo.Collection('live');
 EmergingVideos = new Mongo.Collection('emerging');
 AllStarVideos = new Mongo.Collection('allStar');
 
+Router.route('/about', {
+  template: 'about',
+  onBeforeAction: function() {
+    Session.set('about', true);
+    this.next();
+  }
+});
+
 Router.route('/', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
@@ -125,6 +133,7 @@ var updateGrid = function(genre, collection, route) {
       };
     }
     CurrentVideos = collection;
+    Session.set('about', false);
     return templateData;
   }
 }
