@@ -23,12 +23,16 @@ template(name="simpleModal")
 				+loginButtons
 
 template(name="helpModal")
-	.anti-modal-box
+	.about.anti-modal-box
 		.anti-modal-header
 			.anti-modal-title(style="color: {{color}};")
-				h2 Shortcuts
+				h2 What is kikbak.tv?
 			.anti-modal-closer &times;
 		.anti-modal-body 
+			p kikbak.tv combs the internet for the newest coolest music videos everyday, then combines them into a list. 
+			| This is list updates as the day goes on, as videos are posted on blogs and watched we update the list. Check
+			| back throughout the day for updates!
+			h3 Shortcuts
 			p Many of the actions you can do in the app can also be done at the press of a key!
 			+each shortcut
 				.keyRow
