@@ -17,6 +17,7 @@ Meteor.startup(function () {
 	Session.set('color', redHex);
 	Session.set('colorImage', redTag);
 	Session.set('colorRgb', redRgb);
+	Session.set('about', false)
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.set('playerPushedTop', true);
@@ -208,10 +209,25 @@ Template.helpModal.helpers({
 						{ key:'<-', exp:'Previous song' },
 						{ key:'space', exp:'Pause the song' }];
 	}
+});
+
+Template.helpModal.events({
+	'click .about': function() {
+		AntiModals.dismissOverlay();
+	}
 })
 
 // ============== Header ============== //
+Template.about.events({
+	'click .goBack': function() {
+		Router.go('/');
+	}
+})
+
 Template.header.helpers({
+	about: function() {
+		return Session.get('about');
+	},
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
 						{type:"Emerging", className: "emergingVideos"},
@@ -404,15 +420,12 @@ Template.player.events({
 
 // ============== Grid Thumbs ============== //
 Template.gridThumbs.rendered = function(){
-
    $("body").mousewheel(function(event, delta) {
-
-      this.scrollLeft -= (delta * 30);
-    
-      event.preventDefault();
-
+	   	if(event.target.className == "overlay") {
+	   		this.scrollLeft -= (delta * 30);
+	      event.preventDefault();
+	   	}
    });
-
 }
 
 Template.gridThumbs.helpers({

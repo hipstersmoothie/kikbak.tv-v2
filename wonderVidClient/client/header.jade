@@ -7,7 +7,7 @@ template(name="header")
           span.icon-bar 
           span.icon-bar 
           span.icon-bar 
-        a.navbar-brand(href="#" style="color: {{color}};") kikbak.tv
+        a.navbar-brand(href="/" style="color: {{color}};") kikbak.tv
         .headerColor.red
         .headerColor.green
         .headerColor.yellow
@@ -26,19 +26,19 @@ template(name="header")
             li
               #headerLike(class="like {{#if isLiked}}heart-red{{/if}}")
 
-        
-        ul.nav.navbar-nav.navbar-right
-          li
-            a(href="" style="color: {{color}};")
-              +loginButtons
-          li.dropdown
-            a.dropdown-toggle(href="#" style="color: {{color}};" data-toggle="dropdown" role="button" aria-expanded="false") 
-              | {{selectedGenre}}
-              span.caret
-            ul.dropdown-menu(role="menu")
-              each genres
+        +unless about
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(href="" style="color: {{color}};")
+                +loginButtons
+            li.dropdown
+              a.dropdown-toggle(href="#" style="color: {{color}};" data-toggle="dropdown" role="button" aria-expanded="false") 
+                | {{selectedGenre}}
+                span.caret
+              ul.dropdown-menu(role="menu")
+                each genres
+                  li
+                    a(href="#" style="color: {{color}};" class="{{this.className}}" onclick="return false;") {{this.type}}
+                li.divider(role="presentation")
                 li
-                  a(href="#" style="color: {{color}};" class="{{this.className}}" onclick="return false;") {{this.type}}
-              li.divider(role="presentation")
-              li
-                a(href="#" style="color: {{color}};" class="likedVideos" onclick="return false;") Likes
+                  a(href="#" style="color: {{color}};" class="likedVideos" onclick="return false;") Likes
