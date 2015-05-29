@@ -38,8 +38,10 @@ var startExpress = function() {
 		}, 
 		function(err, videos) {
 			console.log('newVids');
-			wonderRank.defaultSort(videos);
-			res.send(videos.splice(0,100));
+			if(videos) {
+				wonderRank.defaultSort(videos);
+				res.send(videos.splice(0,100));
+			}
 		});
 	});
 

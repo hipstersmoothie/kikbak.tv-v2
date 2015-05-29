@@ -84,6 +84,7 @@ body {
 
 .bottom {
 	height: 24em;
+	width: 100%;
 	background-color: white;
 
 	button {
@@ -93,6 +94,17 @@ body {
 		border-radius: 10px;
 		border-color: transparent;
 	}
+}
+
+.card {
+	padding: 1em 0 0 1em;
+	-moz-border-radius: 4px;
+    border-radius: 4px;
+	position: relative;
+	background: #fff;
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 6px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 }
 
 .features {
@@ -114,18 +126,10 @@ body {
 		-webkit-flex: 1;
 		-ms-flex: 1;
 		flex: 1;
-		padding: 1em 0 0 1em;
-		-moz-border-radius: 4px;
-	    border-radius: 4px;
-		position: relative;
-		float: left;
 		width: 90%;
 		padding: 1em;
 		margin: 2em 2% 2em;
-		background: #fff;
-		-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-		-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-		box-shadow: 0 6px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+		float: left;
 
 		.icon {
 		    background: #eee;
@@ -266,6 +270,65 @@ body {
 		  margin-left: 14px;
 		  
 		  animation: smile 1.25s ease-out;
+		}
+	}
+}
+
+.creators {
+	height: 50em;
+
+	.creatorLeft {
+		margin-left: 35px;
+		margin-right: 2.5%;
+	}
+
+	.creatorRight {
+		margin-right: 35px;
+		margin-left: 2.5%;
+	}
+	.creator {
+		display: -webkit-flex;
+		display: flex;
+		-webkit-align-items: flex-start;
+		align-items: flex-start;
+		height: 90%;
+		width: 44%;
+		margin-top: 3%;
+		margin-bottom: 3%;
+		background: white;
+		padding: 1em;
+		float: left;
+
+		.pic {
+			width: 200px;
+			height: 200px;
+			background-color: yellow;
+			margin-top: 20px;
+			border-radius: 50%;
+			background-size: cover;
+			background-repeat: no-repeat;
+		}
+
+		.picLeft {
+			margin-left: 20px;	
+			background-image: url('/images/myface.jpg');
+		}
+
+		.picRight {
+			-webkit-box-ordinal-group: 2;
+			-webkit-order: 1;
+			-ms-flex-order: 1;
+			order: 1;
+			margin-right: 20px;
+			background-image: url('/images/emmett.jpg');
+		}
+
+		.description {
+			-webkit-box-flex: 1;
+			-webkit-flex: 1;
+			-ms-flex: 1;
+			flex: 1;
+			margin: 30px;
 		}
 	}
 }
