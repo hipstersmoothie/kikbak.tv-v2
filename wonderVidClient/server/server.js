@@ -16,9 +16,9 @@ Meteor.startup(function () {
     base_url = "https://wondervid.herokuapp.com";
     ServiceConfiguration.configurations.insert({
       service: "google",
-      clientId: "1017109112095-8jsbj46ehov7pku11e4bu6111cro8tt6.apps.googleusercontent.com",
+      clientId: "1017109112095-0f5c5pm9ko8bsojihiq17o0dgfmbhmac.apps.googleusercontent.com",
       loginStyle: "redirect",
-      secret: "deh7tJKB5kfDCfnGGUo1ZTVc"
+      secret: "VBFRTPKgrck5cNSRh7Kv-DdQ"
     });
   }
 

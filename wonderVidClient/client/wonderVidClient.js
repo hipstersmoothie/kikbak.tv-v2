@@ -352,6 +352,11 @@ Template.player.helpers({
 });
 
 Template.player.events({
+	'click .blackOverlay': function() {
+		Session.set('playerPushedTop', true);
+		tlDropdown.reverse();
+		Session.set('playerMinimized', false);
+	},
 	"click .togglePlayer": function () {
 		if(Session.equals('playerPushedTop', false)){
 			Session.set('playerPushedTop', true);
