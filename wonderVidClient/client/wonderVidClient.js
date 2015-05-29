@@ -215,8 +215,8 @@ Template.header.helpers({
 		return [{type:"Top Videos", className: "topVideos"}, 
 						{type:"Emerging", className: "emergingVideos"},
 						{type:"All Star", className: "allStarVideos"},
-						{type:"Hip Hop", className: "hipHopVideos"},
-						{type:"Electronic", className: "electronicVideos"},
+						// {type:"Hip Hop", className: "hipHopVideos"},
+						// {type:"Electronic", className: "electronicVideos"},
 						{type:"Live", className: "liveVideos"}];
 	},
 	selectedGenre: function() {

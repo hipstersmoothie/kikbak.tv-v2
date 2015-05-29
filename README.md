@@ -24,7 +24,7 @@ To start client got to WonderVidClient: (starts on localHost:3000)
 meteor
 ```
 
-Navigate to http://localhost:4000/videosList to see the first 20 videos.
-GET http://localhost:4000/videos for full list
+Navigate to http://localhost:5000/videosList to see the first 20 videos.
+GET http://localhost:5000/videos for full list
 
 Go to  http://localhost:3000/ to see UI.
