@@ -84,6 +84,7 @@ Meteor.startup(function () {
 
 	// run this to set the colors
 	changeColor("blue");
+
 });
 
 var setPseudoClass = function (rule, prop, value) {
@@ -397,6 +398,18 @@ Template.player.events({
 });
 
 // ============== Grid Thumbs ============== //
+Template.gridThumbs.rendered = function(){
+
+   $("body").mousewheel(function(event, delta) {
+
+      this.scrollLeft -= (delta * 30);
+    
+      event.preventDefault();
+
+   });
+
+}
+
 Template.gridThumbs.helpers({
 	isSelected: function () {
 		return Session.get('currentVideo') ? Session.get('currentVideo').videoId == this.videoId : false;

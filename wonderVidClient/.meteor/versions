@@ -51,6 +51,7 @@ mousetrap:mousetrap@1.4.6_1
 mquandalle:jade@0.4.3
 mquandalle:jade-compiler@0.4.3
 mrt:gsap@1.11.8
+mrt:jquery-mousewheel@0.1.0
 mrt:moment@2.8.1
 numtel:template-from-string@0.1.0
 oauth@1.1.4
