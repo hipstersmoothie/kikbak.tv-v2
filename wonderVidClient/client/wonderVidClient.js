@@ -424,7 +424,8 @@ Template.player.events({
 // ============== Grid Thumbs ============== //
 Template.gridThumbs.rendered = function(){
    $("body").mousewheel(function(event, delta) {
-	   	if(event.target.className == "overlay") {
+   	console.log(event.target.className)
+	   	if(event.target.className == "overlay" || event.target.className == "overlay selected") {
 	   		this.scrollLeft -= (delta * 30);
 	      event.preventDefault();
 	   	}
