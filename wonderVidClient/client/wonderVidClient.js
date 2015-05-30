@@ -258,6 +258,9 @@ Template.header.helpers({
 
 CurrentVideos = null;
 Template.header.events({
+	'click .aboutDrop': function() {
+		Router.go('/about');
+	},
 	'click .help': function() {
 		AntiModals.overlay('helpModal');
 	},

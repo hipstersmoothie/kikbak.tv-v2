@@ -16,6 +16,7 @@ Router.route('/about', {
   template: 'about',
   onBeforeAction: function() {
     Session.set('about', true);
+    Session.set('selectedGenre', 'About');
     this.next();
   }
 });
