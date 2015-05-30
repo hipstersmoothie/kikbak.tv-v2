@@ -78,10 +78,14 @@ body {
 }
 
 .bottom {
-	height: 10em;
+	height: 20em;
 	width: 100%;
-	background-color: #101010;
 	color: white;
+	background: -webkit-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* Chrome 10+, Saf5.1+ */
+  background:    -moz-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* FF3.6+ */
+  background:     -ms-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* IE10 */
+  background:      -o-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* Opera 11.10+ */
+  background:         linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* W3C */
 	
 	button {
 		width: 150px;
@@ -304,6 +308,11 @@ body {
 	}
 }
 
+.top, .bottom, .middle {
+	font-family: 'Lato', sans-serif;
+	font-weight: 400;
+}
+
 .creators {
 	height: auto;
 	background: -webkit-linear-gradient(0deg, #ECE9E6 10%, #FFFFFF 90%); /* Chrome 10+, Saf5.1+ */
@@ -313,13 +322,14 @@ body {
   background:         linear-gradient(0deg, #ECE9E6 10%, #FFFFFF 90%); /* W3C */
 	padding-top: 20px;
 	overflow: auto;
-	color: white;
+	// color: white;
 
 	h1 {
 		font-size: 60px;
 	}
 
 	.creator {
+		background-color: white;
 		display: -webkit-flex;
 		display: flex;
 		-webkit-align-items: flex-start;
