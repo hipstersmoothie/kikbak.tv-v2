@@ -26,19 +26,19 @@ template(name="header")
             li
               #headerLike(class="like {{#if isLiked}}heart-red{{/if}}")
 
-        +unless about
-          ul.nav.navbar-nav.navbar-right
-            li
-              a(href="" style="color: {{color}};")
-                +loginButtons
-            li.dropdown
-              a.dropdown-toggle(href="#" style="color: {{color}};" data-toggle="dropdown" role="button" aria-expanded="false") 
-                | {{selectedGenre}}
-                span.caret
-              ul.dropdown-menu(role="menu")
-                each genres
-                  li
-                    a(href="#" style="color: {{color}};" class="{{this.className}}" onclick="return false;") {{this.type}}
-                li.divider(role="presentation")
+        //- +unless about
+        ul.nav.navbar-nav.navbar-right
+          li
+            a(href="" style="color: {{color}};")
+              +loginButtons
+          li.dropdown
+            a.dropdown-toggle(href="#" style="color: {{color}};" data-toggle="dropdown" role="button" aria-expanded="false") 
+              | {{selectedGenre}}
+              span.caret
+            ul.dropdown-menu(role="menu")
+              each genres
                 li
-                  a(href="#" style="color: {{color}};" class="likedVideos" onclick="return false;") Likes
+                  a(href="#" style="color: {{color}};" class="{{this.className}}" onclick="return false;") {{this.type}}
+              li.divider(role="presentation")
+              li
+                a(href="#" style="color: {{color}};" class="likedVideos" onclick="return false;") Likes

@@ -12,6 +12,7 @@ EmergingVideos = new Mongo.Collection('emerging');
 AllStarVideos = new Mongo.Collection('allStar');
 
 Router.route('/about', {
+  layoutTemplate: 'layout',
   template: 'about',
   onBeforeAction: function() {
     Session.set('about', true);
