@@ -192,7 +192,7 @@ var changeColor = function(color) {
 
 Template.simpleModal.helpers({
 	loggedIn: function() {
-		AntiModals.dismissAll();
+		AntiModals.dismissOverlay($('.anti-modal-box'));
 		if(Meteor.user())
 			return "You're logged in!";
 		else
@@ -212,8 +212,8 @@ Template.helpModal.helpers({
 });
 
 Template.helpModal.events({
-	'click .about': function() {
-		AntiModals.dismissOverlay();
+	'click .about': function(evt, f) {
+		AntiModals.dismissOverlay( AntiModals.dismissOverlay($(f.firstNode).parent()));
 	}
 })
 
