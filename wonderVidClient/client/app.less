@@ -69,17 +69,12 @@ body {
 	height: 30em;
 	background-color: white;
 	padding-top: 50px;
-	background-image: url('/images/couch.jpg');
+	background-image: url('/images/feed.jpg');
 	color: white;
 	background-repeat: no-repeat;
-	background-size: 100%;
+	background-size: cover;
 	height: 80%;
-	background-position-y: -53px; 
-	-webkit-filter: blur(5px);
-	-moz-filter: blur(5px);
-	-o-filter: blur(5px);
-	-ms-filter: blur(5px);
-	filter: blur(5px);
+	background-origin: content-box;
 }
 
 .bottom {
@@ -108,18 +103,23 @@ body {
 }
 
 .middle {
-	height: 7em;
-	background-color: gray;
+	// height: 7em;
+  background: -webkit-linear-gradient(90deg, #7474BF 10%, #348AC7 90%); /* Chrome 10+, Saf5.1+ */
+  background:    -moz-linear-gradient(90deg, #7474BF 10%, #348AC7 90%); /* FF3.6+ */
+  background:     -ms-linear-gradient(90deg, #7474BF 10%, #348AC7 90%); /* IE10 */
+  background:      -o-linear-gradient(90deg, #7474BF 10%, #348AC7 90%); /* Opera 11.10+ */
+  background:         linear-gradient(90deg, #7474BF 10%, #348AC7 90%); /* W3C */
+  padding-top: 20px;
 
 	h1 {
 		color: white;
 		font-size: 60px;
+		margin: 0;
 	}
 }
 
 .features {
 	height: auto;
-	background-color: gray;
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;
@@ -306,7 +306,14 @@ body {
 }
 
 .creators {
-	height: 40em;
+	height: auto;
+	background: -webkit-linear-gradient(0deg, #ECE9E6 10%, #FFFFFF 90%); /* Chrome 10+, Saf5.1+ */
+  background:    -moz-linear-gradient(0deg, #ECE9E6 10%, #FFFFFF 90%); /* FF3.6+ */
+  background:     -ms-linear-gradient(0deg, #ECE9E6 10%, #FFFFFF 90%); /* IE10 */
+  background:      -o-linear-gradient(0deg, #ECE9E6 10%, #FFFFFF 90%); /* Opera 11.10+ */
+  background:         linear-gradient(0deg, #ECE9E6 10%, #FFFFFF 90%); /* W3C */
+	padding-top: 20px;
+	overflow: auto;
 
 	h1 {
 		font-size: 60px;
