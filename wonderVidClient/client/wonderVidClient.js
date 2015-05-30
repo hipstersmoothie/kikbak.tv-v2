@@ -163,25 +163,47 @@ var changeColor = function(color) {
 			Session.set('color', redHex);
 			Session.set('colorImage', redTag);
 			Session.set('colorRgb', redRgb);
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #C04848 10%, #480048 90%)");
+			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #C04848 10%, #480048 90%)");
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #C04848 10%, #480048 90%)");
+			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #C04848 10%, #480048 90%)");
+			setPseudoClass(".middle", "background", "linear-gradient(90deg, #C04848 10%, #480048 90%)");
 			break
 		case "yellow":
 			Session.set('color', yellowHex);
 			Session.set('colorImage', yellowTag);
 			Session.set('colorRgb', yellowRgb);
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
+			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
+			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
+			setPseudoClass(".middle", "background", "linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
 			break
-		case "green":
+		case "green":        
 			Session.set('color', greenHex);
 			Session.set('colorImage', greenTag);
 			Session.set('colorRgb', greenRgb);
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
+			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
+			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
+			setPseudoClass(".middle", "background", "linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
 			break
 		case "blue":
 			Session.set('color', blueHex);
 			Session.set('colorImage', blueTag);
 			Session.set('colorRgb', blueRgb);
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
+			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
+			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
+			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
+			setPseudoClass(".middle", "background", "linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
 			break
 		default:
 			break;
 	}
+
+
 	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
 	setPseudoClass("#login-buttons .login-button:hover, .accounts-dialog .login-button:hover", "color", Session.get('color'));

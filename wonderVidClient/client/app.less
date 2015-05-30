@@ -76,15 +76,20 @@ body {
 }
 
 .top {
-	height: 30em;
-	background-color: white;
-	padding-top: 50px;
-	background-image: url('/images/feed.jpg');
-	color: white;
-	background-repeat: no-repeat;
-	background-size: cover;
-	height: 80%;
-	background-origin: content-box;
+  height: 30em;
+  background-color: white;
+  background-image: url('/images/playergif.gif');
+  color: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-y: -150px;
+  height: 80%;
+  -webkit-filter: blur(3px);
+  -moz-filter: blur(3px);
+  -o-filter: blur(3px);
+  -ms-filter: blur(3px);
+  filter: blur(3px);
+  background-origin: content-box;
 }
 
 .bottom {
@@ -130,16 +135,16 @@ body {
 		margin: 0;
 	}
 }
-.creators .text-center,
-.topHeight .description h1{
-	text-shadow: 0 0 5px #FFF,
-				 0 0 10px #FFF,
-				 0 0 15px #FFF, 
-				 0 0 20px #FFF, 
-				 0 0 35px #FFF, 
-				 0 0 40px #FFF, 
-				 0 0 50px #FFF, 
-				 0 0 75px #FFF;
+
+.blackFuzz{
+	text-shadow: 0 0 5px #000,
+				 0 0 10px #000,
+				 0 0 15px #000, 
+				 0 0 20px #000, 
+				 0 0 35px #000, 
+				 0 0 40px #000, 
+				 0 0 50px #000, 
+				 0 0 75px #000;
 }
 
 .features {
@@ -350,6 +355,7 @@ body {
 	overflow: auto;
 	// color: white;
 	background-image: url('/images/feed.jpg');
+  	background-size: contain;
 
 	h1 {
 		font-size: 60px;
