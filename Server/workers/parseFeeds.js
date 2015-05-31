@@ -1,7 +1,7 @@
 var http = require('http'),
 	db = require("./../helpers/db"),
 	_ = require('lodash'),
-	parser = require('parse-rss'),
+	parser = require('./../helpers/my-parser'),
 	request = require('request-enhanced'),
 	cheerio = require('cheerio'),
 	getYouTubeID = require('get-youtube-id'),
@@ -23,9 +23,9 @@ var refreshBlogsFeeds = function() {
 
 var posts = 0;
 var parseFeed = function(url) {
-	parser(url, function(err, postsData) {
+	parser(url.url, function(err, postsData) {
 		if(err) {
-			// console.log('parseFeed', url, err);
+			console.log('parseFeed', url, err);
 		}
 		else  {
 			_.forEach(postsData, _.bind(getHtml, null, _, url));
@@ -37,7 +37,7 @@ var getHtml = function(post, blog) {
 	request.get({
 		url: post.link,
 		maxAttempts:3,
-		pool: {maxSockets: 1}
+		maxConcurrent: 50
 	}, function(error, response){
 		// First we'll check to make sure no errors occurred when making the request
 		if(!error){
@@ -45,7 +45,7 @@ var getHtml = function(post, blog) {
 			var $ = cheerio.load(response);
 			handlePost($, blog, post.link);
 		} else {
-			// console.log("getHtml", blog, post.link, error);
+			console.log("getHtml", blog, post.link, error);
 		}
 	});
 }
@@ -79,7 +79,7 @@ var addToDb = function(url, blog, $, link) {
 	var vidId = getYouTubeID(url);
 	db.videos.find({ videoId : vidId }, function(err, video) {  
 		if (err) {
-			// console.log('addToDb', err);
+			console.log('addToDb', err);
 		} else {
 			if (video.length > 0)
 				updateVid(video, blog, vidId, $, link);
@@ -115,7 +115,7 @@ var newVid = function(vidId, url, blog, $, link) {
 	request.get({
 		url: 'https://www.googleapis.com/youtube/v3/videos?part=statistics%2Csnippet&id=' + vidId  + '&key=' + youtubeKey,
 		maxAttempts:3,
-		pool: {maxSockets: 10}
+		maxConcurrent: 50
 	}, function(error, result) {
 		result = JSON.parse(result);
 		if(result && result['items'] && result['items'].length > 0 
@@ -156,7 +156,7 @@ var newVid = function(vidId, url, blog, $, link) {
 				}
 			}, { upsert : true });
 		} else if (error) {
-			// console.log(error);
+			console.log(error);
 		}
 		posts++;
 	});

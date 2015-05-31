@@ -1,27 +1,20 @@
 var base_url;
 Meteor.startup(function () {
-  // code to run on server at startup
-  ServiceConfiguration.configurations.remove({
+  ServiceConfiguration.configurations.upsert({
     service: "google"
-  });
-  if(Meteor.absoluteUrl() == 'http://localhost:3000/') {
-    base_url = "http://localhost:5000";
-    ServiceConfiguration.configurations.insert({
-      service: "google",
-      clientId: "1017109112095-csl2k4dhc0nckga4t9n8b3pundgciqan.apps.googleusercontent.com",
-      loginStyle: "redirect",
-      secret: "nHYeC7HtGr4IEqIZhdPGBGeb"
-    });
-  } else {
-    base_url = "https://wondervid.herokuapp.com";
-    ServiceConfiguration.configurations.insert({
+  },{
+    $set : {
       service: "google",
       clientId: "1017109112095-0f5c5pm9ko8bsojihiq17o0dgfmbhmac.apps.googleusercontent.com",
       loginStyle: "redirect",
       secret: "VBFRTPKgrck5cNSRh7Kv-DdQ"
-    });
-  }
-
+    }
+  });
+  if(Meteor.absoluteUrl() == 'http://localhost:3000/') 
+    base_url = "http://localhost:5000";
+  else 
+    base_url = "https://wondervid.herokuapp.com";
+  
   updateAll();
   var minutes = 30, the_interval = minutes * 60 * 1000;
   Meteor.setInterval(updateAll, the_interval);

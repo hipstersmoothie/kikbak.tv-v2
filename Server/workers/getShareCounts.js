@@ -18,8 +18,8 @@ var refreshShareCounts = function() {
 var getShareCounts = function(video, index) {
 	request.get({
 		url: 'https://free.sharedcount.com/url?url=https://www.youtube.com/watch?v=' + video.videoId + '&apikey=e420ebc7ae101c3055a305fa522d65b9075c2edb',
-		maxAttempts:3,
-		pool: {maxSockets: 10}
+		maxAttempts: 3,
+		maxConcurrent: 50
 	}, function(error, response){
 		if(!error){
 			var oldShares = video.shareCounts ? video.shareCounts : { Facebook : { total_count : 0 }, Twitter : 0 };

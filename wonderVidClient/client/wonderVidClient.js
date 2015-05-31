@@ -117,8 +117,9 @@ var getLikes = function() {
 }
 
 var reRank = function (videos) {
-	_.forEach(videos, function(video, rank) {
+	return _.map(videos, function(video, rank) {
 		video.rank = rank + 1;
+		return video;
 	});
 }
 
@@ -127,6 +128,7 @@ var hitLikeButton = function(video) {
 		AntiModals.overlay('simpleModal');
 	else {
 		var likes = Session.get('userLikes');
+		console.log('likes')
 		var likesIds = _.map(likes, function(like) {
 			return like.videoId;
 		});
