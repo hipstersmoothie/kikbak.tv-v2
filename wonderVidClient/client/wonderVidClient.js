@@ -449,10 +449,11 @@ Template.player.events({
 // ============== Grid Thumbs ============== //
 Template.gridThumbs.rendered = function(){
    $("body").mousewheel(function(event, delta, deltaX, deltaY) {
-      	event.preventDefault();
        	var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
-
-		this.scrollLeft-= (singleDelta * 30);
+       	if(Session.get('playerPushedTop') == true) {
+       		event.preventDefault();
+			this.scrollLeft -= (singleDelta * 30);
+       	}		
    });
 }
 
