@@ -353,6 +353,25 @@ Template.header.events({
 	}
 });
 
+// ============== Body ============== //
+Template.body.rendered = function(){
+	$("body").mousewheel(function(event, delta, deltaX, deltaY) {
+	  var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
+    if(Session.get('playerPushedTop') == true) {
+     	event.preventDefault();
+
+   		// Determine the proper way to scroll (vert or horizontal) by
+   		// checking if the scrolling width exceeds the window width, and 
+   		// if the scrolling height exceeds the window height.
+   		if (this.scrollWidth > this.clientWidth) {
+				this.scrollLeft -= (singleDelta * 30);
+   		} else if (this.scrollHeight > this.clientHeight) {
+				this.scrollTop -= (singleDelta * 30);
+   		}
+    }		
+	});
+}
+
 // ============== Player ============== //
 Template.player.helpers({
 	needOverlay: function() {
@@ -447,15 +466,6 @@ Template.player.events({
 });
 
 // ============== Grid Thumbs ============== //
-Template.gridThumbs.rendered = function(){
-   $("body").mousewheel(function(event, delta, deltaX, deltaY) {
-       	var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
-       	if(Session.get('playerPushedTop') == true) {
-       		event.preventDefault();
-			this.scrollLeft -= (singleDelta * 30);
-       	}		
-   });
-}
 
 Template.gridThumbs.helpers({
 	isSelected: function () {
