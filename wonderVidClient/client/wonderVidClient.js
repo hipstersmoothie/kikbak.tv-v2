@@ -357,7 +357,7 @@ Template.header.events({
 Template.body.rendered = function(){
 	$("body").mousewheel(function(event, delta, deltaX, deltaY) {
 	  var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
-    if(Session.get('playerPushedTop') == true) {
+    if(Session.get('playerPushedTop') == true || Session.get('playerMinimized') == true) {
      	event.preventDefault();
 
    		// Determine the proper way to scroll (vert or horizontal) by
