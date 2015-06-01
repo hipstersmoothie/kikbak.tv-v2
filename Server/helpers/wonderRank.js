@@ -95,8 +95,8 @@ var sort = function(videos) {
 			// var ratio2 = shareRatio(b);
 			var viewMultiplier1 = viewMultiplier(a.oldStats.viewCount);
 			var viewMultiplier2 = viewMultiplier(b.oldStats.viewCount);
-			a.wonderRank = (dampen(a.foundOn.length, date1) * adg1 * viewMultiplier1 * ifMusicVideo(a));
-			b.wonderRank = (dampen(b.foundOn.length, date2) * adg2 * viewMultiplier2 * ifMusicVideo(b));
+			a.wonderRank = (adg1 );
+			b.wonderRank = (adg2 );
 
 			return (a.wonderRank) - (b.wonderRank);
 		}).reverse();

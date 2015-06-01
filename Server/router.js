@@ -32,8 +32,8 @@ var startExpress = function() {
 	app.get('/videos', function (req, res) {
 		db.videos.find({
 			$and: [
-				{ title: { $not: /2015|Boiler Room|Trailer/ } }, //live
-				{ publishedBy: { $not: /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision/ } } //interviews
+				{ title: { $not: /2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV/ } }, //live
+				{ publishedBy: { $not: /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel/ } } //interviews
 			]
 		}, 
 		function(err, videos) {
@@ -56,7 +56,13 @@ var startExpress = function() {
 	});
 
 	app.get('/emerging', function (req, res) {
-		db.videos.find({tags : {$nin : ["Live", "Interview", "Trailer"]}}, function(err, videos) {
+		db.videos.find({
+			$and: [
+				{ title: { $not: /2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV/ } }, //live
+				{ publishedBy: { $not: /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel/ } }, //interviews
+				{tags : {$nin : ["Live", "Interview", "Trailer"]}}
+			]
+		}, function(err, videos) {
 			wonderRank.hipsterSort(videos);
 			res.send(videos.splice(0,100));
 		});

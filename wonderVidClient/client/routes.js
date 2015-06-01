@@ -1,7 +1,8 @@
 Router.plugin('loading', {loadingTemplate: 'loading'});
 
 Router.configure({
-  loadingTemplate: 'loading'
+  loadingTemplate: 'loading',
+  trackPageView: true
 });
 
 TopVideos = new Mongo.Collection('videos');

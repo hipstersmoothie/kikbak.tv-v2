@@ -7,7 +7,7 @@ gulp.task('server:start', function() {
 });
 
 gulp.task('server:restart', function() {
-    gulp.watch( [ './*.js', './workers/*.js' ], server.restart );
+    gulp.watch( [ './*.js', './workers/*.js', './helpers/*.js' ], server.restart );
 });
 
 gulp.task('default', ['server:start', 'server:restart']);
