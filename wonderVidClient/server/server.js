@@ -22,8 +22,6 @@ Meteor.startup(function () {
 
 var updateAll = function() {
   updateThis('/videos', TopVideos);
-  updateThis('/videos-hip-hop', HipHopVideos);
-  updateThis('/electronic', ElectronicVideos);
   updateThis('/live', LiveVideos);
   updateThis('/emerging', EmergingVideos);
   updateThis('/allstars', AllStarVideos);
@@ -46,8 +44,6 @@ var updateThis = function(url, collection) {
 }
 
 TopVideos = new Mongo.Collection('videos');
-HipHopVideos = new Mongo.Collection('hipHop');
-ElectronicVideos = new Mongo.Collection('electronic');
 LiveVideos = new Mongo.Collection('live');
 EmergingVideos = new Mongo.Collection('emerging');
 AllStarVideos = new Mongo.Collection('allStar');
@@ -55,10 +51,6 @@ AllStarVideos = new Mongo.Collection('allStar');
 Meteor.publish('videos', function(type) {
   if (type == "topVideos") {
     return TopVideos.find({}, {sort:{rank:1}});
-  } else if (type == 'hipHop') {
-    return HipHopVideos.find({}, {sort:{rank:1}});
-  } else if (type == 'electronic') {
-    return ElectronicVideos.find({}, {sort:{rank:1}});
   } else if (type == 'live') {
     return LiveVideos.find({}, {sort:{rank:1}});
   } else if (type == 'emerging') {
@@ -80,12 +72,12 @@ Meteor.publish("userData", function () {
 Meteor.methods({
   likeVideo: function(id, like) {
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
-    Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=' + like + '&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken);
+    Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=' + like + '&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken + 'f'); 
   },
   likedVideos: function() {
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
-    var likeList = Meteor.http.get('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
-    var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
+    var likeList = Meteor.http.get('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken+ 'f')
+    var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken+ 'f')
     likePlaylist.data.items = _.map(likePlaylist.data.items, function(item, index) {
       item.title = item.snippet.title;
       item.videoId = item.contentDetails.videoId

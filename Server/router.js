@@ -68,33 +68,13 @@ var startExpress = function() {
 		});
 	});
 
-	app.get('/videos-hip-hop', function (req, res) {
-		db.videos.find({tags: { $in: ["Hip Hop"]}}, function(err, videos) {
-			wonderRank.defaultSort(videos);
-			res.send(videos.splice(0,100));
-		});
-	});
-
-	app.get('/electronic', function (req, res) {
-		db.videos.find({tags: { $in: ["Electonic"]}}, function(err, videos) {
-			wonderRank.defaultSort(videos);
-			res.send(videos.splice(0,100));
-		});
-	});
-
 	app.get('/live', function (req, res) {
 		db.videos.find({tags: {$nin : ["Music Video", "Trailer"], $in: ["Interview", "Live"]}}, function(err, videos) {
 			wonderRank.defaultSort(videos);
 			res.send(videos.splice(0,100));
 		});
 	});
-
-	app.get('/trailers', function (req, res) {
-		db.videos.find({tags: {$nin : ["Music Video"], $in: ["Trailer"]}}, function(err, videos) {
-			wonderRank.defaultSort(videos);
-			res.send(videos.splice(0,100));
-		});
-	});
+	
 	return app;
 }
 
