@@ -6,6 +6,8 @@ var express = require('express'),
 
 var startExpress = function() {
 	var app = express();
+	var blockedTitles = /2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV|Official Movie/;
+	var blockedPublished = /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY/;
 
 	app.set('port', process.env.PORT || 5000); 
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -32,8 +34,8 @@ var startExpress = function() {
 	app.get('/videos', function (req, res) {
 		db.videos.find({
 			$and: [
-				{ title: { $not: /2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV/ } }, //live
-				{ publishedBy: { $not: /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel/ } } //interviews
+				{ title: { $not: blockedTitles } }, //live
+				{ publishedBy: { $not: blockedPublished } } //interviews
 			]
 		}, 
 		function(err, videos) {
@@ -50,28 +52,34 @@ var startExpress = function() {
 			title: { $not: /(?=2015)(?=Boiler Room)/ }
 		}, 
 		function(err, videos) {
-			wonderRank.topSort(videos);
-			res.send(videos.splice(0,100));
+			if(videos) {
+				wonderRank.topSort(videos);
+				res.send(videos.splice(0,100));
+			}
 		});
 	});
 
 	app.get('/emerging', function (req, res) {
 		db.videos.find({
 			$and: [
-				{ title: { $not: /2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV/ } }, //live
-				{ publishedBy: { $not: /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel/ } }, //interviews
+				{ title: { $not: blockedTitles } }, //live
+				{ publishedBy: { $not: blockedPublished } }, //interviews
 				{tags : {$nin : ["Live", "Interview", "Trailer"]}}
 			]
 		}, function(err, videos) {
-			wonderRank.hipsterSort(videos);
-			res.send(videos.splice(0,100));
+			if(videos) {
+				wonderRank.hipsterSort(videos);
+				res.send(videos.splice(0,100));
+			}
 		});
 	});
 
 	app.get('/live', function (req, res) {
 		db.videos.find({tags: {$nin : ["Music Video", "Trailer"], $in: ["Interview", "Live"]}}, function(err, videos) {
-			wonderRank.defaultSort(videos);
-			res.send(videos.splice(0,100));
+			if(videos) {
+				wonderRank.defaultSort(videos);
+				res.send(videos.splice(0,100));
+			}
 		});
 	});
 	
