@@ -6,8 +6,8 @@ var express = require('express'),
 
 var startExpress = function() {
 	var app = express();
-	var blockedTitles = /2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV|Official Movie/;
-	var blockedPublished = /SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY/;
+	var blockedTitles = /2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV|Official Movie|GGN /;
+	var blockedPublished = /BigBoyTV|deathrockstar|Al Lindstrom|SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY|The Tonight Show Starring Jimmy Fallon|The Late Late Show with James Corden|The A.V. Club|GQ Magazine/;
 
 	app.set('port', process.env.PORT || 5000); 
 	app.use(express.static(path.join(__dirname, 'public')));
