@@ -40,7 +40,7 @@ Meteor.startup(function () {
 		}
 	});
 
-	Mousetrap.bind('right', function() { 
+	Mousetrap.bind('right', function(event) { 
 		if(video) {
 			event.preventDefault();
 			video.nextVideo();
