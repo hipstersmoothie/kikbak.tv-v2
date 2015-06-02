@@ -27,8 +27,7 @@ Meteor.startup(function () {
 		requestPermissions: {
 			google: ['https://www.googleapis.com/auth/youtube']
 		},
-		requestOfflineToken: {google:true},
-		forceApprovalPrompt: {google:true}
+		requestOfflineToken: {google:true}
 	});
 	if(Meteor.user())
 		getLikes();

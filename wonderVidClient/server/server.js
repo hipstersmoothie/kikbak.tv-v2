@@ -1,5 +1,6 @@
 var base_url;
 Meteor.startup(function () {
+  Future = Npm.require('fibers/future');
   ServiceConfiguration.configurations.upsert({
     service: "google"
   },{
@@ -74,24 +75,58 @@ Meteor.methods({
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
     Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=' + like + '&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken); 
   },
-  likedVideos: function() {
+  refreshOAuthToken: function(service) {
+    var getNewAccessToken = function(service) {
+      result = Meteor.http.post(service.url, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}, content: oAuthRefreshBody(service)});
+      return result.data ? result.data.access_token : null;
+    }
+    var oAuthRefreshBody = function(service) {
+      loginServiceConfig = Accounts.loginServiceConfiguration.findOne({service: service.name});
+      return 'refresh_token=' + Meteor.user().services[service.name].refreshToken +
+          '&client_id=' + loginServiceConfig.clientId +
+          '&client_secret=' + loginServiceConfig.secret +
+          '&grant_type=refresh_token';
+    }
+    var storeNewAccessToken = function(service, newAccessToken) {
+      var o = {};
+      o['services.' + service.name + '.accessToken'] = newAccessToken;
+      Meteor.users.update(Meteor.userId(), {$set: o});
+    }
+    var token = getNewAccessToken(service);
+    console.log("Got new access token #{token} for", service);
+    storeNewAccessToken(service, token);
+    return token;
+  },
+  likedVideos: function(token) {
+    token = token ? token : Meteor.user().services.google.accessToken;
+    var fut = new Future();
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
-    var likeList = Meteor.http.get('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
-    var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken)
-    likePlaylist.data.items = _.map(likePlaylist.data.items, function(item, index) {
-      item.title = item.snippet.title;
-      item.videoId = item.contentDetails.videoId
-      item.thumbnail = {};
-      item.thumbnail.high = {},
-      item.rank = index + 1;
-      if(item.snippet.thumbnails)
-        item.thumbnail.high.url  = item.snippet.thumbnails.high.url;
+    Meteor.http.get('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true&key={{'+apiKey+'}&access_token='+token, function(err, likeList) {
+      if(!err) {
+        var likePlaylist = Meteor.http.get('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&maxResults=50&playlistId=' + likeList.data.items[0].contentDetails.relatedPlaylists.likes + '&key={{'+apiKey+'}&access_token='+token)
+        likePlaylist.data.items = _.map(likePlaylist.data.items, function(item, index) {
+          item.title = item.snippet.title;
+          item.videoId = item.contentDetails.videoId
+          item.thumbnail = {};
+          item.thumbnail.high = {},
+          item.rank = index + 1;
+          if(item.snippet.thumbnails)
+            item.thumbnail.high.url  = item.snippet.thumbnails.high.url;
 
-      return item;
+          return item;
+        });
+        fut['return'](likePlaylist.data.items ? likePlaylist.data.items : []);
+      } else if (err.response.statusCode == 401) {
+        Meteor.call('refreshOAuthToken', {name: 'google', url: 'https://accounts.google.com/o/oauth2/token'},
+          function(err, token) {
+            if(!err) {
+              fut['return'](Meteor.call('likedVideos'));
+            } else {
+              console.log(err)
+            }
+        });
+      }
     });
-    if (likePlaylist.data.items)
-      return likePlaylist.data.items;
-    else
-      return [];
+    return fut.wait(); 
   }
 });
