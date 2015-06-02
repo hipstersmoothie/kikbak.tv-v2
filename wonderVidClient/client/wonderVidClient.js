@@ -76,17 +76,17 @@ Meteor.startup(function () {
 		}
 	});
 
-	Mousetrap.bind('space', function() { 
-		if(video && video.getPlayerState() == YT.PlayerState.PLAYING)
-			video.pauseVideo();
-		else
-			video.playVideo();
-	});
-
+	Mousetrap.bind('space', togglePlayState);
 	// run this to set the colors
 	changeColor("blue");
-
 });
+
+var togglePlayState = function() {
+	if(video && video.getPlayerState() == YT.PlayerState.PLAYING)
+		video.pauseVideo();
+	else
+		video.playVideo();
+}
 
 var setPseudoClass = function (rule, prop, value) {
     _.forEach(document.styleSheets, function(sheet) {
@@ -524,10 +524,12 @@ Template.gridThumbs.events({
 
 		var oldVid = Session.get('currentVideo');
 		Session.set('currentVideo', thisVid);
-		if(Session.equals('playerMinimized', true)){
+		console.log(oldVid, thisVid);
+		if (oldVid && oldVid.videoId == thisVid.videoId) {
+			togglePlayState();
+		} else if (Session.equals('playerMinimized', true)){
 			video.playVideoAt(index);
-
-		}else if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+		} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){
 			console.log("First: " + index);
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
