@@ -41,13 +41,17 @@ Meteor.startup(function () {
 	});
 
 	Mousetrap.bind('right', function() { 
-		if(video)
+		if(video) {
+			event.preventDefault();
 			video.nextVideo();
+		}
 	});
 
-	Mousetrap.bind('left', function() { 
-		if(video)
+	Mousetrap.bind('left', function(event) { 
+		if(video) {
+			event.preventDefault();
 			video.previousVideo();
+		}
 	});
 
 	Mousetrap.bind('down', function() { 
