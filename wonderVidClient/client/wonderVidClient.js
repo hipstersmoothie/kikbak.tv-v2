@@ -524,7 +524,6 @@ Template.gridThumbs.events({
 
 		var oldVid = Session.get('currentVideo');
 		Session.set('currentVideo', thisVid);
-		console.log(oldVid, thisVid);
 		if (oldVid && oldVid.videoId == thisVid.videoId) {
 			togglePlayState();
 		} else if (Session.equals('playerMinimized', true)){
