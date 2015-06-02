@@ -41,13 +41,19 @@ Meteor.startup(function () {
 	});
 
 	Mousetrap.bind('right', function() { 
-		if(video)
+		if(video) {
+			event.preventDefault();
+			scrollToCurrentVideo("right");
 			video.nextVideo();
+		}
 	});
 
 	Mousetrap.bind('left', function() { 
-		if(video)
+		if(video) {
+			event.preventDefault();
+			scrollToCurrentVideo("left");
 			video.previousVideo();
+		}
 	});
 
 	Mousetrap.bind('down', function() { 
@@ -87,6 +93,28 @@ Meteor.startup(function () {
 	changeColor("blue");
 
 });
+
+/**
+ * Scrolls window to a video ina certain direction
+ * @param  {String} direction "left" or "right"
+ */
+var scrollToCurrentVideo = function(direction){
+	var selectedElement = $(".single > .selected").parent();
+	if (direction == "right") {
+		selectedElement = selectedElement.next();
+	} else if (direction == "left") {
+		selectedElement = selectedElement.prev();
+	}
+
+	var left = selectedElement.offset().left;
+	var right = selectedElement.width() + left;
+
+	if (left < window.scrollX) {
+		window.scrollTo(left, window.scrollY);
+	} else if (right > window.scrollX + window.innerWidth) {
+		window.scrollTo(right - window.innerWidth, window.scrollY);
+	}
+}
 
 var setPseudoClass = function (rule, prop, value) {
     _.forEach(document.styleSheets, function(sheet) {
