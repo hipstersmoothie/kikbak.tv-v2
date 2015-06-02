@@ -136,13 +136,26 @@ var hitLikeButton = function(video) {
 		var index = likesIds.indexOf(video.videoId);
 
 		if(index > -1) {
-			likes.splice(index, 1);
-			Meteor.call('likeVideo', video.videoId, 'dislike');
+			Meteor.call('likeVideo', video.videoId, 'dislike', function(res){
+				if (!res.error) {
+					likes.splice(index, 1);
+					Session.set('userLikes', reRank(likes));
+				} else {
+					// remove for production
+					throw res;
+				}
+			});
 		} else {
-			likes.unshift(video);
-			Meteor.call('likeVideo', video.videoId, 'like');
+			Meteor.call('likeVideo', video.videoId, 'like', function(res){
+				if (!res.error) {
+					likes.unshift(video);
+					Session.set('userLikes', reRank(likes));
+				} else {
+					// remove for production
+					throw res;
+				}
+			});
 		}
-		Session.set('userLikes', reRank(likes));
 	}
 }
 
