@@ -2,7 +2,7 @@ var multiplier = function(days) {
 	if (days <= 1)
 		return 200;
 	else if (days <= 2)
-		return 150;
+		return 80;
 	else if (days <= 3)
 		return 10;
 	else if (days <= 7)
