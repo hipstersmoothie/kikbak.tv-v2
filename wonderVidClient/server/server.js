@@ -93,7 +93,6 @@ Meteor.methods({
       Meteor.users.update(Meteor.userId(), {$set: o});
     }
     var token = getNewAccessToken(service);
-    console.log("Got new access token #{token} for", service);
     storeNewAccessToken(service, token);
     return token;
   },
