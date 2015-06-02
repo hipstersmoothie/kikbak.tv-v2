@@ -41,7 +41,7 @@ Meteor.startup(function () {
 	});
 
 
-	Mousetrap.bind('right', function() { 
+	Mousetrap.bind('right', function(event) { 
 		if(video) {
 			event.preventDefault();
 			scrollToCurrentVideo("right");
@@ -50,7 +50,7 @@ Meteor.startup(function () {
 	});
 
 
-	Mousetrap.bind('left', function() { 
+	Mousetrap.bind('left', function(event) { 
 		if(video) {
 			event.preventDefault();
 			scrollToCurrentVideo("left");
