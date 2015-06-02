@@ -376,9 +376,7 @@ Template.body.rendered = function(){
    		// checking if the scrolling width exceeds the window width, and 
    		// if the scrolling height exceeds the window height.
    		if (this.scrollWidth > this.clientWidth) {
-				this.scrollLeft -= (singleDelta * 30);
    		} else if (this.scrollHeight > this.clientHeight) {
-				this.scrollTop -= (singleDelta * 30);
    		}
     }		
 	});
