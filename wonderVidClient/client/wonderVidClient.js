@@ -432,7 +432,7 @@ Template.player.events({
 			tlMinimize = new TimelineLite();
 			
 			tlMinimize.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "23%"});
-			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
 		} else{
 			tlMinimize.restart();
 			

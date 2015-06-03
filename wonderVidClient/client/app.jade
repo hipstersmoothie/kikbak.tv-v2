@@ -66,18 +66,22 @@ template(name='player')
 			+lmSocialShare opts=sharedata
 			.sideDescription 
 				p {{#autolink}}{{currentVideo.description}}{{/autolink}}
-
-		#player
+		.playerNavBar(id="playerNavBar" style="background-color: {{color}}")
+			.togglePlayer(id="togglePlayer")
+				img(style="width:36px" src="images/cancel.png")
+			.flagVideo(id="flagVideo")
+				img(style="width:54px" src="images/flag.png")
+			.minimizePlayer(id="minimizePlayer")
+				img(style="width:48px" src="images/minimize.png")
+			
+		.player(class="{{#if minimized}}minimizedSize{{/if}}")
+			#player
 		+if minimized
 			.closePlayer(id="closePlayer")
-				img(src="images/cancel.png")
+				img(style="width:24px" src="images/cancel.png")
 			.expandPlayer(id="expandPlayer")
-				img(src="images/expand.png")
-		else
-			.togglePlayer(id="togglePlayer")
-				img(src="images/arrow.png")
-			.minimizePlayer(id="minimizePlayer")
-				img(src="images/minimize.png")
+				img(style="width:24px" src="images/expand.png")
+		
 
 template(name='gridThumbs')
 	.container
