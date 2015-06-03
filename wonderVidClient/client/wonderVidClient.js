@@ -27,8 +27,7 @@ Meteor.startup(function () {
 		requestPermissions: {
 			google: ['https://www.googleapis.com/auth/youtube']
 		},
-		requestOfflineToken: {google:true},
-		forceApprovalPrompt: {google:true}
+		requestOfflineToken: {google:true}
 	});
 	if(Meteor.user())
 		getLikes();
@@ -41,14 +40,22 @@ Meteor.startup(function () {
 		}
 	});
 
-	Mousetrap.bind('right', function() { 
-		if(video)
+
+	Mousetrap.bind('right', function(event) { 
+		if(video) {
+			event.preventDefault();
+			scrollToCurrentVideo("right");
 			video.nextVideo();
+		}
 	});
 
-	Mousetrap.bind('left', function() { 
-		if(video)
+
+	Mousetrap.bind('left', function(event) { 
+		if(video) {
+			event.preventDefault();
+			scrollToCurrentVideo("left");
 			video.previousVideo();
+		}
 	});
 
 	Mousetrap.bind('down', function() { 
@@ -81,17 +88,39 @@ Meteor.startup(function () {
 		}
 	});
 
-	Mousetrap.bind('space', function() { 
-		if(video && video.getPlayerState() == YT.PlayerState.PLAYING)
-			video.pauseVideo();
-		else
-			video.playVideo();
-	});
-
+	Mousetrap.bind('space', togglePlayState);
 	// run this to set the colors
 	changeColor("blue");
-
 });
+
+/**
+ * Scrolls window to a video ina certain direction
+ * @param  {String} direction "left" or "right"
+ */
+var scrollToCurrentVideo = function(direction){
+	var selectedElement = $(".single > .selected").parent();
+	if (direction == "right") {
+		selectedElement = selectedElement.next();
+	} else if (direction == "left") {
+		selectedElement = selectedElement.prev();
+	}
+
+	var left = selectedElement.offset().left;
+	var right = selectedElement.width() + left;
+
+	if (left < window.scrollX) {
+		window.scrollTo(left, window.scrollY);
+	} else if (right > window.scrollX + window.innerWidth) {
+		window.scrollTo(right - window.innerWidth, window.scrollY);
+	}
+}
+
+var togglePlayState = function() {
+	if(video && video.getPlayerState() == YT.PlayerState.PLAYING)
+		video.pauseVideo();
+	else
+		video.playVideo();
+}
 
 var setPseudoClass = function (rule, prop, value) {
     _.forEach(document.styleSheets, function(sheet) {
@@ -140,13 +169,26 @@ var hitLikeButton = function(video) {
 		var index = likesIds.indexOf(video.videoId);
 
 		if(index > -1) {
-			likes.splice(index, 1);
-			Meteor.call('likeVideo', video.videoId, 'dislike');
+			Meteor.call('likeVideo', video.videoId, 'none', function(res){
+				if (!res || !res.error) {
+					likes.splice(index, 1);
+					Session.set('userLikes', reRank(likes));
+				} else {
+					// remove for production
+					throw res;
+				}
+			});
 		} else {
-			likes.unshift(video);
-			Meteor.call('likeVideo', video.videoId, 'like');
+			Meteor.call('likeVideo', video.videoId, 'like', function(res){
+				if (!res || !res.error) {
+					likes.unshift(video);
+					Session.set('userLikes', reRank(likes));
+				} else {
+					// remove for production
+					throw res;
+				}
+			});
 		}
-		Session.set('userLikes', reRank(likes));
 	}
 }
 
@@ -368,9 +410,9 @@ Template.body.rendered = function(){
    		// checking if the scrolling width exceeds the window width, and 
    		// if the scrolling height exceeds the window height.
    		if (this.scrollWidth > this.clientWidth) {
-				this.scrollLeft -= (singleDelta * 30);
+   			window.scrollBy(singleDelta * -30, 0);
    		} else if (this.scrollHeight > this.clientHeight) {
-				this.scrollTop -= (singleDelta * 30);
+   			window.scrollBy(0, singleDelta * -30);
    		}
     }		
 	});
@@ -551,10 +593,11 @@ Template.gridThumbs.events({
 
 		var oldVid = Session.get('currentVideo');
 		Session.set('currentVideo', thisVid);
-		if(Session.equals('playerMinimized', true)){
+		if (oldVid && oldVid.videoId == thisVid.videoId) {
+			togglePlayState();
+		} else if (Session.equals('playerMinimized', true)){
 			video.playVideoAt(index);
-
-		}else if(tlDropdown == null || Session.equals('playerPushedTop', true)){
+		} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){
 			console.log("First: " + index);
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
