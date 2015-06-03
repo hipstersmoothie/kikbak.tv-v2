@@ -63,8 +63,12 @@ Meteor.startup(function () {
 		if(Session.get('playerPushedTop') == false && video) {
 			if(tlMinimize == null){
 				tlMinimize = new TimelineLite();
-				tlMinimize.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "23%"});
+				tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
+				tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
 				tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+				tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
+				tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
+				tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
 				Session.set('playerMinimized', true);
 				
 			} else if(Session.get('playerMinimized') == true){
@@ -411,6 +415,30 @@ Template.player.helpers({
 			dateString = month + " • " + day + " • " + year;
 			return dateString;
 		}
+	},
+	colorFontClose: function() {
+		if(Session.equals("color", yellowHex))
+			return "cancel.png";
+		else
+			return "cancelWhite.png";	
+	},
+	colorFontExpand: function() {
+		if(Session.equals("color", yellowHex))
+			return "expand.png";
+		else
+			return "expandWhite.png";
+	},
+	colorFontFlag: function() {
+		if(Session.equals("color", yellowHex))
+			return "flag.png";
+		else
+			return "flagWhite.png"		
+	},
+	colorFontMinimize: function() {
+		if(Session.equals("color", yellowHex))
+			return "minimize.png";
+		else
+			return "minimizeWhite.png"
 	}
 });
 
@@ -430,9 +458,12 @@ Template.player.events({
 	"click .minimizePlayer": function () {
 		if(tlMinimize == null){
 			tlMinimize = new TimelineLite();
-			
-			tlMinimize.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "23%"});
+			tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
+			tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
 			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
+			tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
+			tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
+			tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
 		} else{
 			tlMinimize.restart();
 			
@@ -448,7 +479,9 @@ Template.player.events({
 	"click .closePlayer": function () {
 		setTimeout(function(){
 			tlMinimize.reverse();
+			document.getElementById("playerNavBar").style.right = "15%";
 			document.getElementById("playerSideBar").style.left = "23%";
+			document.getElementById("playerNavBarMinimized").style.top = "0%";
 		}, 500);
 		Session.set('playerPushedTop', true);
 		Session.set('playerMinimized', false);
@@ -488,6 +521,12 @@ Template.gridThumbs.helpers({
 			return "featured"
 
 		return "";
+	},
+	fontColor: function() {
+		if(Session.equals("color",yellowHex))
+			return "#151515";
+		else	
+			return "white";
 	}
 });
 
@@ -520,11 +559,14 @@ Template.gridThumbs.events({
 			Session.set('playerPushedTop', false);
 			Session.set('playerMinimized', false);
 
+			document.getElementById("playerNavBar").style.right = "15%";
 			document.getElementById("playerSideBar").style.left = "23%";
+			document.getElementById("playerNavBarMinimized").style.top = "0%";
 			tlDropdown = new TimelineLite();
 			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 			tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
 			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
+			tlDropdown.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "-20px"});
 			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
 
 			if(nextList) {
@@ -537,7 +579,9 @@ Template.gridThumbs.events({
 		}else{
 			console.log("after: " + index);
 
+			document.getElementById("playerNavBar").style.right = "15%";
 			document.getElementById("playerSideBar").style.left = "23%";
+			document.getElementById("playerNavBarMinimized").style.top = "0%";
 			tlDropdown.restart();
 			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 			if(nextList) {
