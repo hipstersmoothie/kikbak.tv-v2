@@ -36,13 +36,71 @@ Meteor.startup(function () {
 	Mousetrap.bind('right', nextVideoShortcut);
 	Mousetrap.bind('left', previousVideoShortcut);
 	Mousetrap.bind('down', pullVideoDown);
-	Mousetrap.bind('m',  function() { 
+	Mousetrap.bind('m',  minimizeVideo);
+	Mousetrap.bind('space', togglePlayState);
+
+	var commands = {
+    'play video :number': function(number) { 
+    	hitSquare(Session.get('videos')[number - 1], number - 1);
+    },
+    'like video': function() {
+    	hitLikeButton(Session.get(currentVideo));
+    },
+    'switch to :route': function(route) {
+    	switch(route) {
+    		case "top":
+    			Router.go('/');
+    			break;
+    		case "emerging":
+    			Router.go('/emerging');
+    			break;
+    		case "star":
+    			Router.go('/allStar');
+    			break;
+    		case "live":
+    			Router.go('/live');
+    			break;
+    		case "likes":
+    			Router.go('/likes');
+    			break;
+    		default:
+    			break;
+    	}
+    },
+    'play': function() {
+    	if(video)
+    		video.playVideo();
+    },
+    'pause': function() { 
+    	if(video)
+    		video.pauseVideo();
+    },
+    'next video': nextVideoShortcut,
+    'previous video': previousVideoShortcut,
+    'clear' : clearScreen,
+    'down' : pullVideoDown,
+    'minimize' : minimizeVideo,
+    'expand' : function() {
+    	 if(Session.get('playerMinimized') == true){
+				tlMinimize.reverse();
+				Session.set('playerMinimized', false);
+			}
+    }
+  };
+
+  annyang.addCommands(commands);
+  annyang.start();
+	// run this to set the colors
+	changeColor("blue");
+});
+
+var minimizeVideo = function() { 
 	if(Session.get('playerPushedTop') == false && video) {
 		if(tlMinimize == null){
 			tlMinimize = new TimelineLite();
-			tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
 			tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
-			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+			tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
+			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
 			tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
 			tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
 			tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
@@ -56,36 +114,8 @@ Meteor.startup(function () {
 			Session.set('playerMinimized', true);
 		}
 	}
-});
-	Mousetrap.bind('space', togglePlayState);
+}
 
-	var commands = {
-    'play video :number': function(number) { 
-    	hitSquare(Session.get('videos')[number - 1], number - 1);
-    },
-    'play': function() {
-    	if(video)
-    		video.playVideo();
-    },
-    'pause': function() { 
-    	if(video)
-    		video.pauseVideo();
-    },
-    'next video': nextVideoShortcut,
-    'previous video': previousVideoShortcut,
-    'clear' : clearScreen,
-    'down' : pullVideoDown
-    // 'minimize' : minimizeVideo
-  };
-
-  annyang.addCommands(commands);
-  annyang.start();
-	// run this to set the colors
-	changeColor("blue");
-});
-
-// var minimizeVideo =
-// 
 var clearScreen = function() { 
 	if(Session.get('playerPushedTop') == false && video) {
 		Session.set('playerPushedTop', true);
