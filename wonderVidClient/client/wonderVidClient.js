@@ -32,66 +32,93 @@ Meteor.startup(function () {
 	if(Meteor.user())
 		getLikes();
 
-	Mousetrap.bind('esc', function() { 
-		if(Session.get('playerPushedTop') == false && video) {
-			Session.set('playerPushedTop', true);
-			tlDropdown.reverse();
+	Mousetrap.bind('esc', clearScreen);
+	Mousetrap.bind('right', nextVideoShortcut);
+	Mousetrap.bind('left', previousVideoShortcut);
+	Mousetrap.bind('down', pullVideoDown);
+	Mousetrap.bind('m',  function() { 
+	if(Session.get('playerPushedTop') == false && video) {
+		if(tlMinimize == null){
+			tlMinimize = new TimelineLite();
+			tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
+			tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
+			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
+			tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
+			tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
+			tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
+			Session.set('playerMinimized', true);
+			
+		} else if(Session.get('playerMinimized') == true){
+			tlMinimize.reverse();
 			Session.set('playerMinimized', false);
+		} else {
+			tlMinimize.play();
+			Session.set('playerMinimized', true);
 		}
-	});
-
-
-	Mousetrap.bind('right', function(event) { 
-		if(video) {
-			event.preventDefault();
-			scrollToCurrentVideo("right");
-			video.nextVideo();
-		}
-	});
-
-
-	Mousetrap.bind('left', function(event) { 
-		if(video) {
-			event.preventDefault();
-			scrollToCurrentVideo("left");
-			video.previousVideo();
-		}
-	});
-
-	Mousetrap.bind('down', function() { 
-		if(Session.get('playerPushedTop') == true &&  Session.get('playerMinimized') == false && video) {
-			tlDropdown.restart();
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-			Session.set('playerPushedTop', false);
-		}
-	});
-
-	Mousetrap.bind('m', function() { 
-		if(Session.get('playerPushedTop') == false && video) {
-			if(tlMinimize == null){
-				tlMinimize = new TimelineLite();
-				tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
-				tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
-				tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0});
-				tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
-				tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
-				tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
-				Session.set('playerMinimized', true);
-				
-			} else if(Session.get('playerMinimized') == true){
-				tlMinimize.reverse();
-				Session.set('playerMinimized', false);
-			} else {
-				tlMinimize.play();
-				Session.set('playerMinimized', true);
-			}
-		}
-	});
-
+	}
+});
 	Mousetrap.bind('space', togglePlayState);
+
+	var commands = {
+    'play video :number': function(number) { 
+    	hitSquare(Session.get('videos')[number - 1], number - 1);
+    },
+    'play': function() {
+    	if(video)
+    		video.playVideo();
+    },
+    'pause': function() { 
+    	if(video)
+    		video.pauseVideo();
+    },
+    'next video': nextVideoShortcut,
+    'previous video': previousVideoShortcut,
+    'clear' : clearScreen,
+    'down' : pullVideoDown
+    // 'minimize' : minimizeVideo
+  };
+
+  annyang.addCommands(commands);
+  annyang.start();
 	// run this to set the colors
 	changeColor("blue");
 });
+
+// var minimizeVideo =
+// 
+var clearScreen = function() { 
+	if(Session.get('playerPushedTop') == false && video) {
+		Session.set('playerPushedTop', true);
+		tlDropdown.reverse();
+		Session.set('playerMinimized', false);
+	}
+}
+
+var pullVideoDown = function() { 
+	if(Session.get('playerPushedTop') == true &&  Session.get('playerMinimized') == false && video) {
+		tlDropdown.restart();
+		TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+		Session.set('playerPushedTop', false);
+	}
+}
+
+var nextVideoShortcut = function(event) { 
+	if(video) {
+		if(event)
+			event.preventDefault();
+		scrollToCurrentVideo("right");
+		video.nextVideo();
+	}
+}
+
+var previousVideoShortcut = function(event) { 
+	if(video) {
+		if(event)
+			event.preventDefault();
+		scrollToCurrentVideo("left");
+		video.previousVideo();
+	}
+}
 
 /**
  * Scrolls window to a video ina certain direction
@@ -591,52 +618,7 @@ Template.gridThumbs.events({
 			return;
 		}
 
-		var oldVid = Session.get('currentVideo');
-		Session.set('currentVideo', thisVid);
-		if (oldVid && oldVid.videoId == thisVid.videoId) {
-			togglePlayState();
-		} else if (Session.equals('playerMinimized', true)){
-			video.playVideoAt(index);
-		} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){
-			console.log("First: " + index);
-			Session.set('playerPushedTop', false);
-			Session.set('playerMinimized', false);
-
-			document.getElementById("playerNavBar").style.right = "15%";
-			document.getElementById("playerSideBar").style.left = "23%";
-			document.getElementById("playerNavBarMinimized").style.top = "0%";
-			tlDropdown = new TimelineLite();
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-			tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
-			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
-			tlDropdown.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "-20px"});
-			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
-
-			if(nextList) {
-				video.loadPlaylist(nextList.videoIds, index);
-				nextList = null;
-			}	else if(oldVid != null)
-				video.playVideoAt(index);
-			else
-				renderVids(index);
-		}else{
-			console.log("after: " + index);
-
-			document.getElementById("playerNavBar").style.right = "15%";
-			document.getElementById("playerSideBar").style.left = "23%";
-			document.getElementById("playerNavBarMinimized").style.top = "0%";
-			tlDropdown.restart();
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-			if(nextList) {
-				event.loadPlaylist(nextList.videoIds, index);
-				nextList = null;
-				//updateList(video);
-			}
-			else
-				video.playVideoAt(index);
-			Session.set('playerPushedTop', false);
-			Session.set('playerMinimized', false);
-		}
+		hitSquare(thisVid, index);
 	},
 	'click .like': function() {
 		if(!Meteor.user())
@@ -646,6 +628,54 @@ Template.gridThumbs.events({
 	}
 });
 
+var hitSquare = function(thisVid, index) {
+	var oldVid = Session.get('currentVideo');
+	Session.set('currentVideo', thisVid);
+	if (oldVid && oldVid.videoId == thisVid.videoId) {
+		togglePlayState();
+	} else if (Session.equals('playerMinimized', true)){
+		video.playVideoAt(index);
+	} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){
+		console.log("First: " + index);
+		Session.set('playerPushedTop', false);
+		Session.set('playerMinimized', false);
+
+		document.getElementById("playerNavBar").style.right = "15%";
+		document.getElementById("playerSideBar").style.left = "23%";
+		document.getElementById("playerNavBarMinimized").style.top = "0%";
+		tlDropdown = new TimelineLite();
+		TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+		tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
+		tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
+		tlDropdown.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "-20px"});
+		tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
+
+		if(nextList) {
+			video.loadPlaylist(nextList.videoIds, index);
+			nextList = null;
+		}	else if(oldVid != null)
+			video.playVideoAt(index);
+		else
+			renderVids(index);
+	}else{
+		console.log("after: " + index);
+
+		document.getElementById("playerNavBar").style.right = "15%";
+		document.getElementById("playerSideBar").style.left = "23%";
+		document.getElementById("playerNavBarMinimized").style.top = "0%";
+		tlDropdown.restart();
+		TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+		if(nextList) {
+			video.loadPlaylist(nextList.videoIds, index); //need to test
+			nextList = null;
+			//updateList(video);
+		}
+		else
+			video.playVideoAt(index);
+		Session.set('playerPushedTop', false);
+		Session.set('playerMinimized', false);
+	}
+}
 // ============== Video Helpers ============== //
 var findVid = function(videoId) {
 	var thisVid = null;
