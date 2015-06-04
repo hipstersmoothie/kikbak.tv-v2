@@ -4,14 +4,16 @@ var multiplier = function(days) {
 	else if (days <= 2)
 		return 80;
 	else if (days <= 3)
+		return 40;
+	else if (days <= 4)
+		return 20;
+	else if (days <= 5)
 		return 10;
+	else if (days <= 6)
+		return 5;
 	else if (days <= 7)
-		return 7;
+		return 3;
 	if (days < 31)
-		return 6;
-	else if (days < 50)
-		return 4;
-	else if (days < 150)
 		return 1;
 	else {
 		return 0;
