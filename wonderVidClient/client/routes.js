@@ -2,7 +2,16 @@ Router.plugin('loading', {loadingTemplate: 'loading'});
 
 Router.configure({
   loadingTemplate: 'loading',
-  trackPageView: true
+  trackPageView: true,
+  onBeforeAction: function() {
+    var minutesSinceLastReload = ((Math.abs(new Date()) - currentTime)/1000)/60;
+    if(minutesSinceLastReload > 30) {
+      subs.reset();
+      currentTime = new Date();
+    }
+    
+    this.next();
+  }
 });
 
 TopVideos = new Mongo.Collection('videos');
@@ -20,11 +29,12 @@ Router.route('/about', {
   }
 });
 
+var subs = new SubsManager();
 Router.route('/', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
-    return  Meteor.subscribe('videos', 'topVideos');
+    return subs.subscribe('videos', 'topVideos');
   },
   data: function() {
     return updateGrid('Top Videos', TopVideos, this, '/');
@@ -35,7 +45,7 @@ Router.route('/allStar', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
-    return  Meteor.subscribe('videos', 'allStar');
+    return  subs.subscribe('videos', 'allStar');
   },
   data: function() {
     return updateGrid('All Star', AllStarVideos, this, '/allStar');
@@ -46,7 +56,7 @@ Router.route('/live', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
-    return  Meteor.subscribe('videos', 'live');
+    return  subs.subscribe('videos', 'live');
   },
   data: function() {
    return updateGrid('Live', LiveVideos, this);
@@ -57,7 +67,7 @@ Router.route('/emerging', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',
   waitOn: function() {
-    return Meteor.subscribe('videos', 'emerging');
+    return subs.subscribe('videos', 'emerging');
   },
   data: function() {
     return updateGrid('Emerging', EmergingVideos, this);
@@ -92,7 +102,7 @@ Router.route('/likes', {
       return video.videoId;
     }));
     Session.set('videos', videos);
-    return templateData;
+    // return templateData;
   }
 }); 
 
@@ -113,6 +123,6 @@ var updateGrid = function(genre, collection, route) {
     }
     CurrentVideos = collection;
     Session.set('about', false);
-    return templateData;
+    // return templateData;
   }
 }

@@ -10,8 +10,10 @@ var yellowTag = "url('/images/rankBackgroundYellow.png')";
 var redHex = '#D6373A';
 var redRgb = 'rgba(214,55,58,0.5)';
 var redTag = "url('/images/rankBackgroundRed.png')";
+currentTime = null;
 
 Meteor.startup(function () {
+	currentTime = new Date();
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
 	Session.set('color', redHex);
@@ -38,58 +40,6 @@ Meteor.startup(function () {
 	Mousetrap.bind('down', pullVideoDown);
 	Mousetrap.bind('m',  minimizeVideo);
 	Mousetrap.bind('space', togglePlayState);
-
-	var commands = {
-    'play video :number': function(number) { 
-    	hitSquare(Session.get('videos')[number - 1], number - 1);
-    },
-    'like video': function() {
-    	hitLikeButton(Session.get('currentVideo'));
-    },
-    'switch to :route': function(route) {
-    	switch(route) {
-    		case "top":
-    			Router.go('/');
-    			break;
-    		case "emerging":
-    			Router.go('/emerging');
-    			break;
-    		case "star":
-    			Router.go('/allStar');
-    			break;
-    		case "live":
-    			Router.go('/live');
-    			break;
-    		case "likes":
-    			Router.go('/likes');
-    			break;
-    		default:
-    			break;
-    	}
-    },
-    'play': function() {
-    	if(video)
-    		video.playVideo();
-    },
-    'pause': function() { 
-    	if(video)
-    		video.pauseVideo();
-    },
-    'next video': nextVideoShortcut,
-    'previous video': previousVideoShortcut,
-    'clear' : clearScreen,
-    'down' : pullVideoDown,
-    'minimize' : minimizeVideo,
-    'expand' : function() {
-    	 if(Session.get('playerMinimized') == true){
-				tlMinimize.reverse();
-				Session.set('playerMinimized', false);
-			}
-    }
-  };
-
-  annyang.addCommands(commands);
-  annyang.start();
 	// run this to set the colors
 	changeColor("blue");
 });
@@ -598,7 +548,6 @@ Template.player.events({
 });
 
 // ============== Grid Thumbs ============== //
-
 Template.gridThumbs.helpers({
 	isSelected: function () {
 		return Session.get('currentVideo') ? Session.get('currentVideo').videoId == this.videoId : false;
@@ -626,6 +575,9 @@ Template.gridThumbs.helpers({
 			return "#151515";
 		else	
 			return "white";
+	},
+	videos: function() {
+		return Session.get('videos');
 	}
 });
 
