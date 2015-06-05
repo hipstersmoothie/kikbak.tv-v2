@@ -64,7 +64,7 @@ Router.route('/emerging', {
   }
 });  
 
-LikedVideos = new Mongo.Collection();
+LikedVideos = new Mongo.Collection(null);
 Router.route('/likes', {
   layoutTemplate: 'layout',
   template: 'gridThumbs',

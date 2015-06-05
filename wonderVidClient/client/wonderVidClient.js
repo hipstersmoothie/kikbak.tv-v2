@@ -44,7 +44,7 @@ Meteor.startup(function () {
     	hitSquare(Session.get('videos')[number - 1], number - 1);
     },
     'like video': function() {
-    	hitLikeButton(Session.get(currentVideo));
+    	hitLikeButton(Session.get('currentVideo'));
     },
     'switch to :route': function(route) {
     	switch(route) {
