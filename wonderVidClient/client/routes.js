@@ -106,7 +106,7 @@ var updateGrid = function(genre, collection, route) {
     var vidIds = _.pluck(videos, 'videoId');
     var templateData = { videos: videos  };
     Session.set('playlist', vidIds);
-    Session.set('videos', JSON.parse(JSON.stringify(videos)));
+    Session.set('videos', videos);
     if (video) {
       nextList = {
         videoIds : vidIds,
