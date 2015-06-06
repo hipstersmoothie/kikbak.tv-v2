@@ -544,9 +544,6 @@ Template.gridThumbs.helpers({
 		});
 		return likes.indexOf(this.videoId) > -1;
 	},
-	rank: function(){
-		return CurrentVideos.findOne({videoId:this.videoId}).rank;
-	},
 	hidePlayer: function() {
 		return Session.get('playerTuckedLeft');
 	},

@@ -91,7 +91,7 @@ template(name='gridThumbs')
 				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
 					.overlay(class="{{#if isSelected}}selected{{/if}}" style="background-image: {{colorImage}};" )
 						.rank(style="color: {{fontColor}}")
-							p #{rank}
+							p #{this.rank}
 						.like(class="{{#if isLiked}}heart-red{{/if}}")
 					.descriptionText
 						p #{this.title}
