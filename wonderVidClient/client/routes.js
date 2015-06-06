@@ -2,16 +2,7 @@ Router.plugin('loading', {loadingTemplate: 'loading'});
 
 Router.configure({
   loadingTemplate: 'loading',
-  trackPageView: true,
-  onBeforeAction: function() {
-    var minutesSinceLastReload = ((Math.abs(new Date()) - currentTime)/1000)/60;
-    if(minutesSinceLastReload > 30) {
-      subs.reset();
-      currentTime = new Date();
-    }
-    
-    this.next();
-  }
+  trackPageView: true
 });
 
 TopVideos = new Mongo.Collection('videos');
@@ -102,12 +93,13 @@ Router.route('/likes', {
       return video.videoId;
     }));
     Session.set('videos', videos);
-    // return templateData;
   }
 }); 
 
+var lastGrid = null; //this allows the the grid to be updated once per route visit, collection should updated every route change
 var updateGrid = function(genre, collection, route) {
-  if (route.ready()) {
+  if (route.ready() && lastGrid != genre) {
+    lastGrid = genre;
     Session.set('videos', null);
     Session.set('selectedGenre', genre);
     var videos = collection.find({}, {sort:{rank:1}}).fetch();
@@ -123,6 +115,5 @@ var updateGrid = function(genre, collection, route) {
     }
     CurrentVideos = collection;
     Session.set('about', false);
-    // return templateData;
   }
 }
