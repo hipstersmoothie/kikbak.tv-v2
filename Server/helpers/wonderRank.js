@@ -100,6 +100,12 @@ var sort = function(videos) {
 			a.wonderRank = (dampen(a.foundOn.length, date1) * adg1 * viewMultiplier1 * ifMusicVideo(a));
 			b.wonderRank = (dampen(b.foundOn.length, date2) * adg2 * viewMultiplier2 * ifMusicVideo(b));
 
+			if(a.wonderRank - b.wonderRank == 0){
+				if(a.youTubePostDate - b.youTubePostDate > 0) 
+					a.wonderRank += 5;
+				else
+					b.wonderRank += 5;
+			}
 			return (a.wonderRank) - (b.wonderRank);
 		}).reverse();
 }
