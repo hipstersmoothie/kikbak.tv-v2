@@ -69,15 +69,20 @@ template(name='player')
 		.playerNavBar(id="playerNavBar" style="background-color: {{color}}")
 			.togglePlayer(id="togglePlayer")
 				img(style="width:36px" src="images/{{colorFontClose}}")
+				p(style="color:{{fontColor}}") close
 			.flagVideo(id="flagVideo")
 				img(style="width:54px" src="images/{{colorFontFlag}}")
+				p(style="color:{{fontColor}}") flag
 			.minimizePlayer(id="minimizePlayer")
+				p(style="color:{{fontColor}}") minimize
 				img(style="width:48px" src="images/{{colorFontMinimize}}")
 		.playerNavBarMinimized(id="playerNavBarMinimized" style="background-color: {{color}}")
 				.closePlayer(id="closePlayer")
+					p(style="color:{{fontColor}}") close
 					img(style="width:16px" src="images/{{colorFontClose}}")
 				.expandPlayer(id="expandPlayer")
 					img(style="width:16px" src="images/{{colorFontExpand}}")
+					p(style="color:{{fontColor}}") expand
 
 		.player
 			#player

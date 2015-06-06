@@ -479,6 +479,12 @@ Template.player.helpers({
 			return dateString;
 		}
 	},
+	fontColor: function() {
+		if(Session.equals("color",yellowHex))
+			return "#151515";
+		else	
+			return "white";
+	},
 	colorFontClose: function() {
 		if(Session.equals("color", yellowHex))
 			return "cancel.png";
@@ -666,6 +672,7 @@ var hitSquare = function(thisVid, index) {
 	var oldVid = Session.get('currentVideo');
 	Session.set('currentVideo', thisVid);
 	if (oldVid && oldVid.videoId == thisVid.videoId && Session.equals("playerMinimized",true)){
+		video.playVideo();
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
