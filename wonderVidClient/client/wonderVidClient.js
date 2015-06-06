@@ -34,9 +34,7 @@ Meteor.startup(function () {
 
 	Mousetrap.bind('esc', function() { 
 		if(Session.get('playerPushedTop') == false && video) {
-			Session.set('playerPushedTop', true);
-			tlDropdown.reverse();
-			Session.set('playerMinimized', false);
+			reverseDropDownAnimation();
 		}
 	});
 
@@ -60,9 +58,7 @@ Meteor.startup(function () {
 
 	Mousetrap.bind('down', function() { 
 		if(Session.get('playerPushedTop') == true &&  Session.get('playerMinimized') == false && video) {
-			tlDropdown.restart();
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-			Session.set('playerPushedTop', false);
+			restartDropDown();
 		}
 	});
 
@@ -362,10 +358,7 @@ Template.header.events({
 			Session.set('stateImage', playButtonn);
 		}
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
-			tlDropdown.restart();
-			
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-			Session.set('playerPushedTop', false);
+			restartDropDown();
 		}
 	},
 	"click .nextButton": function () {
@@ -486,31 +479,15 @@ Template.player.helpers({
 
 Template.player.events({
 	'click .blackOverlay': function() {
-		Session.set('playerPushedTop', true);
-		tlDropdown.reverse();
-		Session.set('playerMinimized', false);
+		reverseDropDownAnimation();
 	},
 	"click .togglePlayer": function () {
 		if(Session.equals('playerPushedTop', false)){
-			Session.set('playerPushedTop', true);
-			tlDropdown.reverse();
+			reverseDropDownAnimation();
 		}
-		Session.set('playerMinimized', false);
 	},
 	"click .minimizePlayer": function () {
-		if(tlMinimize == null){
-			tlMinimize = new TimelineLite();
-			tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
-			tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
-			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
-			tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
-			tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
-			tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
-		} else{
-			tlMinimize.restart();
-			
-		}
-		Session.set('playerMinimized', true);
+		minimizePlayerAnimation();
 	},
 	"click .expandPlayer": function () {
 		tlMinimize.reverse();
@@ -519,23 +496,11 @@ Template.player.events({
 		Session.set('playerMinimized', false);
 	},
 	"click .closePlayer": function () {
-		setTimeout(function(){
-			tlMinimize.reverse();
-			document.getElementById("playerNavBar").style.right = "15%";
-			document.getElementById("playerSideBar").style.left = "23%";
-			document.getElementById("playerNavBarMinimized").style.top = "0%";
-		}, 500);
-		Session.set('playerPushedTop', true);
-		Session.set('playerMinimized', false);
-		TweenLite.to(".playerContainer", 0.5, {autoAlpha:0, display:"none"});
-		video.pauseVideo();
+		reverseMinimizeAnimation();
 	},
 	"click .downArrow": function () {
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
-			tlDropdown.restart();
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-
-			Session.set('playerPushedTop', false);
+			restartDropDown();
 		}
 	}
 });
@@ -584,7 +549,7 @@ Template.gridThumbs.events({
 				return false;
 			}
 		});
-		
+
 		if (index == -1) {
 			Session.set('currentVideo', Session.get('videos')[thisVid.rank + 1]);
 			video.playVideoAt(thisVid.rank);
@@ -595,22 +560,13 @@ Template.gridThumbs.events({
 		Session.set('currentVideo', thisVid);
 		if (oldVid && oldVid.videoId == thisVid.videoId) {
 			togglePlayState();
+			// reverseMinimizeAnimation();
 		} else if (Session.equals('playerMinimized', true)){
 			video.playVideoAt(index);
 		} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){
 			console.log("First: " + index);
-			Session.set('playerPushedTop', false);
-			Session.set('playerMinimized', false);
 
-			document.getElementById("playerNavBar").style.right = "15%";
-			document.getElementById("playerSideBar").style.left = "23%";
-			document.getElementById("playerNavBarMinimized").style.top = "0%";
-			tlDropdown = new TimelineLite();
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-			tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
-			tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
-			tlDropdown.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "-20px"});
-			tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"});
+			createDropDownAnimation();
 
 			if(nextList) {
 				video.loadPlaylist(nextList.videoIds, index);
@@ -622,11 +578,7 @@ Template.gridThumbs.events({
 		}else{
 			console.log("after: " + index);
 
-			document.getElementById("playerNavBar").style.right = "15%";
-			document.getElementById("playerSideBar").style.left = "23%";
-			document.getElementById("playerNavBarMinimized").style.top = "0%";
-			tlDropdown.restart();
-			TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+			restartDropDown();
 			if(nextList) {
 				event.loadPlaylist(nextList.videoIds, index);
 				nextList = null;
@@ -634,8 +586,7 @@ Template.gridThumbs.events({
 			}
 			else
 				video.playVideoAt(index);
-			Session.set('playerPushedTop', false);
-			Session.set('playerMinimized', false);
+			
 		}
 	},
 	'click .like': function() {
@@ -645,6 +596,72 @@ Template.gridThumbs.events({
 			hitLikeButton(this);
 	}
 });
+
+var reverseDropDownAnimation = function() {
+	Session.set('playerPushedTop', true);
+	tlDropdown.reverse();
+	Session.set('playerMinimized', false);
+}
+
+var reverseMinimizeAnimation = function() {
+	setTimeout(function(){
+		tlMinimize.reverse();
+		document.getElementById("playerNavBar").style.right = "15%";
+		document.getElementById("playerSideBar").style.left = "23%";
+		document.getElementById("playerNavBarMinimized").style.top = "0%";
+	}, 500);
+	Session.set('playerPushedTop', true);
+	Session.set('playerMinimized', false);
+	TweenLite.to(".playerContainer", 0.5, {autoAlpha:0, display:"none"});
+	video.pauseVideo();
+}
+
+var minimizePlayerAnimation = function() {
+	if(tlMinimize == null){
+		tlMinimize = new TimelineLite();
+		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
+		tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
+		tlMinimize.insert( new TweenLite(".player", 0.5, {width: "100%", height: "100%", right: 0}), 0);
+		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
+		// tlMinimize.insert( new TweenLite(".playerNavBarMinimized", 0.5, {top: "-20%"}), 0);
+		// tlMinimize.insert( new TweenLite(".playerNavBarMinimized", 0, {display: "block"}), 0);
+
+		// tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
+		tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
+		tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
+	} else{
+		tlMinimize.restart();
+		
+	}
+	Session.set('playerMinimized', true);
+}
+
+var restartDropDown = function(){	
+	Session.set('playerPushedTop', false);
+	Session.set('playerMinimized', false);
+	document.getElementById("playerNavBar").style.right = "15%";
+	document.getElementById("playerSideBar").style.left = "23%";
+	document.getElementById("playerNavBarMinimized").style.top = "0%";
+	tlDropdown.restart();
+	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+}
+
+var createDropDownAnimation = function(){
+	Session.set('playerPushedTop', false);
+	Session.set('playerMinimized', false);
+	document.getElementById("playerNavBar").style.right = "15%";
+	document.getElementById("playerSideBar").style.left = "23%";
+	document.getElementById("playerNavBarMinimized").style.top = "0%";
+	tlDropdown = new TimelineLite();
+	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+	tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
+	tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
+	// tlDropdown.insert( new TweenLite(".playerNavBar", 0.5, {ease: Expo.easeIn, right: "-20px"}), 0);
+	// tlDropdown.insert( new TweenLite(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}), 0);
+
+	tlDropdown.to(".playerNavBar", 0.55, {ease: Expo.easeIn, right: "-20px"});
+	tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}, '-=0.5');
+}
 
 // ============== Video Helpers ============== //
 var findVid = function(videoId) {
