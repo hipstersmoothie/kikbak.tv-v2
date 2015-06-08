@@ -13,20 +13,23 @@ template(name="header")
         .headerColor.yellow
         .headerColor.blue
         a.help(href="#" style="color: {{color}};" onclick="return false;") ?
-
-      .collapse.navbar-collapse#bs-example-navbar-collapse-1
-        ul.nav.navbar-nav.navbar-center
-          +if isVideo
+        +if isVideo
             li
               img#prevButton.navbar-brand.prevButton(src="/images/prev.png")
               img#playButton.navbar-brand.playButton(src="/images/{{stateImage}}")
               img#nextButton.navbar-brand.nextButton(src="/images/next.png")
+
+      .collapse.navbar-collapse#bs-example-navbar-collapse-1
+        ul.nav.navbar-nav.navbar-center
             li
               a(href="" style="color: {{color}};") {{currentVideo.title}}
             li
               #headerLike(class="like {{#if isLiked}}heart-red{{/if}}")
-
+                
         ul.nav.navbar-nav.navbar-right
+          +if isVideo
+            li
+              #headerLike(class="like {{#if isLiked}}heart-red{{/if}}")  
           li
             a(href="" style="color: {{color}};")
               +loginButtons
