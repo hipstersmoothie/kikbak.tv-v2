@@ -19,7 +19,6 @@ Meteor.startup(function () {
 	Session.set('color', redHex);
 	Session.set('colorImage', redTag);
 	Session.set('colorRgb', redRgb);
-	Session.set('about', false)
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.set('playerPushedTop', true);
@@ -320,9 +319,6 @@ Template.about.events({
 })
 
 Template.header.helpers({
-	about: function() {
-		return Session.get('about');
-	},
 	genres: function() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
 						{type:"Emerging", className: "emergingVideos"},

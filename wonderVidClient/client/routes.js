@@ -114,6 +114,5 @@ var updateGrid = function(genre, collection, route) {
       };
     }
     CurrentVideos = collection;
-    Session.set('about', false);
   }
 }
