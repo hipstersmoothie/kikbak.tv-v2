@@ -1,42 +1,17 @@
 var _ = require('lodash');
-
-var checkHipHop = function(text, youTubeDescription, uploader, title) {
-	var tags = [];
-	if(text.indexOf(' rapper') > -1 || text.indexOf(' rapping') > -1 
-		|| text.indexOf('hip-hop') > -1 || text.indexOf('rap') > -1) {
-		tags = ["Hip Hop"]
-	}
-	return tags;
-}
-
-var checkElectronic = function(text, youTubeDescription, uploader, title) {
-	var tags = [];
-	if (text.indexOf(' edm') > -1 || text.indexOf(' electonic') > -1 || 
-		youTubeDescription.toLowerCase().indexOf('electonic') > -1 || youTubeDescription.toLowerCase().indexOf(' edm') > -1 ||
-		text.indexOf(' trap') > -1 || text.indexOf(' house') > -1 || text.indexOf(' techno') > -1 || text.indexOf(' dnb') > -1
-		|| text.indexOf(' synth') > -1 || text.indexOf(' dnb') > -1) {
-		tags = ["Electonic"];
-	}
-	return tags;
-}
-
-var checkInterview = function(text, youTubeDescription, uploader, title) {
-	var tags = [];
-	if (text.indexOf('interview') > -1 || text.indexOf('Interview') > -1 || title.toLowerCase() == "SwaysUniverse" 
-		|| uploader == 'NPR Music' || title.toLowerCase().indexOf('documentary') > -1)
-		tags = ["Interview"];
-	return tags;
-}
-
+var blockedTitles = /documentary|Birthday bash 20|covers|covering|:60 with|perform|Guitars and Bass Play|Behind the Scenes|Summer Jam|MTV News|Converse Rubber Tracks|2014|2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|.15|SKEE TV|Official Movie|GGN |^(?=.*Drake)(?=.*Tour).*$|Live @|Live in|Live at|\[live\]|\(live\)|Interview/i;
+var blockedPublished = /LadyGagaNewz|NPR Music|Power 106|ClevverTV|Play Too Much|Stoney Roads|NME|CBS News|triple j|timwestwoodtv|colt45maltliquor|Jimmy Kimmel Live|BigBoyTV|deathrockstar|Al Lindstrom|SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY|The Tonight Show Starring Jimmy Fallon|The Late Late Show with James Corden|The A.V. Club|GQ Magazine|I.T. Channel/;
 var checkLive = function(text, youTubeDescription, uploader, title) {
 	var tags = [];
-	if (text.indexOf(' live') > -1 || youTubeDescription.toLowerCase().indexOf(' live') > -1
-		|| title.toLowerCase().indexOf(' live') > -1 || title.toLowerCase().indexOf(' bbc') > -1 || title.toLowerCase().indexOf('2015') > -1
-		|| title.toLowerCase().indexOf('american idol') > -1 || uploader == 'MTV' || uploader == 'timwestwoodtv'
-		|| title.toLowerCase().indexOf('jimmy fallon') > -1 || uploader == 'BBC Radio 1'|| title.toLowerCase().indexOf('boiler room') > -1
-		|| title.toLowerCase().indexOf('dj set') > -1 || uploader == 'NPR Music') {
-		tags = ["Live"];
-	}
+	if (blockedTitles.test(title))
+		tags = ['Live'];
+	if (blockedPublished.test(uploader))
+		tags = ['Live'];
+	if(youTubeDescription.indexOf('GGN') > -1) 
+		tags = ['Live'];
+	if ((youTubeDescription.indexOf('2015') > -1 || youTubeDescription.indexOf('/15') > -1 || youTubeDescription.indexOf('.15') > -1)
+	 && (title.indexOf('official video') == -1 || title.indexOf('music video') == -1 || uploader.indexOf('vevo') == -1))
+		tags = ['Live'];
 	return tags;
 }
 
@@ -49,15 +24,7 @@ var checkMusicVideo = function(text, youTubeDescription, uploader, title) {
 	return tags;
 }
 
-var checkTrailer = function(text, youTubeDescription, uploader, title) {
-	var tags = [];
-	if (title.toLowerCase().indexOf('trailer') > -1) {
-		tags = ["Trailer"];
-	}
-	return tags;
-}
-
-var tagFunctions = [checkMusicVideo, checkInterview, checkTrailer, checkLive, checkElectronic, checkHipHop];
+var tagFunctions = [checkMusicVideo, checkLive];
 var getTag = function(html, $, youTubeDescription, title, uploader) {
 	var tags = [];
 	if (html.each) {
@@ -71,4 +38,15 @@ var getTag = function(html, $, youTubeDescription, title, uploader) {
 	return tags;
 }
 
-module.exports = getTag
+var getTagBasedOnVid = function(youTubeDescription, title, uploader) {
+	var tags = [];
+	_.forEach(tagFunctions, function(tagIt) {
+		tags = _.union(tags, tagIt(null, youTubeDescription, uploader, title));
+	});
+	return tags;
+}
+
+module.exports = {
+	getTag : getTag,
+	getTagBasedOnVid : getTagBasedOnVid
+}

@@ -64,10 +64,12 @@ var tagVideo = function(vidId, html, $) {
 	youTube.getById(vidId, function(error, result) {
 		if(!error) {
 			var tags;
+			console.log(result)
 			if(result && result['items'] && result['items'][0] && result['items'][0]['snippet'])
-				tags = getTags(html, $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']);
+				tags = getTags.getTag(html, $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']);
 			else
-				tags = getTags(html, $, '', '', '');
+				tags = getTags.getTag(html, $, '', '', '');
+			console.log(tags)
 			db.videos.update({ videoId : vidId }, {$addToSet: {
 				tags : {$each:tags}
 			}});
@@ -95,7 +97,7 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 	if (!_.includes(foundUrls,  blog.url)) {
 		console.log('updating', video.title, video.foundOn, blog);
 		var blogs = blog.tags ? blog.tags : [];
-		var tags = _.union(getTags($('p'), $, "", "", ""), blogs);
+		var tags = _.union(getTags.getTag($('p'), $, "", "", ""), blogs);
 		db.videos.update({ videoId : vidId }, {
 			$addToSet: {
 				foundOn : blog
@@ -129,7 +131,7 @@ var newVid = function(vidId, url, blog, $, link) {
 			}
 			
 			var blogs = blog.tags ? blog.tags : [];
-			var tags =  _.union(getTags($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
+			var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
 			console.log('adding', url, vidId); 
 			db.videos.update({ videoId : vidId }, {
 				$setOnInsert: {
@@ -162,14 +164,32 @@ var newVid = function(vidId, url, blog, $, link) {
 	});
 }
 
-var lastPosts;
-setInterval(function() {
-	if (lastPosts == posts) {
-		console.log('searched', posts, 'posts');
-		process.exit();
-	} else {
-		lastPosts = posts
-	}
-}, 120000)
+// var lastPosts;
+// setInterval(function() {
+// 	if (lastPosts == posts) {
+// 		console.log('searched', posts, 'posts');
+// 		process.exit();
+// 	} else {
+// 		lastPosts = posts
+// 	}
+// }, 120000)
 
-refreshBlogsFeeds();
+// refreshBlogsFeeds();
+
+db.videos.find({}, function(err, videos) {
+	console.log('tagging')
+	_.forEach(videos, function(video) {
+		youTube.getById(video.videoId, function(error, result) {
+			if(!error) {
+				var tags;
+				if(result && result['items'] && result['items'][0] && result['items'][0]['snippet'])
+					tags = getTags.getTagBasedOnVid(result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']);
+
+				console.log(tags)
+				db.videos.update({ videoId : video.videoId }, {$addToSet: {
+					tags : {$each:tags}
+				}});
+			}
+		});
+	});
+})

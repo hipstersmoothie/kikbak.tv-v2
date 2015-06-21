@@ -16,6 +16,7 @@ Meteor.startup(function () {
   else 
     base_url = "https://wondervid.herokuapp.com";
   
+  
   updateAll();
   var minutes = 30, the_interval = minutes * 60 * 1000;
   Meteor.setInterval(updateAll, the_interval);

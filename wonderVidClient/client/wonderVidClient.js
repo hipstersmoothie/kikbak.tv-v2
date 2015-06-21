@@ -453,7 +453,7 @@ Template.player.helpers({
 	      pinterest: false,
 	      shareData: {
 	        url: url,
-	        defaultShareText: ' -- Found on WonderVid'
+	        defaultShareText: ' -- Found on Kikbak.tv'
 	      }
 	    }
 		} else

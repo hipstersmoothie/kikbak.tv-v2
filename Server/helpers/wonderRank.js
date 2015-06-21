@@ -1,3 +1,4 @@
+var _ = require('lodash'); 
 var multiplier = function(days) {
 	if (days <= 1)
 		return 200;
@@ -85,6 +86,15 @@ var dampen = function(length, date) {
 	return length;
 }
 
+var boidOut = function(array) {
+	if(array.length == 1 && array[0].url == "http://boi-1da.net/feed/")
+		return 0;
+	var urls = _.pluck(array, 'url');
+	if(urls.indexOf("http://boi-1da.net/feed/") > -1 && urls.indexOf("http://nahright.com/news/category/video/feed/") > -1)
+		return array.length - 1;
+	return array.length
+}
+
 var sort = function(videos) {
 	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
 	if(videos)
@@ -97,8 +107,8 @@ var sort = function(videos) {
 			// var ratio2 = shareRatio(b);
 			var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
 			var viewMultiplier2 = viewMultiplier(b.avgViewPerHalfHour);
-			a.wonderRank = (dampen(a.foundOn.length, date1) * adg1 * viewMultiplier1 * ifMusicVideo(a));
-			b.wonderRank = (dampen(b.foundOn.length, date2) * adg2 * viewMultiplier2 * ifMusicVideo(b));
+			a.wonderRank = (boidOut(a.foundOn) * adg1 * viewMultiplier1 * ifMusicVideo(a));
+			b.wonderRank = (boidOut(b.foundOn) * adg2 * viewMultiplier2 * ifMusicVideo(b));
 
 			if(a.wonderRank - b.wonderRank == 0){
 				if(a.youTubePostDate - b.youTubePostDate > 0) 

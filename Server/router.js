@@ -6,8 +6,8 @@ var express = require('express'),
 
 var startExpress = function() {
 	var app = express();
-	var blockedTitles = /MTV News|Converse Rubber Tracks|2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|SKEE TV|Official Movie|GGN |^(?=.*Drake)(?=.*Tour).*$|Live @|Live in|Live at|\[live\]|\(live\)/i;
-	var blockedPublished = /CBS News|triple j|timwestwoodtv|colt45maltliquor|Jimmy Kimmel Live|BigBoyTV|deathrockstar|Al Lindstrom|SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY|The Tonight Show Starring Jimmy Fallon|The Late Late Show with James Corden|The A.V. Club|GQ Magazine|I.T. Channel/;
+	var blockedTitles = /Birthday bash 20|covers|covering|:60 with|perform|Guitars and Bass Play|Behind the Scenes|Summer Jam|MTV News|Converse Rubber Tracks|2014|2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|.15|SKEE TV|Official Movie|GGN |^(?=.*Drake)(?=.*Tour).*$|Live @|Live in|Live at|\[live\]|\(live\)|Interview/i;
+	var blockedPublished = /3FM|John Clay|LadyGagaNewz|Power 106|ClevverTV|Play Too Much|Stoney Roads|NME|CBS News|triple j|timwestwoodtv|colt45maltliquor|Jimmy Kimmel Live|BigBoyTV|deathrockstar|Al Lindstrom|SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY|The Tonight Show Starring Jimmy Fallon|The Late Late Show with James Corden|The A.V. Club|GQ Magazine|I.T. Channel/;
 
 	app.set('port', process.env.PORT || 5000); 
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -32,11 +32,14 @@ var startExpress = function() {
 	});
 
 	app.get('/videos', function (req, res) {
-		db.videos.find({
+		db.videos.find(
+		{
 			$and: [
 				{ title: { $not: blockedTitles } }, //live
-				{ publishedBy: { $not: blockedPublished } } //interviews
+				{ publishedBy: { $not: blockedPublished } },
+				{ description: { $not: /GGN/ } } //interviews
 			]
+
 		}, 
 		function(err, videos) {
 			console.log('newVids');
