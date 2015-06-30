@@ -14,7 +14,7 @@ var multiplier = function(days) {
 		return 5;
 	else if (days <= 7)
 		return 3;
-	if (days < 31)
+	else  if (days < 14)
 		return 1;
 	else {
 		return 0;

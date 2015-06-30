@@ -132,7 +132,7 @@ var newVid = function(vidId, url, blog, $, link) {
 			
 			var blogs = blog.tags ? blog.tags : [];
 			var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
-			console.log('adding', url, vidId); 
+			console.log('adding', result['items'][0]['snippet']['title'], vidId); 
 			db.videos.update({ videoId : vidId }, {
 				$setOnInsert: {
 					youTubePostDate : result['items'][0]['snippet']['publishedAt'],
