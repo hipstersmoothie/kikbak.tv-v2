@@ -125,11 +125,15 @@ Meteor.methods({
           item.thumbnail = {};
           item.thumbnail.high = {},
           item.rank = index + 1;
+          item.youTubePostDate = item.snippet.publishedAt;
+          item.description = item.snippet.description;
+
           if(item.snippet.thumbnails)
             item.thumbnail.high.url  = item.snippet.thumbnails.high.url;
 
           return item;
         });
+
         fut['return'](likePlaylist.data.items ? likePlaylist.data.items : []);
       } else if (err.response.statusCode == 401) {
         Meteor.call('refreshOAuthToken', {name: 'google', url: 'https://accounts.google.com/o/oauth2/token'},

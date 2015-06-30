@@ -95,8 +95,18 @@ Router.route('/likes', {
       return video.videoId;
     }));
     Session.set('videos', videos);
+    setUpNextList(_.pluck(videos, 'videoId'));
   }
 }); 
+
+var setUpNextList = function(videoIds) {
+  if (video) {
+    nextList = {
+      videoIds : videoIds,
+      name : Router.current().route.getName()
+    };
+  }
+}
 
 var lastGrid = null; //this allows the the grid to be updated once per route visit, collection should updated every route change
 var updateGrid = function(genre, collection, route) {
@@ -109,12 +119,7 @@ var updateGrid = function(genre, collection, route) {
     var templateData = { videos: videos  };
     Session.set('playlist', vidIds);
     Session.set('videos', videos);
-    if (video) {
-      nextList = {
-        videoIds : vidIds,
-        name : Router.current().route.getName()
-      };
-    }
+    setUpNextList(vidIds);
     CurrentVideos = collection;
   }
 }
