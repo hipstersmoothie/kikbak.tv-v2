@@ -41,7 +41,10 @@ Meteor.startup(function () {
 	Mousetrap.bind('m',  minimizeVideo);
 	Mousetrap.bind('space', togglePlayState);
 	// run this to set the colors
-	changeColor("blue");
+	if(!Cookie.get('color'))
+		changeColor("blue");
+	else
+		changeColor(Cookie.get('color'));
 });
 
 var minimizeVideo = function() { 
@@ -230,6 +233,7 @@ Template.registerHelper('colorImage', function() {
 });
 
 var changeColor = function(color) {
+	Cookie.set('color', color);
 	switch(color) {
 		case "red":
 			Session.set('color', redHex);
