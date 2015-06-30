@@ -26,3 +26,5 @@ jquery
 reywood:iron-router-ga
 meteorhacks:subs-manager
 msavin:jetsetter
+panphora:environment-template-helpers
+matdutour:popup-confirm

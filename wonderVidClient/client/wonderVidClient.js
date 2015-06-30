@@ -446,7 +446,7 @@ Template.player.helpers({
 	sharedata: function() {
 		var video =  Session.get('currentVideo');
 		if(video) {
-			var url = 'https://www.youtube.com/watch?v=' + video.videoId;
+			var url = 'youtu.be/v=' + video.videoId;
 			return {
 	      facebook: true,
 	      twitter: true,
@@ -532,6 +532,19 @@ Template.player.events({
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			restartDropDown();
 		}
+	},
+	'click .flagVideo': function() {
+		new Confirmation({
+		  message: "Are you sure this isnt a video?",
+		  title: "Flag Video",
+		  cancelText: "Cancel",
+		  okText: "Ok",
+		  success: true // wether the button should be green or red
+		}, function (ok) {
+			Meteor.call('flagVideo', Session.get('currentVideo').videoId, function() {
+				Router.go(Router.current())
+			});
+		});
 	}
 });
 

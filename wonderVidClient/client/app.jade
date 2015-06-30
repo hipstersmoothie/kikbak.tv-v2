@@ -70,9 +70,10 @@ template(name='player')
 			.togglePlayer(id="togglePlayer")
 				img(style="width:36px" src="images/{{colorFontClose}}")
 				p(style="color:{{fontColor}}") close
-			.flagVideo(id="flagVideo")
-				img(style="width:54px" src="images/{{colorFontFlag}}")
-				p(style="color:{{fontColor}}") flag
+			+if isDevEnvironment
+				.flagVideo(id="flagVideo")
+					img(style="width:54px" src="images/{{colorFontFlag}}")
+					p(style="color:{{fontColor}}") flag
 			.minimizePlayer(id="minimizePlayer")
 				p(style="color:{{fontColor}}") minimize
 				img(style="width:48px" src="images/{{colorFontMinimize}}")
