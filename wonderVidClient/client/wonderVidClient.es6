@@ -35,8 +35,8 @@ Meteor.startup(function () {
 
 
 	Mousetrap.bind('esc', clearScreen);
-	Mousetrap.bind('right', nextVideoShortcut);
-	Mousetrap.bind('left', previousVideoShortcut);
+	Mousetrap.bind('right', videoShortcut.bind(null, "right"));
+	Mousetrap.bind('left', videoShortcut.bind(null, "left"));
 	Mousetrap.bind('down', pullVideoDown);
 	Mousetrap.bind('m',  minimizeVideo);
 	Mousetrap.bind('space', togglePlayState);
@@ -100,21 +100,11 @@ var pullVideoDown = function() {
 	}
 }
 
-var nextVideoShortcut = function(event) { 
+var videoShortcut = function(direction) {
 	if(video) {
 		if(event)
 			event.preventDefault();
-
-		scrollToCurrentVideo("right");
-		video.nextVideo();
-	}
-}
-
-var previousVideoShortcut = function(event) { 
-	if(video) {
-		if(event)
-			event.preventDefault();
-		scrollToCurrentVideo("left");
+		scrollToCurrentVideo(direction);
 		video.previousVideo();
 	}
 }
@@ -483,7 +473,8 @@ Template.player.helpers({
 	fontColor: _.bind(determineColor, null, "#151515", "white"),
 	colorFontClose: _.bind(determineColor, null, "cancel.png", "cancelWhite.png"),
 	colorFontExpand: _.bind(determineColor, null, "expand.png", "expandWhite.png"),
-	colorFontFlag: _.bind(determineColor, null, "minimize.png", "minimizeWhite.png")
+	colorFontMinimize: _.bind(determineColor, null, "minimize.png", "minimizeWhite.png"),
+	colorFontFlag: _.bind(determineColor, null, "flag.png", "flagWhite.png")
 });
 
 Template.player.events({
