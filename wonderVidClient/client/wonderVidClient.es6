@@ -50,66 +50,13 @@ Meteor.startup(() => {
 	if(Meteor.user())
 		getLikes();
 
-	Mousetrap.bind('esc', clearScreen);
+	Mousetrap.bind('esc', reverseDropDownAnimation);
 	Mousetrap.bind('right', videoShortcut.bind(null, "right"));
 	Mousetrap.bind('left', videoShortcut.bind(null, "left"));
-	Mousetrap.bind('down', pullVideoDown);
-	Mousetrap.bind('m',  minimizeVideo);
+	Mousetrap.bind('down', restartDropDown);
+	Mousetrap.bind('m',  minimizePlayerAnimation);
 	Mousetrap.bind('space', togglePlayState);
 });
-
-var minimizeVideo = () => { 
-	if(tlMinimize == null){
-		tlMinimize = new TimelineLite();
-		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
-		tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
-		tlMinimize.insert( new TweenLite(".player", 0.5, {width: "100%", height: "100%", right: 0}), 0);
-		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
-		tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
-		tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
-		Session.set('playerMinimized', true);
-	} else if(Session.get('playerMinimized') == true){
-		reverseMinimizeAnimation();
-	}else{
-		tlMinimize.restart();
-		Session.set('playerMinimized', true);		
-	}
-
-	if(Session.get('playerPushedTop') == false && video) {
-		if(tlMinimize == null){
-			tlMinimize = new TimelineLite();
-			tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
-			tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
-			tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
-			tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
-			tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
-			tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
-			Session.set('playerMinimized', true);
-			
-		} else if(Session.get('playerMinimized') == true){
-			reverseDropDownAnimation();
-		} else {
-			tlMinimize.play();
-			Session.set('playerMinimized', true);
-		}
-	}
-}
-
-var clearScreen = () => { 
-	if(Session.get('playerPushedTop') == false && video) {
-		Session.set('playerPushedTop', true);
-		tlDropdown.reverse();
-		Session.set('playerMinimized', false);
-	}
-}
-
-var pullVideoDown = () => { 
-	if(Session.get('playerPushedTop') == true &&  Session.get('playerMinimized') == false && video) {
-		tlDropdown.restart();
-		TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-		Session.set('playerPushedTop', false);
-	}
-}
 
 var videoShortcut = function(direction) { // needs a this context
 	if(video) {
@@ -144,10 +91,10 @@ var togglePlayState = () => {
 }
 
 var setPseudoClass = (rule, prop, value) => {
-	document.styleSheets.forEach(sheet => {
-		sheet.cssRules.forEach(cssRule => {
+	_.forEach(document.styleSheets, sheet => {
+		_.forEach(sheet.cssRules, cssRule => {
 			if(cssRule.selectorText && cssRule.selectorText.indexOf(rule) == 0)
-      	cssRule.style[prop] = value;
+				cssRule.style[prop] = value;
 		})
 	});
 }
@@ -179,10 +126,7 @@ var hitLikeButton = video => {
 		AntiModals.overlay('simpleModal');
 	else {
 		var index = likesIds().indexOf(video.videoId);
-		if(index > -1) 
-			likeVid(video, index, 'none');
-		else
-			likeVid(video, index, 'like');
+		likeVid(video, index, index > -1 ? 'none' : 'like');
 	}
 }
 
@@ -206,11 +150,11 @@ var playButton = "playButton.png",
 		tlDropdown = null, ytPlaylist = [];
 
 Template.registerHelper('color', () => {
-     return Session.get('color');
+	return Session.get('color');
 });
 
 Template.registerHelper('colorImage', ()  => {
-     return Session.get('colorImage');
+	return Session.get('colorImage');
 });
 
 var colorSwap = color => {
@@ -239,10 +183,7 @@ var changeColor = function(color) {
 Template.simpleModal.helpers({
 	loggedIn() {
 		AntiModals.dismissOverlay($('.anti-modal-box'));
-		if(Meteor.user())
-			return "You're logged in!";
-		else
-			return "You're not logged in!";
+		return Meteor.user() ? "You're logged in!" : "You're not logged in!";
 	},
 })
 
@@ -275,8 +216,6 @@ Template.header.helpers({
 		return [{type:"Top Videos", className: "topVideos"}, 
 						{type:"Emerging", className: "emergingVideos"},
 						{type:"All Star", className: "allStarVideos"},
-						// {type:"Hip Hop", className: "hipHopVideos"},
-						// {type:"Electronic", className: "electronicVideos"},
 						{type:"Live", className: "liveVideos"}];
 	},
 	selectedGenre() {
@@ -334,9 +273,7 @@ Template.header.events({
 			video.pauseVideo();
 			Session.set('stateImage', playButtonn);
 		}
-		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
-			restartDropDown();
-		}
+		restartDropDown();
 	},
 	"click .nextButton": () => {
 		Session.set('stateImage', pauseButton);
@@ -345,19 +282,19 @@ Template.header.events({
 	"click .prevButton": () => {
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
-  },
+	},
 	"click .red": () => {
 		changeColor(red);	
- 	},
+	},
 	"click .green": () => {
 		changeColor(green);	
- 	},
+	},
 	"click .yellow": () => {
 		changeColor(yellow);	
-  	},
+		},
 	"click .blue": () => {
 		changeColor(blue);	
-  	},
+		},
 	'click .likedVideos' : () => {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -372,27 +309,99 @@ Template.header.events({
 // ============== Body ============== //
 Template.body.rendered = () => {
 	$("body").mousewheel(function(event, delta, deltaX, deltaY) {
-	  var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
-    if(Session.get('playerPushedTop') == true || Session.get('playerMinimized') == true) {
-     	event.preventDefault();
+		var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
+		if(Session.get('playerPushedTop') == true || Session.get('playerMinimized') == true) {
+			event.preventDefault();
 
-   		// Determine the proper way to scroll (vert or horizontal) by
-   		// checking if the scrolling width exceeds the window width, and 
-   		// if the scrolling height exceeds the window height.
-   		if (this.scrollWidth > this.clientWidth) {
-   			window.scrollBy(singleDelta * -30, 0);
-   		} else if (this.scrollHeight > this.clientHeight) {
-   			window.scrollBy(0, singleDelta * -30);
-   		}
-    }		
+			// Determine the proper way to scroll (vert or horizontal) by
+			// checking if the scrolling width exceeds the window width, and 
+			// if the scrolling height exceeds the window height.
+			if (this.scrollWidth > this.clientWidth)
+				window.scrollBy(singleDelta * -30, 0);
+			else if (this.scrollHeight > this.clientHeight)
+				window.scrollBy(0, singleDelta * -30);
+		}		
 	});
 }
 
-// ============== Player ============== //
+// ============== Animations ============== //
 var determineColor = function(dark, white) {
 	return Session.equals("color", yellow.hex) ? dark : white;
 }
 
+var minimizePlayerAnimation = () => {
+	if(tlMinimize == null){
+		tlMinimize = new TimelineLite();
+		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
+		tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
+		tlMinimize.insert( new TweenLite(".player", 0.5, {width: "100%", height: "100%", right: 0}), 0);
+		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
+		tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
+		tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
+		Session.set('playerMinimized', true);
+	} else if(Session.get('playerMinimized') == true){
+		expandPlayerAnimation();
+	} else{
+		tlMinimize.restart();
+		Session.set('playerMinimized', true);		
+	}
+}
+
+var reverseDropDownAnimation = () => {
+	if(video) {
+		video.pauseVideo();
+		Session.set('playerPushedTop', true);
+		tlDropdown.reverse();
+		Session.set('playerMinimized', false);
+	}
+}
+
+var closeVideoAnimation = () => {
+	setTimeout(() => {
+		tlMinimize.reverse();
+		document.getElementById("playerNavBar").style.right = "15%";
+		document.getElementById("playerSideBar").style.left = "23%";
+		document.getElementById("playerNavBarMinimized").style.top = "0%";
+	}, 500);
+	Session.set('playerPushedTop', true);
+	Session.set('playerMinimized', false);
+	TweenLite.to(".playerContainer", 0.5, {autoAlpha:0, display:"none"});
+	video.pauseVideo();
+}
+
+var expandPlayerAnimation = () => {
+	tlMinimize.reverse();
+	Session.set('playerPushedTop', false);
+	Session.set('playerMinimized', false);
+}
+
+var restartDropDown = () => {	
+	if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
+		Session.set('playerPushedTop', false);
+		Session.set('playerMinimized', false);
+		document.getElementById("playerNavBar").style.right = "15%";
+		document.getElementById("playerSideBar").style.left = "23%";
+		document.getElementById("playerNavBarMinimized").style.top = "0%";
+		tlDropdown.restart();
+		TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+	}
+}
+
+var createDropDownAnimation = () => {
+	Session.set('playerPushedTop', false);
+	Session.set('playerMinimized', false);
+	document.getElementById("playerNavBar").style.right = "15%";
+	document.getElementById("playerSideBar").style.left = "23%";
+	document.getElementById("playerNavBarMinimized").style.top = "0%";
+	tlDropdown = new TimelineLite();
+	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
+	tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
+	tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
+	tlDropdown.to(".playerNavBar", 0.55, {ease: Expo.easeIn, right: "-20px"});
+	tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}, '-=0.5');
+}
+
+// ============== Player ============== //
 Template.player.helpers({
 	needOverlay() {
 		return Session.get('currentVideo') && Session.get('playerMinimized') == false && Session.get('playerPushedTop') == false;
@@ -404,14 +413,14 @@ Template.player.helpers({
 		var video = Session.get('currentVideo');
 		if(video) {
 			return {
-	      facebook: true,
-	      twitter: true,
-	      pinterest: false,
-	      shareData: {
-	        url : 'youtu.be/v=' + video.videoId,
-	        defaultShareText: ' -- Found on Kikbak.tv'
-	      }
-	    }
+				facebook: true,
+				twitter: true,
+				pinterest: false,
+				shareData: {
+					url : 'youtu.be/v=' + video.videoId,
+					defaultShareText: ' -- Found on Kikbak.tv'
+				}
+			}
 		} else
 			return {};
 	},
@@ -434,39 +443,21 @@ Template.player.helpers({
 	colorFontFlag: _.bind(determineColor, null, "flag.png", "flagWhite.png")
 });
 
+
 Template.player.events({
-	'click .blackOverlay': () => {
-		reverseDropDownAnimation();
-	},
-	"click .togglePlayer": () => {
-		if(Session.equals('playerPushedTop', false)){
-			video.pauseVideo();
-			reverseDropDownAnimation();
-		}
-	},
-	"click .minimizePlayer": () => {
-		minimizePlayerAnimation();
-	},
-	"click .expandPlayer": () => {
-		tlMinimize.reverse();
-		Session.set('playerPushedTop', false);
-		Session.set('playerMinimized', false);
-	},
-	"click .closePlayer": () => {
-		reverseMinimizeAnimation();
-	},
-	"click .downArrow": () => {
-		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
-			restartDropDown();
-		}
-	},
+	'click .blackOverlay': reverseDropDownAnimation,
+	"click .togglePlayer": reverseDropDownAnimation,
+	"click .minimizePlayer": minimizePlayerAnimation,
+	"click .expandPlayer": expandPlayerAnimation,
+	"click .closePlayer": closeVideoAnimation,
+	"click .downArrow": restartDropDown,
 	'click .flagVideo': () => {
 		new Confirmation({
-		  message: "Are you sure this isnt a video?",
-		  title: "Flag Video",
-		  cancelText: "Cancel",
-		  okText: "Ok",
-		  success: true // wether the button should be green or red
+			message: "Are you sure this isnt a video?",
+			title: "Flag Video",
+			cancelText: "Cancel",
+			okText: "Ok",
+			success: true // wether the button should be green or red
 		}, ok => {
 			Meteor.call('flagVideo', Session.get('currentVideo').videoId, () => {
 				Router.go(Router.current());
@@ -518,78 +509,16 @@ Template.gridThumbs.events({
 	}
 });
 
-var reverseDropDownAnimation = () => {
-	Session.set('playerPushedTop', true);
-	tlDropdown.reverse();
-	Session.set('playerMinimized', false);
-}
-
-var reverseMinimizeAnimation = () => {
-	setTimeout(() => {
-		tlMinimize.reverse();
-		document.getElementById("playerNavBar").style.right = "15%";
-		document.getElementById("playerSideBar").style.left = "23%";
-		document.getElementById("playerNavBarMinimized").style.top = "0%";
-	}, 500);
-	Session.set('playerPushedTop', true);
-	Session.set('playerMinimized', false);
-	TweenLite.to(".playerContainer", 0.5, {autoAlpha:0, display:"none"});
-	video.pauseVideo();
-}
-
-var minimizePlayerAnimation = () =>  {
-	if(tlMinimize == null){
-		tlMinimize = new TimelineLite();
-		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
-		tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
-		tlMinimize.insert( new TweenLite(".player", 0.5, {width: "100%", height: "100%", right: 0}), 0);
-		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
-		tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
-		tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
-	} else{
-		tlMinimize.restart();
-	}
-	Session.set('playerMinimized', true);
-}
-
-var restartDropDown = () => {	
-	Session.set('playerPushedTop', false);
-	Session.set('playerMinimized', false);
-	document.getElementById("playerNavBar").style.right = "15%";
-	document.getElementById("playerSideBar").style.left = "23%";
-	document.getElementById("playerNavBarMinimized").style.top = "0%";
-	tlDropdown.restart();
-	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-}
-
-var createDropDownAnimation = () => {
-	Session.set('playerPushedTop', false);
-	Session.set('playerMinimized', false);
-	document.getElementById("playerNavBar").style.right = "15%";
-	document.getElementById("playerSideBar").style.left = "23%";
-	document.getElementById("playerNavBarMinimized").style.top = "0%";
-	tlDropdown = new TimelineLite();
-	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
-	tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
-	tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
-	tlDropdown.to(".playerNavBar", 0.55, {ease: Expo.easeIn, right: "-20px"});
-	tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}, '-=0.5');
-}
-
 var hitSquare = (thisVid, index) => {
 	var oldVid = Session.get('currentVideo');
 	Session.set('currentVideo', thisVid);
 	if (oldVid && oldVid.videoId == thisVid.videoId && Session.equals("playerMinimized",true)){
 		video.playVideo();
-		tlMinimize.reverse();
-		Session.set('playerPushedTop', false);
-		Session.set('playerMinimized', false);
+		expandPlayerAnimation();
 	} else if (Session.equals('playerMinimized', true)){
 		video.playVideoAt(index);
-	} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){
-		console.log("First: " + index);
+	} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){		
 		createDropDownAnimation();
-
 		if(nextList) {
 			video.loadPlaylist(nextList.videoIds, index);
 			nextList = null;
@@ -597,16 +526,17 @@ var hitSquare = (thisVid, index) => {
 			video.playVideoAt(index);
 		else
 			renderVids(index);
-	}else{
+	} else{ // dont think it ever gets here
 		console.log("after: " + index);
-		restartDropDown();
-		if(nextList) {
-			video.loadPlaylist(nextList.videoIds, index); //need to test
-			nextList = null;
-			//updateList(video);
-		}
-		else
-			video.playVideoAt(index);
+		console.log('ooops we were using it')
+		// restartDropDown();
+		// if(nextList) {
+		// 	video.loadPlaylist(nextList.videoIds, index); //need to test
+		// 	nextList = null;
+		// 	//updateList(video);
+		// }
+		// else
+		// 	video.playVideoAt(index);
 	}
 }
 // ============== Video Helpers ============== //
