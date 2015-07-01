@@ -222,19 +222,18 @@ var colorSwap = color => {
 	setPseudoClass(".middle", "background", `-webkit-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
 	setPseudoClass(".middle", "background", `-o-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
 	setPseudoClass(".middle", "background", `linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
+
+	setPseudoClass("::-webkit-scrollbar-thumb", "background", color.hex);
+	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", color.hex);
+	setPseudoClass("#login-buttons .login-button:hover, .accounts-dialog .login-button:hover", "color", color.hex);
+	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + color.rgb);
+	setPseudoClass(".single .selected", "border", "3px solid " + color.hex);
+	setPseudoClass(".single .overlay:hover", "background-color", color.rgb);
 }
 
 var changeColor = function(color) {
 	Cookie.set('color', JSON.stringify(color));
-	console.log(color)
 	colorSwap(color);
-
-	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
-	setPseudoClass("#login-buttons .login-button:hover, .accounts-dialog .login-button:hover", "color", Session.get('color'));
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + Session.get('colorRgb'));
-	setPseudoClass(".single .selected", "border", "3px solid " + Session.get('color'));
-	setPseudoClass(".single .overlay:hover", "background-color", Session.get('colorRgb'));
 }
 
 Template.simpleModal.helpers({
