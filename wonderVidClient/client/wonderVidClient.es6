@@ -188,11 +188,7 @@ var hitLikeButton = function(video) {
 		AntiModals.overlay('simpleModal');
 	else {
 		var likes = Session.get('userLikes');
-		console.log('likes')
-		var likesIds = _.map(likes, function(like) {
-			return like.videoId;
-		});
-		var index = likesIds.indexOf(video.videoId);
+		var index = likesIds().indexOf(video.videoId);
 
 		if(index > -1) {
 			Meteor.call('likeVideo', video.videoId, 'none', function(res){
@@ -289,7 +285,7 @@ var changeColor = function(color) {
 }
 
 Template.simpleModal.helpers({
-	loggedIn: function() {
+	loggedIn() {
 		AntiModals.dismissOverlay($('.anti-modal-box'));
 		if(Meteor.user())
 			return "You're logged in!";
@@ -299,7 +295,7 @@ Template.simpleModal.helpers({
 })
 
 Template.helpModal.helpers({
-	shortcut: function() {
+	shortcut() {
 		return [{ key:'m', exp:'Minimize the player' },
 						{ key:'esc', exp:'Push the player to the top' },
 						{ key:'down', exp:'Bring the player down from the top' },
@@ -310,20 +306,20 @@ Template.helpModal.helpers({
 });
 
 Template.helpModal.events({
-	'click .about': function(evt, f) {
+	'click .about': (evt, f) => {
 		AntiModals.dismissOverlay( AntiModals.dismissOverlay($(f.firstNode).parent()));
 	}
 })
 
 // ============== Header ============== //
 Template.about.events({
-	'click .goBack': function() {
+	'click .goBack': () => {
 		Router.go('/');
 	}
 })
 
 Template.header.helpers({
-	genres: function() { 
+	genres() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
 						{type:"Emerging", className: "emergingVideos"},
 						{type:"All Star", className: "allStarVideos"},
@@ -331,53 +327,54 @@ Template.header.helpers({
 						// {type:"Electronic", className: "electronicVideos"},
 						{type:"Live", className: "liveVideos"}];
 	},
-	selectedGenre: function() {
+	selectedGenre() {
 		return Session.get('selectedGenre');
 	},
-	currentVideo: function() {
+	currentVideo() {
 		return Session.get('currentVideo');
 	},
-	stateImage: function () {
+	stateImage() {
 		return Session.get("stateImage");
 	},
-	isLiked: function() {
-		var likes = _.map(Session.get('userLikes'), function(like) {
-			return like.videoId;
-		});
-		return likes.indexOf(Session.get('currentVideo').videoId) > -1;
+	isLiked() {
+		return likesIds().indexOf(Session.get('currentVideo').videoId) > -1;
 	},
-	isVideo: function() {
+	isVideo() {
 		return Session.get('currentVideo') != null;
 	}
 });
 
+var likesIds = () => {
+	return Session.get('userLikes').map(like => like.videoId);
+}
+
 CurrentVideos = null;
 Template.header.events({
-	'click .aboutDrop': function() {
+	'click .aboutDrop': () => {
 		Router.go('/about');
 	},
-	'click .help': function() {
+	'click .help': () => {
 		AntiModals.overlay('helpModal');
 	},
-	'click .topVideos': function() {
+	'click .topVideos': () => {
 		Router.go('/');
 	},
-	'click .allStarVideos': function() {
+	'click .allStarVideos': () => {
 		Router.go('/allStar');
 	},
-	'click .hipHopVideos': function() {
+	'click .hipHopVideos': () => {
 		Router.go('/hipHop');
 	},
-	'click .liveVideos': function() {
+	'click .liveVideos': () => {
 		Router.go('/live');
 	},
-	'click .electronicVideos': function() {
+	'click .electronicVideos': () => {
 		Router.go('/electronic');
 	},
-	'click .emergingVideos': function() {
+	'click .emergingVideos': () => {
 		Router.go('/emerging');
 	},
-	"click .playButton": function () {
+	"click .playButton":  () => {
 		if(Session.equals("stateImage",playButton)){
 			video.playVideo();
 			Session.set('stateImage', pauseButton);
@@ -389,39 +386,39 @@ Template.header.events({
 			restartDropDown();
 		}
 	},
-	"click .nextButton": function () {
+	"click .nextButton": () => {
 		Session.set('stateImage', pauseButton);
 		video.nextVideo();	
 	},
-	"click .prevButton": function () {
+	"click .prevButton": () => {
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
   },
-	"click .red": function () {
+	"click .red": () => {
 		changeColor("red");	
  	},
-	"click .green": function () {
+	"click .green": () => {
 		changeColor("green");	
  	},
-	"click .yellow": function () {
+	"click .yellow": () => {
 		changeColor("yellow");	
   	},
-	"click .blue": function () {
+	"click .blue": () => {
 		changeColor("blue");	
   	},
-	'click .likedVideos' : function() {
+	'click .likedVideos' : () => {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
 		else
 			Router.go('/likes');
 	},
-	'click .like': function() {
+	'click .like': () => {
 		hitLikeButton(Session.get("currentVideo"));
 	}
 });
 
 // ============== Body ============== //
-Template.body.rendered = function(){
+Template.body.rendered = () => {
 	$("body").mousewheel(function(event, delta, deltaX, deltaY) {
 	  var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
     if(Session.get('playerPushedTop') == true || Session.get('playerMinimized') == true) {
@@ -440,14 +437,18 @@ Template.body.rendered = function(){
 }
 
 // ============== Player ============== //
+var determineColor = function(dark, white) {
+	return Session.equals("color", yellowHex) ? dark : white;
+}
+
 Template.player.helpers({
-	needOverlay: function() {
+	needOverlay() {
 		return Session.get('currentVideo') && Session.get('playerMinimized') == false && Session.get('playerPushedTop') == false;
 	},
-	currentVideo: function() {
+	currentVideo() {
 		return Session.get('currentVideo') ? Session.get('currentVideo') : {description:""};
 	},
-	sharedata: function() {
+	sharedata() {
 		var video =  Session.get('currentVideo');
 		if(video) {
 			var url = 'youtu.be/v=' + video.videoId;
@@ -456,20 +457,20 @@ Template.player.helpers({
 	      twitter: true,
 	      pinterest: false,
 	      shareData: {
-	        url: url,
+	        url,
 	        defaultShareText: ' -- Found on Kikbak.tv'
 	      }
 	    }
 		} else
 			return {};
 	},
-	minimized:function() {
+	minimized() {
 		return Session.get('playerMinimized');
 	},
-	pushedTop: function() {
+	pushedTop() {
 		return Session.get('playerPushedTop') && Session.get('currentVideo') != null;
 	},
-	formedDate: function() {
+	formedDate() {
 		if(Session.get("currentVideo")) {
 			var dateString = Session.get("currentVideo").youTubePostDate;
 			var year = dateString.substring(0,4);
@@ -479,74 +480,48 @@ Template.player.helpers({
 			return dateString;
 		}
 	},
-	fontColor: function() {
-		if(Session.equals("color",yellowHex))
-			return "#151515";
-		else	
-			return "white";
-	},
-	colorFontClose: function() {
-		if(Session.equals("color", yellowHex))
-			return "cancel.png";
-		else
-			return "cancelWhite.png";	
-	},
-	colorFontExpand: function() {
-		if(Session.equals("color", yellowHex))
-			return "expand.png";
-		else
-			return "expandWhite.png";
-	},
-	colorFontFlag: function() {
-		if(Session.equals("color", yellowHex))
-			return "flag.png";
-		else
-			return "flagWhite.png"		
-	},
-	colorFontMinimize: function() {
-		if(Session.equals("color", yellowHex))
-			return "minimize.png";
-		else
-			return "minimizeWhite.png"
-	}
+	fontColor: _.bind(determineColor, null, "#151515", "white"),
+	colorFontClose: _.bind(determineColor, null, "cancel.png", "cancelWhite.png"),
+	colorFontExpand: _.bind(determineColor, null, "expand.png", "expandWhite.png"),
+	colorFontFlag: _.bind(determineColor, null, "minimize.png", "minimizeWhite.png")
 });
 
 Template.player.events({
-	'click .blackOverlay': function() {
+	'click .blackOverlay': () => {
 		reverseDropDownAnimation();
 	},
-	"click .togglePlayer": function () {
+	"click .togglePlayer": () => {
 		if(Session.equals('playerPushedTop', false)){
 			video.pauseVideo();
 			reverseDropDownAnimation();
 		}
 	},
-	"click .minimizePlayer": function () {
+	"click .minimizePlayer": () => {
 		minimizePlayerAnimation();
 	},
-	"click .expandPlayer": function () {
+	"click .expandPlayer": () => {
 		tlMinimize.reverse();
 		Session.set('playerPushedTop', false);
 		Session.set('playerMinimized', false);
 	},
-	"click .closePlayer": function () {
+	"click .closePlayer": () => {
 		reverseMinimizeAnimation();
 	},
-	"click .downArrow": function () {
+	"click .downArrow": () => {
 		if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
 			restartDropDown();
 		}
 	},
-	'click .flagVideo': function() {
+	'click .flagVideo': () => {
 		new Confirmation({
 		  message: "Are you sure this isnt a video?",
 		  title: "Flag Video",
 		  cancelText: "Cancel",
 		  okText: "Ok",
 		  success: true // wether the button should be green or red
-		}, function (ok) {
-			Meteor.call('flagVideo', Session.get('currentVideo').videoId, function() {
-				Router.go(Router.current())
+		}, ok => {
+			Meteor.call('flagVideo', Session.get('currentVideo').videoId, () => {
+				Router.go(Router.current());
 			});
 		});
 	}
@@ -554,57 +529,40 @@ Template.player.events({
 
 // ============== Grid Thumbs ============== //
 Template.gridThumbs.helpers({
-	isSelected: function () {
+	isSelected() {
 		return Session.get('currentVideo') ? Session.get('currentVideo').videoId == this.videoId : false;
 	},
-	isLiked: function() {
-		var likes = _.map(Session.get('userLikes'), function(like) {
-			return like.videoId;
-		});
-		return likes.indexOf(this.videoId) > -1;
+	isLiked() {
+		return likesIds().indexOf(this.videoId) > -1;
 	},
-	hidePlayer: function() {
+	hidePlayer() {
 		return Session.get('playerTuckedLeft');
 	},
-	featured: function() {
-		if(this.rank == 1 || (this.rank - 1) % 13 == 0)
-			return "featured"
-
-		return "";
+	featured() {
+		return (this.rank == 1 || (this.rank - 1) % 13 == 0) ? "featured" : "";
 	},
-	fontColor: function() {
-		if(Session.equals("color",yellowHex))
-			return "#151515";
-		else	
-			return "white";
+	fontColor() {
+		return determineColor("#151515", "white")
 	},
-	videos: function() {
+	videos() {
 		return Session.get('videos');
 	}
 });
 
 Template.gridThumbs.events({
-	"click .single": function (event) {
+	"click .single": function (event) { // needs its own this
 		if (event.target.classList[0] == 'like' || event.target.nodeName == 'P')
 			return
-		var index = Session.get('playlist').indexOf(this.videoId);
-		var thisVid = null, thisId = this.videoId;
-		_.forEach(Session.get('videos'), function(video) {
-			if(video.videoId == thisId) {
-				thisVid = video;
-				return false;
-			}
-		});
 
+		var index = Session.get('playlist').indexOf(this.videoId);
 		if (index == -1) {
-			Session.set('currentVideo', Session.get('videos')[thisVid.rank + 1]);
-			video.playVideoAt(thisVid.rank);
-			return;
+			Session.set('currentVideo', Session.get('videos')[this.rank + 1]);
+			return video.playVideoAt(this.rank);
 		}
 
-		hitSquare(thisVid, index);
+		hitSquare(this, index);
 	},
-	'click .like': function() {
+	'click .like': function() { // needs its own this
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
 		else
@@ -612,14 +570,14 @@ Template.gridThumbs.events({
 	}
 });
 
-var reverseDropDownAnimation = function() {
+var reverseDropDownAnimation = () => {
 	Session.set('playerPushedTop', true);
 	tlDropdown.reverse();
 	Session.set('playerMinimized', false);
 }
 
-var reverseMinimizeAnimation = function() {
-	setTimeout(function(){
+var reverseMinimizeAnimation = () => {
+	setTimeout(() => {
 		tlMinimize.reverse();
 		document.getElementById("playerNavBar").style.right = "15%";
 		document.getElementById("playerSideBar").style.left = "23%";
@@ -631,27 +589,22 @@ var reverseMinimizeAnimation = function() {
 	video.pauseVideo();
 }
 
-var minimizePlayerAnimation = function() {
+var minimizePlayerAnimation = () =>  {
 	if(tlMinimize == null){
 		tlMinimize = new TimelineLite();
 		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
 		tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
 		tlMinimize.insert( new TweenLite(".player", 0.5, {width: "100%", height: "100%", right: 0}), 0);
 		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});
-		// tlMinimize.insert( new TweenLite(".playerNavBarMinimized", 0.5, {top: "-20%"}), 0);
-		// tlMinimize.insert( new TweenLite(".playerNavBarMinimized", 0, {display: "block"}), 0);
-
-		// tlMinimize.to(".player", 0.2, {width: "100%", height: "100%", right: 0});
 		tlMinimize.to(".playerNavBarMinimized", 0, {display: "block"});
 		tlMinimize.to(".playerNavBarMinimized", 0.25, {top: "-20%"});
 	} else{
 		tlMinimize.restart();
-		
 	}
 	Session.set('playerMinimized', true);
 }
 
-var restartDropDown = function(){	
+var restartDropDown = () => {	
 	Session.set('playerPushedTop', false);
 	Session.set('playerMinimized', false);
 	document.getElementById("playerNavBar").style.right = "15%";
@@ -661,7 +614,7 @@ var restartDropDown = function(){
 	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 }
 
-var createDropDownAnimation = function(){
+var createDropDownAnimation = () => {
 	Session.set('playerPushedTop', false);
 	Session.set('playerMinimized', false);
 	document.getElementById("playerNavBar").style.right = "15%";
@@ -671,14 +624,11 @@ var createDropDownAnimation = function(){
 	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 	tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
 	tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
-	// tlDropdown.insert( new TweenLite(".playerNavBar", 0.5, {ease: Expo.easeIn, right: "-20px"}), 0);
-	// tlDropdown.insert( new TweenLite(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}), 0);
-
 	tlDropdown.to(".playerNavBar", 0.55, {ease: Expo.easeIn, right: "-20px"});
 	tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}, '-=0.5');
 }
 
-var hitSquare = function(thisVid, index) {
+var hitSquare = (thisVid, index) => {
 	var oldVid = Session.get('currentVideo');
 	Session.set('currentVideo', thisVid);
 	if (oldVid && oldVid.videoId == thisVid.videoId && Session.equals("playerMinimized",true)){
@@ -712,18 +662,13 @@ var hitSquare = function(thisVid, index) {
 	}
 }
 // ============== Video Helpers ============== //
-var findVid = function(videoId) {
-	var thisVid = null;
-	_.forEach(Session.get('videos'), function(video) {
-		if(video.videoId == videoId) {
-			thisVid = video;
-			return false;
-		}
+var findVid = videoId => {
+	return _.find(Session.get('videos'), video => {
+		return video.videoId == videoId;
 	});
-	return thisVid;
 }
 
-var updateList = function(event) {
+var updateList = event => {
 	if (video.route != nextList.name) { // new page play first
 		event.loadPlaylist(nextList.videoIds);
 		Session.set('currentVideo', Session.get('videos')[0]);
@@ -736,41 +681,41 @@ var updateList = function(event) {
 }
 
 firstPlay = true, nextList = null;
-renderVids = function(index) {
+renderVids = index => {
 	Session.set("stateImage",pauseButton);	
 	videoTmp = new YT.Player("player", {
-	events: {
-		onReady: function (event) {
-			if(index != null)
-				event.target.loadPlaylist(Session.get('playlist'), index);
-			else
-				event.target.cuePlaylist(Session.get('playlist'));
-		},
-		onStateChange: function (event) {
-			if (firstPlay && event.data == YT.PlayerState.PLAYING) {
-				firstPlay = false;
-				Session.set('playlist', video.getPlaylist());
-			}
-			if(event.data == YT.PlayerState.PLAYING) {
-				var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
-				Session.set('currentVideo', nextVid);
-				Session.set("stateImage", pauseButton);
-			} else if (event.data == YT.PlayerState.PAUSED) {
-				Session.set("stateImage", playButton);
-			} else if (event.data == YT.PlayerState.ENDED) {
-				if(nextList)
-					updateList(event.target);
-				else {
+		events: {
+			onReady(event) {
+				if(index != null)
+					event.target.loadPlaylist(Session.get('playlist'), index);
+				else
+					event.target.cuePlaylist(Session.get('playlist'));
+			},
+			onStateChange(event) {
+				if (firstPlay && event.data == YT.PlayerState.PLAYING) {
+					firstPlay = false;
+					Session.set('playlist', video.getPlaylist());
+				}
+				if(event.data == YT.PlayerState.PLAYING) {
 					var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
 					Session.set('currentVideo', nextVid);
+					Session.set("stateImage", pauseButton);
+				} else if (event.data == YT.PlayerState.PAUSED) {
+					Session.set("stateImage", playButton);
+				} else if (event.data == YT.PlayerState.ENDED) {
+					if(nextList)
+						updateList(event.target);
+					else {
+						var nextVid = findVid(event.target.getVideoUrl().match(/[?&]v=([^&]+)/)[1]);
+						Session.set('currentVideo', nextVid);
+					}
 				}
+			},
+			onError(errorCode) { //video unavailable
+				if(errorCode.data == 100 || errorCode.data == 150)
+					video.nextVideo();
 			}
-		},
-		onError: function(errorCode) { //video unavailable
-			if(errorCode.data == 100 || errorCode.data == 150)
-				video.nextVideo();
-		}
-	} 
+		} 
 	});
 	video = videoTmp;
 	video.route = Router.current().route.getName();
