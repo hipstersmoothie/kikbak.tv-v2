@@ -1,28 +1,46 @@
-var greenHex = '#31C663';
-var greenRgb = 'rgba(49,198,99,0.5)';
-var greenTag = "url('/images/rankBackground.png')";
-var blueHex = '#406EAA';
-var blueRgb = 'rgba(64,110,170,0.5)';
-var blueTag = "url('/images/rankBackgroundBlue.png')";
-var yellowHex = '#F7DD72';
-var yellowRgb = 'rgba(247,221,114,0.5)';
-var yellowTag = "url('/images/rankBackgroundYellow.png')";
-var redHex = '#D6373A';
-var redRgb = 'rgba(214,55,58,0.5)';
-var redTag = "url('/images/rankBackgroundRed.png')";
+var red = {
+	hex : '#D6373A',
+	light: '#C04848',
+	dark : '#480048',
+	rgb : 'rgba(214,55,58,0.5)',
+	tag : "url('/images/rankBackgroundRed.png')"
+}
+var green = {
+	hex : '#31C663',
+	light: '#1D976C',
+	dark : '#93F9B9',
+	rgb : 'gba(49,198,99,0.5)',
+	tag : "url('/images/rankBackground.png')"
+}
+var blue = {
+	hex : '#406EAA',
+	light: '#7474BF',
+	dark : '#348AC7',
+	rgb : 'gba(64,110,170,0.5)',
+	tag : "url('/images/rankBackgroundBlue.png')"
+}
+var yellow = {
+	hex : '#F7DD72',
+	light: '#F09819',
+	dark : '#EDDE5D',
+	rgb : 'gba(247,221,114,0.5)',
+	tag : "url('/images/rankBackgroundYellow.png')"
+}
 currentTime = null;
 
 Meteor.startup(function () {
 	currentTime = new Date();
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
-	Session.set('color', redHex);
-	Session.set('colorImage', redTag);
-	Session.set('colorRgb', redRgb);
 	Session.setDefault('stateImage', 'playButton.png');
 	Session.setDefault('selectedGenre', 'Top Videos');
 	Session.set('playerPushedTop', true);
 	Session.set('playerMinimized', false);
+	if(!Cookie.get('color'))
+		changeColor(yellow);
+	else {
+		changeColor(JSON.parse(Cookie.get('color')));
+	}
 
 	Accounts.ui.config({
 		requestPermissions: {
@@ -40,11 +58,6 @@ Meteor.startup(function () {
 	Mousetrap.bind('down', pullVideoDown);
 	Mousetrap.bind('m',  minimizeVideo);
 	Mousetrap.bind('space', togglePlayState);
-	// run this to set the colors
-	if(!Cookie.get('color'))
-		changeColor("blue");
-	else
-		changeColor(Cookie.get('color'));
 });
 
 var minimizeVideo = function() { 
@@ -154,54 +167,44 @@ Meteor.logout = function customLogout() {
 	_logout.apply(Meteor, arguments);
 }
 
-Accounts.onLogin(function() {
-	getLikes();
-});
 Accounts.onLogin(getLikes);
-
-var getLikes = function() {
-	Meteor.call('likedVideos', function(err, res) {
+var getLikes = () => {
+	Meteor.call('likedVideos', (err, res) => {
 		if(!err) 
 			Session.set('userLikes', res);
 	}); 
 }
 
-var reRank = function (videos) {
-	return _.map(videos, function(video, rank) {
+var reRank = videos => {
+	return videos.map((video, rank) => {
 		video.rank = rank + 1;
 		return video;
 	});
 }
 
-var hitLikeButton = function(video) {
+var hitLikeButton = video => {
 	if(!Meteor.user())
 		AntiModals.overlay('simpleModal');
 	else {
-		var likes = Session.get('userLikes');
 		var index = likesIds().indexOf(video.videoId);
-
-		if(index > -1) {
-			Meteor.call('likeVideo', video.videoId, 'none', function(res){
-				if (!res || !res.error) {
-					likes.splice(index, 1);
-					Session.set('userLikes', reRank(likes));
-				} else {
-					// remove for production
-					throw res;
-				}
-			});
-		} else {
-			Meteor.call('likeVideo', video.videoId, 'like', function(res){
-				if (!res || !res.error) {
-					likes.unshift(video);
-					Session.set('userLikes', reRank(likes));
-				} else {
-					// remove for production
-					throw res;
-				}
-			});
-		}
+		if(index > -1) 
+			likeVid(video, index, 'none');
+		else
+			likeVid(video, index, 'like');
 	}
+}
+
+var likeVid = (video, index, rating) => {
+	var likes = Session.get('userLikes');
+	Meteor.call('likeVideo', video.videoId, rating, res => {
+		if (!res || !res.error) {
+			if (rating == 'none')
+				likes.splice(index, 1);
+			else
+				likes.unshift(video);
+			Session.set('userLikes', reRank(likes));
+		}
+	});
 }
 
 // ============== Helpers ============== //
@@ -210,61 +213,29 @@ var playButton = "playButton.png",
 		pauseButton = "pauseButton.png", tlMinimize = null, 
 		tlDropdown = null, ytPlaylist = [];
 
-Template.registerHelper('color', function() {
+Template.registerHelper('color', () => {
      return Session.get('color');
 });
 
-Template.registerHelper('colorImage', function() {
+Template.registerHelper('colorImage', ()  => {
      return Session.get('colorImage');
 });
 
-var changeColor = function(color) {
-	Cookie.set('color', color);
-	switch(color) {
-		case "red":
-			Session.set('color', redHex);
-			Session.set('colorImage', redTag);
-			Session.set('colorRgb', redRgb);
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #C04848 10%, #480048 90%)");
-			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #C04848 10%, #480048 90%)");
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #C04848 10%, #480048 90%)");
-			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #C04848 10%, #480048 90%)");
-			setPseudoClass(".middle", "background", "linear-gradient(90deg, #C04848 10%, #480048 90%)");
-			break
-		case "yellow":
-			Session.set('color', yellowHex);
-			Session.set('colorImage', yellowTag);
-			Session.set('colorRgb', yellowRgb);
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
-			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
-			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
-			setPseudoClass(".middle", "background", "linear-gradient(90deg, #F09819 10%, #EDDE5D 90%)");
-			break
-		case "green":        
-			Session.set('color', greenHex);
-			Session.set('colorImage', greenTag);
-			Session.set('colorRgb', greenRgb);
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
-			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
-			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
-			setPseudoClass(".middle", "background", "linear-gradient(90deg, #1D976C 10%, #93F9B9 90%)");
-			break
-		case "blue":
-			Session.set('color', blueHex);
-			Session.set('colorImage', blueTag);
-			Session.set('colorRgb', blueRgb);
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
-			setPseudoClass(".middle", "background", "-moz-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
-			setPseudoClass(".middle", "background", "-webkit-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
-			setPseudoClass(".middle", "background", "-o-linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
-			setPseudoClass(".middle", "background", "linear-gradient(90deg, #7474BF 10%, #348AC7 90%)");
-			break
-		default:
-			break;
-	}
+var colorSwap = color => {
+	Session.set('color', color.hex);
+	Session.set('colorImage', color.tag);
+	Session.set('colorRgb', color.rgb);
+	setPseudoClass(".middle", "background", `-webkit-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
+	setPseudoClass(".middle", "background", `-moz-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
+	setPseudoClass(".middle", "background", `-webkit-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
+	setPseudoClass(".middle", "background", `-o-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
+	setPseudoClass(".middle", "background", `linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
+}
 
+var changeColor = function(color) {
+	Cookie.set('color', JSON.stringify(color));
+	console.log(color)
+	colorSwap(color);
 
 	setPseudoClass("::-webkit-scrollbar-thumb", "background", Session.get('color'));
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", Session.get('color'));
@@ -385,16 +356,16 @@ Template.header.events({
 		video.previousVideo();	
   },
 	"click .red": () => {
-		changeColor("red");	
+		changeColor(red);	
  	},
 	"click .green": () => {
-		changeColor("green");	
+		changeColor(green);	
  	},
 	"click .yellow": () => {
-		changeColor("yellow");	
+		changeColor(yellow);	
   	},
 	"click .blue": () => {
-		changeColor("blue");	
+		changeColor(blue);	
   	},
 	'click .likedVideos' : () => {
 		if(!Meteor.user())
@@ -428,7 +399,7 @@ Template.body.rendered = () => {
 
 // ============== Player ============== //
 var determineColor = function(dark, white) {
-	return Session.equals("color", yellowHex) ? dark : white;
+	return Session.equals("color", yellow.hex) ? dark : white;
 }
 
 Template.player.helpers({
@@ -439,15 +410,14 @@ Template.player.helpers({
 		return Session.get('currentVideo') ? Session.get('currentVideo') : {description:""};
 	},
 	sharedata() {
-		var video =  Session.get('currentVideo');
+		var video = Session.get('currentVideo');
 		if(video) {
-			var url = 'youtu.be/v=' + video.videoId;
 			return {
 	      facebook: true,
 	      twitter: true,
 	      pinterest: false,
 	      shareData: {
-	        url,
+	        url : 'youtu.be/v=' + video.videoId,
 	        defaultShareText: ' -- Found on Kikbak.tv'
 	      }
 	    }
@@ -463,11 +433,7 @@ Template.player.helpers({
 	formedDate() {
 		if(Session.get("currentVideo")) {
 			var dateString = Session.get("currentVideo").youTubePostDate;
-			var year = dateString.substring(0,4);
-			var day = dateString.substring(5,7);
-			var month = dateString.substring(8,10);
-			dateString = month + " • " + day + " • " + year;
-			return dateString;
+			return `${dateString.substring(5,7)} • ${dateString.substring(8,10)} • ${dateString.substring(0,4)}`;
 		}
 	},
 	fontColor: _.bind(determineColor, null, "#151515", "white"),
