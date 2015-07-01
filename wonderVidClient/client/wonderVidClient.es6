@@ -28,7 +28,7 @@ var yellow = {
 }
 currentTime = null;
 
-Meteor.startup(function () {
+Meteor.startup(() => {
 	currentTime = new Date();
 	Session.set('currentVideo', null);
 	Session.set('userLikes', []);
@@ -37,10 +37,9 @@ Meteor.startup(function () {
 	Session.set('playerPushedTop', true);
 	Session.set('playerMinimized', false);
 	if(!Cookie.get('color'))
-		changeColor(yellow);
-	else {
+		changeColor(blue);
+	else
 		changeColor(JSON.parse(Cookie.get('color')));
-	}
 
 	Accounts.ui.config({
 		requestPermissions: {
@@ -51,7 +50,6 @@ Meteor.startup(function () {
 	if(Meteor.user())
 		getLikes();
 
-
 	Mousetrap.bind('esc', clearScreen);
 	Mousetrap.bind('right', videoShortcut.bind(null, "right"));
 	Mousetrap.bind('left', videoShortcut.bind(null, "left"));
@@ -60,7 +58,7 @@ Meteor.startup(function () {
 	Mousetrap.bind('space', togglePlayState);
 });
 
-var minimizeVideo = function() { 
+var minimizeVideo = () => { 
 	if(tlMinimize == null){
 		tlMinimize = new TimelineLite();
 		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
@@ -97,7 +95,7 @@ var minimizeVideo = function() {
 	}
 }
 
-var clearScreen = function() { 
+var clearScreen = () => { 
 	if(Session.get('playerPushedTop') == false && video) {
 		Session.set('playerPushedTop', true);
 		tlDropdown.reverse();
@@ -105,7 +103,7 @@ var clearScreen = function() {
 	}
 }
 
-var pullVideoDown = function() { 
+var pullVideoDown = () => { 
 	if(Session.get('playerPushedTop') == true &&  Session.get('playerMinimized') == false && video) {
 		tlDropdown.restart();
 		TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
@@ -113,7 +111,7 @@ var pullVideoDown = function() {
 	}
 }
 
-var videoShortcut = function(direction) {
+var videoShortcut = function(direction) { // needs a this context
 	if(video) {
 		if(event)
 			event.preventDefault();
@@ -126,38 +124,32 @@ var videoShortcut = function(direction) {
  * Scrolls window to a video ina certain direction
  * @param  {String} direction "left" or "right"
  */
-var scrollToCurrentVideo = function(direction){
+var scrollToCurrentVideo = direction => {
 	var selectedElement = $(".single > .selected").parent();
-	if (direction == "right") {
-		selectedElement = selectedElement.next();
-	} else if (direction == "left") {
-		selectedElement = selectedElement.prev();
-	}
-
+	selectedElement = direction == "right" ? selectedElement.next() : selectedElement.prev();
 	var left = selectedElement.offset().left;
 	var right = selectedElement.width() + left;
 
-	if (left < window.scrollX) {
+	if (left < window.scrollX) 
 		window.scrollTo(left, window.scrollY);
-	} else if (right > window.scrollX + window.innerWidth) {
+	else if (right > window.scrollX + window.innerWidth) 
 		window.scrollTo(right - window.innerWidth, window.scrollY);
-	}
 }
 
-var togglePlayState = function() {
+var togglePlayState = () => {
 	if(video && video.getPlayerState() == YT.PlayerState.PLAYING)
 		video.pauseVideo();
 	else
 		video.playVideo();
 }
 
-var setPseudoClass = function (rule, prop, value) {
-    _.forEach(document.styleSheets, function(sheet) {
-    	_.forEach(sheet.cssRules, function(cssRule) {
-    		if(cssRule.selectorText && cssRule.selectorText.indexOf(rule) == 0)
-                cssRule.style[prop] = value;
-    	});
-    });
+var setPseudoClass = (rule, prop, value) => {
+	document.styleSheets.forEach(sheet => {
+		sheet.cssRules.forEach(cssRule => {
+			if(cssRule.selectorText && cssRule.selectorText.indexOf(rule) == 0)
+      	cssRule.style[prop] = value;
+		})
+	});
 }
 
 // ============== Accounts ============== //
