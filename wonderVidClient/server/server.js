@@ -24,7 +24,7 @@ Meteor.startup(function () {
   
   updateAll(updates);
   var minutes = 30, the_interval = minutes * 60 * 1000;
-  Meteor.setInterval(updateAll, the_interval);
+  Meteor.setInterval(_.bind(updateAll, null, updates), the_interval);
 });
 
 var updates = [
@@ -47,7 +47,7 @@ var updates = [
 ];
 
 var updateAll = function(updates) {
-  if(updates.length != 0) {
+  if(updates && updates.length != 0) {
     var first = _.first(updates)
     console.log('updating ' + first.url)
     updateThis(first.url, first.collection);
@@ -55,10 +55,6 @@ var updateAll = function(updates) {
       updateAll(_.rest(updates));
     }, 10000);
   }
-  
-  // updateThis('/live', LiveVideos);
-  // updateThis('/emerging', EmergingVideos);
-  // updateThis('/allstars', AllStarVideos);
 }
 
 var updateThis = function(url, collection) {

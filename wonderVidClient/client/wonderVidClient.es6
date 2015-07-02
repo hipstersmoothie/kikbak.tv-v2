@@ -417,8 +417,8 @@ Template.player.helpers({
 				twitter: true,
 				pinterest: false,
 				shareData: {
-					url : 'youtu.be/v=' + video.videoId,
-					defaultShareText: ' -- Found on Kikbak.tv'
+					url : 'http://youtu.be/v=' + video.videoId,
+					defaultShareText: video.title + ' #musicvideo -- Found on Kikbak.tv'
 				}
 			}
 		} else
