@@ -1,4 +1,9 @@
 var base_url;
+TopVideos = new Mongo.Collection('videos');
+LiveVideos = new Mongo.Collection('live');
+EmergingVideos = new Mongo.Collection('emerging');
+AllStarVideos = new Mongo.Collection('allStar');
+
 Meteor.startup(function () {
   Future = Npm.require('fibers/future');
   ServiceConfiguration.configurations.upsert({
@@ -17,16 +22,43 @@ Meteor.startup(function () {
     base_url = "https://wondervid.herokuapp.com";
   
   
-  updateAll();
+  updateAll(updates);
   var minutes = 30, the_interval = minutes * 60 * 1000;
   Meteor.setInterval(updateAll, the_interval);
 });
 
-var updateAll = function() {
-  updateThis('/videos', TopVideos);
-  updateThis('/live', LiveVideos);
-  updateThis('/emerging', EmergingVideos);
-  updateThis('/allstars', AllStarVideos);
+var updates = [
+  {
+    url: '/videos',
+    collection: TopVideos
+  },
+  {
+    url: '/live',
+    collection: LiveVideos
+  },
+  {
+    url: '/emerging',
+    collection: EmergingVideos
+  },
+  {
+    url: '/allstars',
+    collection: AllStarVideos
+  }
+];
+
+var updateAll = function(updates) {
+  if(updates.length != 0) {
+    var first = _.first(updates)
+    console.log('updating ' + first.url)
+    updateThis(first.url, first.collection);
+    Meteor.setTimeout(function() {
+      updateAll(_.rest(updates));
+    }, 10000);
+  }
+  
+  // updateThis('/live', LiveVideos);
+  // updateThis('/emerging', EmergingVideos);
+  // updateThis('/allstars', AllStarVideos);
 }
 
 var updateThis = function(url, collection) {
@@ -45,11 +77,6 @@ var updateThis = function(url, collection) {
   })
 }
 
-TopVideos = new Mongo.Collection('videos');
-LiveVideos = new Mongo.Collection('live');
-EmergingVideos = new Mongo.Collection('emerging');
-AllStarVideos = new Mongo.Collection('allStar');
-
 Meteor.publish('videos', function(type) {
   if (type == "topVideos") {
     return TopVideos.find({}, {sort:{rank:1}});
@@ -64,11 +91,10 @@ Meteor.publish('videos', function(type) {
 });
 
 Meteor.publish("userData", function () {
-  if (this.userId) {
+  if (this.userId)
     return Meteor.users.find({_id: this.userId});
-  } else {
+  else 
     this.ready();
-  }
 });
 
 Meteor.methods({

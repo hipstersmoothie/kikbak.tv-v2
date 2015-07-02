@@ -31,23 +31,23 @@ var startExpress = function() {
 		});
 	});
 
-	app.get('/videos', function (req, res) {
-		db.videos.find(
-		{
+	var getEm = function(req, res, sort) {
+		db.videos.find({
 			$and: [
 				{ title: { $not: blockedTitles } }, //live
-				{ publishedBy: { $not: blockedPublished } },
-				{ description: { $not: /GGN/ } },
-				{ tags : {$nin : ["NotAVid"]}}
+				{ publishedBy: { $not: blockedPublished } }, //interviews
+				{ tags : {$nin : ["Live", "Interview", "Trailer", "NotAVid"]}}
 			]
-		}, 
-		function(err, videos) {
-			console.log('newVids');
+		}, function(err, videos) {
 			if(videos) {
-				wonderRank.defaultSort(videos);
+				sort(videos);
 				res.send(videos.splice(0,100));
 			}
 		});
+	}
+
+	app.get('/videos', function (req, res) {
+		getEm(req, res, wonderRank.defaultSort)
 	});
 
 	app.get('/allstars', function (req, res) {
@@ -63,18 +63,7 @@ var startExpress = function() {
 	});
 
 	app.get('/emerging', function (req, res) {
-		db.videos.find({
-			$and: [
-				{ title: { $not: blockedTitles } }, //live
-				{ publishedBy: { $not: blockedPublished } }, //interviews
-				{ tags : {$nin : ["Live", "Interview", "Trailer", "NotAVid"]}}
-			]
-		}, function(err, videos) {
-			if(videos) {
-				wonderRank.hipsterSort(videos);
-				res.send(videos.splice(0,100));
-			}
-		});
+		getEm(req, res, wonderRank.hipsterSort);
 	});
 
 	app.get('/live', function (req, res) {
