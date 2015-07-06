@@ -1,31 +1,3 @@
-var red = {
-	hex : '#D6373A',
-	light: '#C04848',
-	dark : '#480048',
-	rgb : 'rgba(214,55,58,0.5)',
-	tag : "url('/images/rankBackgroundRed.png')"
-}
-var green = {
-	hex : '#31C663',
-	light: '#1D976C',
-	dark : '#93F9B9',
-	rgb : 'gba(49,198,99,0.5)',
-	tag : "url('/images/rankBackground.png')"
-}
-var blue = {
-	hex : '#406EAA',
-	light: '#7474BF',
-	dark : '#348AC7',
-	rgb : 'gba(64,110,170,0.5)',
-	tag : "url('/images/rankBackgroundBlue.png')"
-}
-var yellow = {
-	hex : '#F7DD72',
-	light: '#F09819',
-	dark : '#EDDE5D',
-	rgb : 'gba(247,221,114,0.5)',
-	tag : "url('/images/rankBackgroundYellow.png')"
-}
 currentTime = null;
 _.enFunction = (func, ...args) => {
 	return function() {
@@ -50,7 +22,7 @@ Meteor.startup(() => {
 	Session.set('playerPushedTop', true);
 	Session.set('playerMinimized', false);
 	if(!Cookie.get('color'))
-		changeColor(blue);
+		changeColor(colors.blue);
 	else
 		changeColor(JSON.parse(Cookie.get('color')));
 
@@ -60,6 +32,7 @@ Meteor.startup(() => {
 		},
 		requestOfflineToken: {google:true}
 	});
+
 	if(Meteor.user())
 		getLikes();
 
@@ -72,11 +45,9 @@ Meteor.startup(() => {
 });
 
 var videoShortcut = function(direction, test) { // needs a this context
-	console.log(direction, test)
 	if(video) {
 		if(event)
 			event.preventDefault();
-		scrollToCurrentVideo(direction);
 		direction == 'right' ? video.nextVideo() : video.previousVideo();
 	}
 }
@@ -121,21 +92,22 @@ Meteor.logout = function customLogout() {
 }
 
 Accounts.onLogin(getLikes);
-var getLikes = () => {
-	Meteor.call('likedVideos', (err, res) => {
+function getLikes() {
+	Meteor.call('likedVideos', function(err, res) {
+		console.log(res);
 		if(!err) 
 			Session.set('userLikes', res);
 	}); 
 }
 
-var reRank = videos => {
+function reRank(videos) {
 	return videos.map((video, rank) => {
 		video.rank = rank + 1;
 		return video;
 	});
 }
 
-var hitLikeButton = video => {
+function hitLikeButton(video) {
 	if(!Meteor.user())
 		AntiModals.overlay('simpleModal');
 	else {
@@ -144,7 +116,7 @@ var hitLikeButton = video => {
 	}
 }
 
-var likeVid = (video, index, rating) => {
+function likeVid(video, index, rating) {
 	var likes = Session.get('userLikes');
 	Meteor.call('likeVideo', video.videoId, rating, res => {
 		if (!res || !res.error) {
@@ -184,8 +156,8 @@ var colorSwap = color => {
 	setPseudoClass("::-webkit-scrollbar-thumb", "background", color.hex);
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", color.hex);
 	setPseudoClass("#login-buttons .login-button:hover, .accounts-dialog .login-button:hover", "color", color.hex);
-	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", "1px solid " + color.rgb);
-	setPseudoClass(".single .selected", "border", "3px solid " + color.hex);
+	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", `1px solid ${color.rgb}`);
+	setPseudoClass(".single .selected", "border", `3px solid ${color.hex}`);
 	setPseudoClass(".single .overlay:hover", "background-color", color.rgb);
 }
 
@@ -295,10 +267,10 @@ Template.header.events({
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
 	},
-	"click .red": _.enFunction(changeColor, red),
-	"click .green": _.enFunction(changeColor, green),
-	"click .yellow": _.enFunction(changeColor, yellow),
-	"click .blue": _.enFunction(changeColor, blue),
+	"click .red": _.enFunction(changeColor, colors.red),
+	"click .green": _.enFunction(changeColor, colors.green),
+	"click .yellow": _.enFunction(changeColor, colors.yellow),
+	"click .blue": _.enFunction(changeColor, colors.blue),
 	'click .likedVideos' : () => {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -330,7 +302,7 @@ Template.body.rendered = () => {
 
 // ============== Animations ============== //
 var determineColor = function(dark, white) {
-	return Session.equals("color", yellow.hex) ? dark : white;
+	return Session.equals("color", colors.yellow.hex) ? dark : white;
 }
 
 var minimizePlayerAnimation = () => {
