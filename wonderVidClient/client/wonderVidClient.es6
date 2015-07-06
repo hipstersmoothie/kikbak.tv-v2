@@ -7,11 +7,6 @@ _.enFunction = (func, ...args) => {
 			func()
 	}
 }
-_.ret = (val) => {
-	return function() {
-		return val;
-	}
-}
 
 Meteor.startup(() => {
 	currentTime = new Date();
@@ -44,7 +39,7 @@ Meteor.startup(() => {
 	Mousetrap.bind('space', togglePlayState);
 });
 
-var videoShortcut = function(direction, test) { // needs a this context
+function videoShortcut(direction, test) { // needs a this context
 	if(video) {
 		if(event)
 			event.preventDefault();
@@ -56,7 +51,7 @@ var videoShortcut = function(direction, test) { // needs a this context
  * Scrolls window to a video ina certain direction
  * @param  {String} direction "left" or "right"
  */
-var scrollToCurrentVideo = direction => {
+function scrollToCurrentVideo(direction) {
 	var selectedElement = $(".single > .selected").parent();
 	selectedElement = direction == "right" ? selectedElement.next() : selectedElement.prev();
 	var left = selectedElement.offset().left;
@@ -68,14 +63,14 @@ var scrollToCurrentVideo = direction => {
 		window.scrollTo(right - window.innerWidth, window.scrollY);
 }
 
-var togglePlayState = () => {
+function togglePlayState() {
 	if(video && video.getPlayerState() == YT.PlayerState.PLAYING)
 		video.pauseVideo();
 	else
 		video.playVideo();
 }
 
-var setPseudoClass = (rule, prop, value) => {
+function setPseudoClass(rule, prop, value) {
 	_.forEach(document.styleSheets, sheet => {
 		_.forEach(sheet.cssRules, cssRule => {
 			if(cssRule.selectorText && cssRule.selectorText.indexOf(rule) == 0)
@@ -143,7 +138,7 @@ Template.registerHelper('colorImage', ()  => {
 	return Session.get('colorImage');
 });
 
-var colorSwap = color => {
+function colorSwap(color) {
 	Session.set('color', color.hex);
 	Session.set('colorImage', color.tag);
 	Session.set('colorRgb', color.rgb);
@@ -161,7 +156,7 @@ var colorSwap = color => {
 	setPseudoClass(".single .overlay:hover", "background-color", color.rgb);
 }
 
-var changeColor = function(color) {
+function changeColor(color) {
 	Cookie.set('color', JSON.stringify(color));
 	colorSwap(color);
 }
@@ -219,7 +214,7 @@ Template.header.helpers({
 	}
 });
 
-var likesIds = () => {
+function likesIds() {
 	return Session.get('userLikes').map(like => like.videoId);
 }
 
@@ -250,10 +245,10 @@ Template.header.events({
 		Router.go('/emerging');
 	},
 	"click .playButton":  () => {
-		if(Session.equals("stateImage",playButton)){
+		if (Session.equals("stateImage",playButton)) {
 			video.playVideo();
 			Session.set('stateImage', pauseButton);
-		}else{
+		} else {
 			video.pauseVideo();
 			Session.set('stateImage', playButtonn);
 		}
@@ -301,11 +296,11 @@ Template.body.rendered = () => {
 }
 
 // ============== Animations ============== //
-var determineColor = function(dark, white) {
+function determineColor(dark, white) {
 	return Session.equals("color", colors.yellow.hex) ? dark : white;
 }
 
-var minimizePlayerAnimation = () => {
+function minimizePlayerAnimation() {
 	if(tlMinimize == null){
 		tlMinimize = new TimelineLite();
 		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
@@ -323,7 +318,7 @@ var minimizePlayerAnimation = () => {
 	}
 }
 
-var reverseDropDownAnimation = () => {
+function reverseDropDownAnimation() {
 	if(video) {
 		video.pauseVideo();
 		Session.set('playerPushedTop', true);
@@ -332,12 +327,10 @@ var reverseDropDownAnimation = () => {
 	}
 }
 
-var closeVideoAnimation = () => {
+function closeVideoAnimation() {
 	setTimeout(() => {
 		tlMinimize.reverse();
-		document.getElementById("playerNavBar").style.right = "15%";
-		document.getElementById("playerSideBar").style.left = "23%";
-		document.getElementById("playerNavBarMinimized").style.top = "0%";
+		setSidebarPositions();
 	}, 500);
 	Session.set('playerPushedTop', true);
 	Session.set('playerMinimized', false);
@@ -345,30 +338,34 @@ var closeVideoAnimation = () => {
 	video.pauseVideo();
 }
 
-var expandPlayerAnimation = () => {
+function expandPlayerAnimation() {
 	tlMinimize.reverse();
 	Session.set('playerPushedTop', false);
 	Session.set('playerMinimized', false);
 }
 
-var restartDropDown = () => {	
+function dropDownInit() {
+	Session.set('playerPushedTop', false);
+	Session.set('playerMinimized', false);
+	setSidebarPositions();
+}
+
+function setSidebarPositions() {
+	document.getElementById("playerNavBar").style.right = "15%";
+	document.getElementById("playerSideBar").style.left = "23%";
+	document.getElementById("playerNavBarMinimized").style.top = "0%";
+}
+
+function restartDropDown() {	
 	if(Session.equals('playerPushedTop', true) && Session.equals('playerMinimized', false)){
-		Session.set('playerPushedTop', false);
-		Session.set('playerMinimized', false);
-		document.getElementById("playerNavBar").style.right = "15%";
-		document.getElementById("playerSideBar").style.left = "23%";
-		document.getElementById("playerNavBarMinimized").style.top = "0%";
+		dropDownInit();
 		tlDropdown.restart();
 		TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 	}
 }
 
-var createDropDownAnimation = () => {
-	Session.set('playerPushedTop', false);
-	Session.set('playerMinimized', false);
-	document.getElementById("playerNavBar").style.right = "15%";
-	document.getElementById("playerSideBar").style.left = "23%";
-	document.getElementById("playerNavBarMinimized").style.top = "0%";
+function createDropDownAnimation() {
+	dropDownInit();
 	tlDropdown = new TimelineLite();
 	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 	tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
@@ -484,7 +481,7 @@ Template.gridThumbs.events({
 	}
 });
 
-var hitSquare = (thisVid, index) => {
+function hitSquare(thisVid, index) {
 	var oldVid = Session.get('currentVideo');
 	Session.set('currentVideo', thisVid);
 	if (oldVid && oldVid.videoId == thisVid.videoId && Session.equals("playerMinimized",true)){
@@ -515,13 +512,13 @@ var hitSquare = (thisVid, index) => {
 	}
 }
 // ============== Video Helpers ============== //
-var findVid = videoId => {
+function findVid(videoId) {
 	return _.find(Session.get('videos'), video => {
 		return video.videoId == videoId;
 	});
 }
 
-var updateList = event => {
+function updateList(event) {
 	if (video.route != nextList.name) { // new page play first
 		event.loadPlaylist(nextList.videoIds);
 		Session.set('currentVideo', Session.get('videos')[0]);
@@ -534,7 +531,7 @@ var updateList = event => {
 }
 
 firstPlay = true, nextList = null;
-renderVids = index => {
+renderVids = function renderVids(index) {
 	Session.set("stateImage",pauseButton);	
 	videoTmp = new YT.Player("player", {
 		events: {
