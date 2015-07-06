@@ -27,6 +27,19 @@ var yellow = {
 	tag : "url('/images/rankBackgroundYellow.png')"
 }
 currentTime = null;
+_.enFunction = (func, ...args) => {
+	return function() {
+		if(args && args.length)
+			func(...args);
+		else
+			func()
+	}
+}
+_.ret = (val) => {
+	return function() {
+		return val;
+	}
+}
 
 Meteor.startup(() => {
 	currentTime = new Date();
@@ -51,19 +64,20 @@ Meteor.startup(() => {
 		getLikes();
 
 	Mousetrap.bind('esc', reverseDropDownAnimation);
-	Mousetrap.bind('right', videoShortcut.bind(null, "right"));
-	Mousetrap.bind('left', videoShortcut.bind(null, "left"));
+	Mousetrap.bind('right', _.enFunction(videoShortcut, "right"));
+	Mousetrap.bind('left', _.enFunction(videoShortcut, "left"));
 	Mousetrap.bind('down', restartDropDown);
 	Mousetrap.bind('m',  minimizePlayerAnimation);
 	Mousetrap.bind('space', togglePlayState);
 });
 
-var videoShortcut = function(direction) { // needs a this context
+var videoShortcut = function(direction, test) { // needs a this context
+	console.log(direction, test)
 	if(video) {
 		if(event)
 			event.preventDefault();
 		scrollToCurrentVideo(direction);
-		video.previousVideo();
+		direction == 'right' ? video.nextVideo() : video.previousVideo();
 	}
 }
 
@@ -206,9 +220,7 @@ Template.helpModal.events({
 
 // ============== Header ============== //
 Template.about.events({
-	'click .goBack': () => {
-		Router.go('/');
-	}
+	'click .goBack': () => { Router.go('/') }
 })
 
 Template.header.helpers({
@@ -283,18 +295,10 @@ Template.header.events({
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
 	},
-	"click .red": () => {
-		changeColor(red);	
-	},
-	"click .green": () => {
-		changeColor(green);	
-	},
-	"click .yellow": () => {
-		changeColor(yellow);	
-		},
-	"click .blue": () => {
-		changeColor(blue);	
-		},
+	"click .red": _.enFunction(changeColor, red),
+	"click .green": _.enFunction(changeColor, green),
+	"click .yellow": _.enFunction(changeColor, yellow),
+	"click .blue": _.enFunction(changeColor, blue),
 	'click .likedVideos' : () => {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -417,8 +421,7 @@ Template.player.helpers({
 				twitter: true,
 				pinterest: false,
 				shareData: {
-					url : 'http://youtu.be/v=' + video.videoId,
-					defaultShareText: video.title + ' #musicvideo -- Found on Kikbak.tv'
+					defaultShareText: `${video.title} #musicvideo -- Found on Kikbak.tv youtu.be/${video.videoId}`
 				}
 			}
 		} else
