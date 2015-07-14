@@ -138,6 +138,10 @@ Template.registerHelper('colorImage', ()  => {
 	return Session.get('colorImage');
 });
 
+Template.registerHelper('big', ()  => {
+	return Session.get('device-screensize') != 'small' && Session.get('device-screensize') != 'medium';
+});
+
 Template.registerHelper('and', function () {
   var args = Array.prototype.slice.call(arguments, 0, -1);  // exclude key=value args
   var parameters = arguments[arguments.length - 1];  // key: value arguments
