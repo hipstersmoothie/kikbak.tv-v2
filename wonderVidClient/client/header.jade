@@ -13,7 +13,7 @@ template(name="header")
         .headerColor.yellow
         .headerColor.blue
         a.help(href="#" style="color: {{color}};" onclick="return false;") ?
-        +if or screensize_small screensize_medium
+        +if screensize_medium
           ul.nav.navbar-nav.small-nav
             li
               a(href="" style="color: {{color}};") {{currentVideo.title}}
