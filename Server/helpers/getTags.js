@@ -24,7 +24,14 @@ var checkMusicVideo = function(text, youTubeDescription, uploader, title) {
 	return tags;
 }
 
-var tagFunctions = [checkMusicVideo, checkLive];
+var checkSeries = function(text, youTubeDescription, uploader, title) {
+	var episodeRegex = /episode [0-9]+/i;
+	if(episodeRegex.test(title)) {
+		return ['NotAVid'];
+	}
+}
+
+var tagFunctions = [checkMusicVideo, checkLive, checkSeries];
 var getTag = function(html, $, youTubeDescription, title, uploader) {
 	var tags = [];
 	if (html.each) {

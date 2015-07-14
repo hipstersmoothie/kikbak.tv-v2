@@ -13,6 +13,14 @@ template(name="layout")
 	div(style="height:100%")
 		+yield
 
+template(name="turnScreenModal")
+	.anti-modal-box
+		.anti-modal-header 
+			.anti-modal-title(style="color: {{color}};") Turn your Phone!
+			.anti-modal-closer &times;
+		.anti-modal-body 
+			p Kikbak.tv is all about music videos and is best used in landscape mode. Try turning your phone.
+
 template(name="simpleModal")
 	.anti-modal-box
 		.anti-modal-header 
@@ -50,48 +58,53 @@ template(name='player')
 		.downArrow(id="downArrow")
 			img(src="/images/downArrow.png")
 	.playerContainer(id="playerContainer")
-		.playerSideBar(id="playerSideBar")
-			.sideTitle
-				p {{currentVideo.title}}
-			.sideDate
-				p #{formedDate}
-			.sideRank(style="color: {{color}};")
-				p(class="rankDesc") couch score:
-				p(class="number") {{currentVideo.wonderRank}}
-			.stats
-				.sideLikes
-					p {{currentVideo.shareCounts.Facebook.total_count}}
-				.sideDislikes
-					p {{currentVideo.shareCounts.Twitter}}
-			+lmSocialShare opts=sharedata
-			.sideDescription 
-				p {{#autolink}}{{currentVideo.description}}{{/autolink}}
-		.playerNavBar(id="playerNavBar" style="background-color: {{color}}")
-			.togglePlayer(id="togglePlayer")
-				img(style="width:36px" src="images/{{colorFontClose}}")
-				p(style="color:{{fontColor}}") close
-			+if isDevEnvironment
-				.flagVideo(id="flagVideo")
-					img(style="width:54px" src="images/{{colorFontFlag}}")
-					p(style="color:{{fontColor}}") flag
-			.minimizePlayer(id="minimizePlayer")
-				p(style="color:{{fontColor}}") minimize
-				img(style="width:48px" src="images/{{colorFontMinimize}}")
-		.playerNavBarMinimized(id="playerNavBarMinimized" style="background-color: {{color}}")
-				.closePlayer(id="closePlayer")
-					p(style="color:{{fontColor}}") close
-					img(style="width:16px" src="images/{{colorFontClose}}")
-				.expandPlayer(id="expandPlayer")
-					img(style="width:16px" src="images/{{colorFontExpand}}")
-					p(style="color:{{fontColor}}") expand
+		+unless screensize_small
+			+unless screensize_medium
+				.playerSideBar(id="playerSideBar")
+					.sideTitle
+						p {{currentVideo.title}}
+					.sideDate
+						p #{formedDate}
+					.sideRank(style="color: {{color}};")
+						p(class="rankDesc") couch score:
+						p(class="number") {{currentVideo.wonderRank}}
+					.stats
+						.sideLikes
+							p {{currentVideo.shareCounts.Facebook.total_count}}
+						.sideDislikes
+							p {{currentVideo.shareCounts.Twitter}}
+					+lmSocialShare opts=sharedata
+					.sideDescription 
+						p {{#autolink}}{{currentVideo.description}}{{/autolink}}			
+				.playerNavBar(id="playerNavBar" style="background-color: {{color}}")
+					.togglePlayer(id="togglePlayer")
+						img(style="width:36px" src="images/{{colorFontClose}}")
+						p(style="color:{{fontColor}}") close
+					+if isDevEnvironment
+						.flagVideo(id="flagVideo")
+							img(style="width:54px" src="images/{{colorFontFlag}}")
+							p(style="color:{{fontColor}}") flag
+					.minimizePlayer(id="minimizePlayer")
+						p(style="color:{{fontColor}}") minimize
+						img(style="width:48px" src="images/{{colorFontMinimize}}")
+				.playerNavBarMinimized(id="playerNavBarMinimized" style="background-color: {{color}}")
+						.closePlayer(id="closePlayer")
+							p(style="color:{{fontColor}}") close
+							img(style="width:16px" src="images/{{colorFontClose}}")
+						.expandPlayer(id="expandPlayer")
+							img(style="width:16px" src="images/{{colorFontExpand}}")
+							p(style="color:{{fontColor}}") expand
 
-		.player
-			#player
+			.player(class="{{#if or screensize_small screensize_medium}}smallPlayer{{/if}}")
+				#player
+		
 		
 		
 
 template(name='gridThumbs')
 	.container
+		//- +if portrait
+		{{turnDevice}}
 		.flex-container
 			+each videos
 				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
