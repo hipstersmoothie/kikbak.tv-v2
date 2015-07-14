@@ -19,7 +19,7 @@ template(name="turnScreenModal")
 			.anti-modal-title(style="color: {{color}};") Turn your Phone!
 			.anti-modal-closer &times;
 		.anti-modal-body 
-			p Kikbak.tv is all about music videos and is best used in landscape mode. Try turning your phone.
+			p Kikbak.tv is all about music videos and is best used in landscape mode. Try turning your phone or widening your browser window.
 
 template(name="simpleModal")
 	.anti-modal-box
@@ -103,7 +103,6 @@ template(name='player')
 
 template(name='gridThumbs')
 	.container
-		//- +if portrait
 		{{turnDevice}}
 		.flex-container
 			+each videos
