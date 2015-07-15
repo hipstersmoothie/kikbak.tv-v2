@@ -14,9 +14,9 @@ template(name="header")
         .headerColor.blue
         a.help(href="#" style="color: {{color}};" onclick="return false;") ?
         +if screensize_medium
-          ul.nav.navbar-nav.small-nav
+          ul.nav.small-nav
             li
-              a(href="" style="color: {{color}};") {{currentVideo.title}}
+              span(href="" style="color: {{color}};") {{currentVideo.title}}
 
       .collapse.navbar-collapse#bs-example-navbar-collapse-1
         +if isVideo
