@@ -65,8 +65,8 @@ template(name='player')
 				.sideDate
 					p #{formedDate}
 				.sideRank(style="color: {{color}};")
-					p(class="rankDesc") couch score:
-					p(class="number") {{currentVideo.wonderRank}}
+					p(class="rankDesc") rank
+					p(class="number") {{currentVideo.rank}}
 				.stats
 					.sideLikes
 						p {{currentVideo.shareCounts.Facebook.total_count}}

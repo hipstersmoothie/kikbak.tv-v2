@@ -64,12 +64,10 @@ var tagVideo = function(vidId, html, $) {
 	youTube.getById(vidId, function(error, result) {
 		if(!error) {
 			var tags;
-			console.log(result)
 			if(result && result['items'] && result['items'][0] && result['items'][0]['snippet'])
 				tags = getTags.getTag(html, $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']);
 			else
 				tags = getTags.getTag(html, $, '', '', '');
-			console.log(tags)
 			db.videos.update({ videoId : vidId }, {$addToSet: {
 				tags : {$each:tags}
 			}});
@@ -121,10 +119,10 @@ var newVid = function(vidId, url, blog, $, link) {
 	}, function(error, result) {
 		result = JSON.parse(result);
 		if(result && result['items'] && result['items'].length > 0 
-			&& /official audio|(audio)|[audio]|audio only/.exec(result['items'][0]['snippet']['title']) == null) {
+			&& /official audio|\(audio\)|\[audio\]|audio only/.exec(result['items'][0]['snippet']['title']) == null) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
-			
+
 			var blogs = blog.tags ? blog.tags : [];
 			var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
 			console.log('adding', result['items'][0]['snippet']['title'], vidId); 
