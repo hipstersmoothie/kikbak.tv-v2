@@ -10,7 +10,7 @@ var http = require('http'),
 	getTags = require('./../helpers/getTags');
 
 var youTube = new YouTube();
-var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
+var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 50;
 var youtubeKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
 youTube.setKey(youtubeKey);
 
@@ -119,7 +119,7 @@ var newVid = function(vidId, url, blog, $, link) {
 	}, function(error, result) {
 		result = JSON.parse(result);
 		if(result && result['items'] && result['items'].length > 0 
-			&& /official audio|\(audio\)|\[audio\]|audio only/.exec(result['items'][0]['snippet']['title']) == null) {
+			&& /official audio|\(audio\)|\[audio\]|audio only/i.exec(result['items'][0]['snippet']['title']) == null) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
 
