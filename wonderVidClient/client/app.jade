@@ -1,6 +1,10 @@
 head
 	meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
 	meta(name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1")
+	meta(name="apple-mobile-web-app-capable" content="yes")
+	meta(name="apple-mobile-web-app-status-bar-style" content="black-translucent")
+	meta(name="mobile-web-app-capable" content="yes")
+
 	title kikbak.tv
 	link(href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css')
 	link(rel='icon' href='/images/favicon.ico')
@@ -13,6 +17,14 @@ template(name="layout")
 	+player
 	div(style="height:100%")
 		+yield
+
+template(name="turnScreenModal")
+	.anti-modal-box
+		.anti-modal-header 
+			.anti-modal-title(style="color: {{color}};") Turn your Phone!
+			.anti-modal-closer &times;
+		.anti-modal-body 
+			p Kikbak.tv is all about music videos and is best used in landscape mode. Try turning your phone or widening your browser window.
 
 template(name="simpleModal")
 	.anti-modal-box
@@ -51,48 +63,52 @@ template(name='player')
 		.downArrow(id="downArrow")
 			img(src="/images/downArrow.png")
 	.playerContainer(id="playerContainer")
-		.playerSideBar(id="playerSideBar")
-			.sideTitle
-				p {{currentVideo.title}}
-			.sideDate
-				p #{formedDate}
-			.sideRank(style="color: {{color}};")
-				p(class="rankDesc") couch score:
-				p(class="number") {{currentVideo.wonderRank}}
-			.stats
-				.sideLikes
-					p {{currentVideo.shareCounts.Facebook.total_count}}
-				.sideDislikes
-					p {{currentVideo.shareCounts.Twitter}}
-			+lmSocialShare opts=sharedata
-			.sideDescription 
-				p {{#autolink}}{{currentVideo.description}}{{/autolink}}
-		.playerNavBar(id="playerNavBar" style="background-color: {{color}}")
-			.togglePlayer(id="togglePlayer")
-				img(style="width:36px" src="images/{{colorFontClose}}")
-				p(style="color:{{fontColor}}") close
-			+if isDevEnvironment
-				.flagVideo(id="flagVideo")
-					img(style="width:54px" src="images/{{colorFontFlag}}")
-					p(style="color:{{fontColor}}") flag
-			.minimizePlayer(id="minimizePlayer")
-				p(style="color:{{fontColor}}") minimize
-				img(style="width:48px" src="images/{{colorFontMinimize}}")
-		.playerNavBarMinimized(id="playerNavBarMinimized" style="background-color: {{color}}")
-				.closePlayer(id="closePlayer")
+		+unless or screensize_small screensize_medium
+			.playerSideBar(id="playerSideBar")
+				.sideTitle
+					p {{currentVideo.title}}
+				.sideDate
+					p #{formedDate}
+				.sideRank(style="color: {{color}};")
+					p(class="rankDesc") rank
+					p(class="number") {{currentVideo.rank}}
+				.stats
+					.sideLikes
+						p {{currentVideo.shareCounts.Facebook.total_count}}
+					.sideDislikes
+						p {{currentVideo.shareCounts.Twitter}}
+				+lmSocialShare opts=sharedata
+				.sideDescription 
+					p {{#autolink}}{{currentVideo.description}}{{/autolink}}			
+			.playerNavBar(id="playerNavBar" style="background-color: {{color}}")
+				.togglePlayer(id="togglePlayer")
+					img(style="width:36px" src="images/{{colorFontClose}}")
 					p(style="color:{{fontColor}}") close
-					img(style="width:16px" src="images/{{colorFontClose}}")
-				.expandPlayer(id="expandPlayer")
-					img(style="width:16px" src="images/{{colorFontExpand}}")
-					p(style="color:{{fontColor}}") expand
+				+if isDevEnvironment
+					.flagVideo(id="flagVideo")
+						img(style="width:54px" src="images/{{colorFontFlag}}")
+						p(style="color:{{fontColor}}") flag
+				.minimizePlayer(id="minimizePlayer")
+					p(style="color:{{fontColor}}") minimize
+					img(style="width:48px" src="images/{{colorFontMinimize}}")
+			.playerNavBarMinimized(id="playerNavBarMinimized" style="background-color: {{color}}")
+					.closePlayer(id="closePlayer")
+						p(style="color:{{fontColor}}") close
+						img(style="width:16px" src="images/{{colorFontClose}}")
+					.expandPlayer(id="expandPlayer")
+						img(style="width:16px" src="images/{{colorFontExpand}}")
+						p(style="color:{{fontColor}}") expand
+		else
+			.togglePlayer.mobileToggle(id="togglePlayer")
+					img(style="width:36px" src="images/{{colorFontClose}}")
+					p(style="color:{{fontColor}}") close
 
-		.player
+		.player(class="{{#if or screensize_small screensize_medium}}smallPlayer{{/if}}")
 			#player
-		
-		
 
 template(name='gridThumbs')
 	.container
+		{{turnDevice}}
 		.flex-container
 			+each videos
 				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 

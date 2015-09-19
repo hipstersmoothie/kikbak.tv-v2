@@ -4,7 +4,7 @@ var	db = require("./../helpers/db"),
 	YouTube = require('youtube-node');
 
 var youTube = new YouTube();
-var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
+var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 50;
 var youtubeKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
 youTube.setKey(youtubeKey);
 var vidlength;
@@ -59,4 +59,7 @@ var updateStats = function(video, index) {
 			process.exit();
 	});
 }
+
 updateStatsForAllVids();
+
+

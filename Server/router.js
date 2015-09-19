@@ -6,8 +6,8 @@ var express = require('express'),
 
 var startExpress = function() {
 	var app = express();
-	var blockedTitles = /Birthday bash 20|covers|covering|:60 with|perform|Guitars and Bass Play|Behind the Scenes|Summer Jam|MTV News|Converse Rubber Tracks|2014|2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|.15|SKEE TV|Official Movie|GGN |^(?=.*Drake)(?=.*Tour).*$|Live @|Live in|Live at|\[live\]|\(live\)|Interview/i;
-	var blockedPublished = /Art ist D|3FM|John Clay|LadyGagaNewz|Power 106|ClevverTV|Play Too Much|Stoney Roads|NME|CBS News|triple j|timwestwoodtv|colt45maltliquor|Jimmy Kimmel Live|BigBoyTV|deathrockstar|Al Lindstrom|SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY|The Tonight Show Starring Jimmy Fallon|The Late Late Show with James Corden|The A.V. Club|GQ Magazine|I.T. Channel/;
+	var blockedTitles = /Zepp Namba|Soundtrack Review|The Breakfast Club|Lollapalooza|Over\/Under|Album Review|Sound Advice|Birthday bash 20|covers|covering|:60 with|perform|Guitars and Bass Play|Behind the Scenes|Summer Jam|MTV News|Converse Rubber Tracks|2014|2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|.15|SKEE TV|Official Movie|GGN |^(?=.*Drake)(?=.*Tour).*$|Live @|Live in|Live at|\[live\]|\(live\)|Interview/i;
+	var blockedPublished = /Comedy Central|Consequence of Sound|asQme|Bootleg Kev|TheBreakfastClub|Art ist D|3FM|John Clay|LadyGagaNewz|Power 106|ClevverTV|Play Too Much|Stoney Roads|NME|CBS News|triple j|timwestwoodtv|colt45maltliquor|Jimmy Kimmel Live|BigBoyTV|deathrockstar|Al Lindstrom|SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY|The Tonight Show Starring Jimmy Fallon|The Late Late Show with James Corden|The A.V. Club|GQ Magazine|I.T. Channel/;
 
 	app.set('port', process.env.PORT || 5000); 
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -31,23 +31,23 @@ var startExpress = function() {
 		});
 	});
 
-	app.get('/videos', function (req, res) {
-		db.videos.find(
-		{
+	var getEm = function(req, res, sort) {
+		db.videos.find({
 			$and: [
 				{ title: { $not: blockedTitles } }, //live
-				{ publishedBy: { $not: blockedPublished } },
-				{ description: { $not: /GGN/ } },
-				{ tags : {$nin : ["NotAVid"]}}
+				{ publishedBy: { $not: blockedPublished } }, //interviews
+				{ tags : {$nin : ["Live", "Interview", "Trailer", "NotAVid"]}}
 			]
-		}, 
-		function(err, videos) {
-			console.log('newVids');
+		}, function(err, videos) {
 			if(videos) {
-				wonderRank.defaultSort(videos);
+				sort(videos);
 				res.send(videos.splice(0,100));
 			}
 		});
+	}
+
+	app.get('/videos', function (req, res) {
+		getEm(req, res, wonderRank.defaultSort)
 	});
 
 	app.get('/allstars', function (req, res) {
@@ -63,18 +63,7 @@ var startExpress = function() {
 	});
 
 	app.get('/emerging', function (req, res) {
-		db.videos.find({
-			$and: [
-				{ title: { $not: blockedTitles } }, //live
-				{ publishedBy: { $not: blockedPublished } }, //interviews
-				{ tags : {$nin : ["Live", "Interview", "Trailer", "NotAVid"]}}
-			]
-		}, function(err, videos) {
-			if(videos) {
-				wonderRank.hipsterSort(videos);
-				res.send(videos.splice(0,100));
-			}
-		});
+		getEm(req, res, wonderRank.hipsterSort);
 	});
 
 	app.get('/live', function (req, res) {

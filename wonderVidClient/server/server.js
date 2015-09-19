@@ -1,4 +1,9 @@
 var base_url;
+TopVideos = new Mongo.Collection('videos');
+LiveVideos = new Mongo.Collection('live');
+EmergingVideos = new Mongo.Collection('emerging');
+AllStarVideos = new Mongo.Collection('allStar');
+
 Meteor.startup(function () {
   Future = Npm.require('fibers/future');
   ServiceConfiguration.configurations.upsert({
@@ -17,16 +22,39 @@ Meteor.startup(function () {
     base_url = "https://wondervid.herokuapp.com";
   
   
-  updateAll();
+  updateAll(updates);
   var minutes = 30, the_interval = minutes * 60 * 1000;
-  Meteor.setInterval(updateAll, the_interval);
+  Meteor.setInterval(_.bind(updateAll, null, updates), the_interval);
 });
 
-var updateAll = function() {
-  updateThis('/videos', TopVideos);
-  updateThis('/live', LiveVideos);
-  updateThis('/emerging', EmergingVideos);
-  updateThis('/allstars', AllStarVideos);
+var updates = [
+  {
+    url: '/videos',
+    collection: TopVideos
+  },
+  {
+    url: '/live',
+    collection: LiveVideos
+  },
+  {
+    url: '/emerging',
+    collection: EmergingVideos
+  },
+  {
+    url: '/allstars',
+    collection: AllStarVideos
+  }
+];
+
+var updateAll = function(updates) {
+  if(updates && updates.length != 0) {
+    var first = _.first(updates)
+    console.log('updating ' + first.url)
+    updateThis(first.url, first.collection);
+    Meteor.setTimeout(function() {
+      updateAll(_.rest(updates));
+    }, 10000);
+  }
 }
 
 var updateThis = function(url, collection) {
@@ -45,11 +73,6 @@ var updateThis = function(url, collection) {
   })
 }
 
-TopVideos = new Mongo.Collection('videos');
-LiveVideos = new Mongo.Collection('live');
-EmergingVideos = new Mongo.Collection('emerging');
-AllStarVideos = new Mongo.Collection('allStar');
-
 Meteor.publish('videos', function(type) {
   if (type == "topVideos") {
     return TopVideos.find({}, {sort:{rank:1}});
@@ -64,24 +87,20 @@ Meteor.publish('videos', function(type) {
 });
 
 Meteor.publish("userData", function () {
-  if (this.userId) {
+  if (this.userId)
     return Meteor.users.find({_id: this.userId});
-  } else {
+  else 
     this.ready();
-  }
 });
 
 Meteor.methods({
   flagVideo: function(videoId) {
-    Meteor.http.put(base_url + '/flag/' + videoId, function(err, res) {
-      if(res.statusCode == 200)
-        updateAll();
-    })
+    Meteor.http.put(base_url + '/flag/' + videoId);
   },
   likeVideo: function(id, like) {
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
     Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=' + like + '&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken, function(err, result) {
-      if(err.response.statusCode === 401) {
+      if(err.response && err.response.statusCode === 401) {
         Meteor.call('refreshOAuthToken', {name: 'google', url: 'https://accounts.google.com/o/oauth2/token'}, function(err, token) {
           if(!err) 
             Meteor.call('likeVideo', id, like);

@@ -10,7 +10,7 @@ var http = require('http'),
 	getTags = require('./../helpers/getTags');
 
 var youTube = new YouTube();
-var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 150;
+var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7, OLDVIDEOMAXDAYS = 50;
 var youtubeKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
 youTube.setKey(youtubeKey);
 
@@ -64,12 +64,10 @@ var tagVideo = function(vidId, html, $) {
 	youTube.getById(vidId, function(error, result) {
 		if(!error) {
 			var tags;
-			console.log(result)
 			if(result && result['items'] && result['items'][0] && result['items'][0]['snippet'])
 				tags = getTags.getTag(html, $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']);
 			else
 				tags = getTags.getTag(html, $, '', '', '');
-			console.log(tags)
 			db.videos.update({ videoId : vidId }, {$addToSet: {
 				tags : {$each:tags}
 			}});
@@ -121,15 +119,10 @@ var newVid = function(vidId, url, blog, $, link) {
 	}, function(error, result) {
 		result = JSON.parse(result);
 		if(result && result['items'] && result['items'].length > 0 
-			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('official audio') == -1 
-			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('(audio)') == -1 
-			&& result['items'][0]['snippet']['title'].toLowerCase().indexOf('[audio]') == -1 
-			&& result['items'][0]['snippet']['channelTitle'] != 'Consequence of Sound'
-			&& result['items'][0]['snippet']['channelTitle'] != 'Above Average') {
-			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS) {
+			&& /official audio|\(audio\)|\[audio\]|audio only/i.exec(result['items'][0]['snippet']['title']) == null) {
+			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
-			}
-			
+
 			var blogs = blog.tags ? blog.tags : [];
 			var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
 			console.log('adding', result['items'][0]['snippet']['title'], vidId); 
@@ -175,21 +168,3 @@ setInterval(function() {
 }, 120000)
 
 refreshBlogsFeeds();
-
-// db.videos.find({}, function(err, videos) {
-// 	console.log('tagging')
-// 	_.forEach(videos, function(video) {
-// 		youTube.getById(video.videoId, function(error, result) {
-// 			if(!error) {
-// 				var tags;
-// 				if(result && result['items'] && result['items'][0] && result['items'][0]['snippet'])
-// 					tags = getTags.getTagBasedOnVid(result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']);
-
-// 				console.log(tags)
-// 				db.videos.update({ videoId : video.videoId }, {$addToSet: {
-// 					tags : {$each:tags}
-// 				}});
-// 			}
-// 		});
-// 	});
-// })
