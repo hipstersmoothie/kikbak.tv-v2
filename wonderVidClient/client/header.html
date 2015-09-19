@@ -1,0 +1,60 @@
+<template name="header">
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#" style="color: {{color}};">wonder.video</a>
+        <div class="headerColor red"></div>
+        <div class="headerColor green"></div>
+        <div class="headerColor yellow"></div>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-center">
+          {{#if isVideo}}
+            <li>12
+              <img id="prevButton" class="navbar-brand prevButton" src="/images/prev.png">
+              <img id="playButton" class="navbar-brand playButton" src="/images/{{stateImage}}">
+              <img id="nextButton" class="navbar-brand nextButton" src="/images/next.png">
+            </li>
+            <li>
+              <a href="" style="color: {{color}};">
+                {{currentVideo.title}}
+              </a>
+            </li>
+            <li>
+              <div id="headerLike" class="like {{#if isLiked}}heart-red{{/if}}">
+              </div>
+            </li>
+          {{/if}}
+        </ul>
+
+
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="" style="color: {{color}};">
+              {{> loginButtons}}
+            </a>
+          </li>
+          <li class="dropdown">
+            <a href="#" style="color: {{color}};" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{selectedGenre}}<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              {{#each genres}}
+                <li><a href="#" style="color: {{color}};" class="{{this.className}}" onclick="return false;">{{this.type}}</a></li>
+              {{/each}}
+              <li role="presentation" class="divider"></li>
+              <li><a href="#" style="color: {{color}};" class="likedVideos" onclick="return false;">Likes</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+</template>

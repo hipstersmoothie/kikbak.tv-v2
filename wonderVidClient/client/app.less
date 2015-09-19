@@ -532,6 +532,25 @@ body {
 	width: 115vh !important;
 	-webkit-flex-basis: 100% !important;
 	flex-basis: 100% !important;
+
+	&.single {
+		.overlay {
+			height: 10em;
+			.rank{
+				font-size: 8em;
+			}
+			.icon-links {
+				font-size: 2em;
+			}
+		}
+		.descriptionText{
+			font-size: 2em;
+		}
+
+		&:hover .play-icon{	
+			font-size: 7em;
+		}
+	}
 }
 
 @media @medium {
@@ -557,18 +576,7 @@ body {
 			width: 41vh;
 	}	
 }
-
-.descriptionText{
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	text-align: center;
-	color: white;
-	font-size: 12px;
-	padding: 2px;
-	width: 100%;
-	background-color: rgba(0,0,0,0.7);
-}	
+	
 
 .playerContainer{
 	transition: translate3d 0.5s ease-out;
@@ -868,50 +876,130 @@ body {
 	right: 0px !important;
 }
 
-.single:hover .overlay{
-	display: inline-block;
-}
+
 
 .single{
-	.selected {
-		border: 3px @HexColor solid
+	overflow: hidden;
+
+	.gradient {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		-webkit-transition: all 0.35s;
+		transition: all 0.35s;
+	}
+	.overlay.selected ~ .gradient,
+	&:hover .gradient{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+1,000000+100&amp;0.75+0,0.2+100 */
+	background: -moz-linear-gradient(top,  rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.74) 1%, rgba(0,0,0,0.2) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.75)), color-stop(1%,rgba(0,0,0,0.74)), color-stop(100%,rgba(0,0,0,0.2))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.74) 1%,rgba(0,0,0,0.2) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.74) 1%,rgba(0,0,0,0.2) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.74) 1%,rgba(0,0,0,0.2) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.74) 1%,rgba(0,0,0,0.2) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bf000000', endColorstr='#33000000',GradientType=0 ); /* IE6-9 */
+
 	}
 
-	.overlay:hover{
-		background-color: rgba(255,255,255,0.2); 
+	.overlay.selected,
+	.overlay.selected ~ .rank,
+	.overlay.selected ~ .icon-links a,
+	&:hover .overlay,
+	&:hover .overlay .rank,
+	&:hover .overlay .icon-links a{
+		-webkit-transform: translate3d(0,0,0);
+		transform: translate3d(0,0,0);
 	}
 
-
-	.overlay:hover .like{
-		background-color: transparent !important;
+	&:hover .overlay .rank {
+		letter-spacing: 0;
 	}
 
-	.overlay{
+	&:hover .icon-links a:nth-child(3) {
+	}
+
+	&:hover .icon-links a:nth-child(2) {
+		-webkit-transition-delay: 0.15s;
+		transition-delay: 0.15s;
+	}
+
+	&:hover .icon-links a:first-child {
+		-webkit-transition-delay: 0.3s;
+		transition-delay: 0.3s;
+	}
+
+	.play-icon {
+		font-size: 0em;
+		color: white;
+		-webkit-transition: all 0.35s;
+		transition: all 0.35s;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    width: 100%;
+	    height: 100%;
+	    position: absolute;
+	}
+
+	.overlay.selected ~ .play-icon,
+	&:hover .play-icon {
+		font-size: 3em;
+	}
+
+	.descriptionText{
 		position: absolute;
 		top: 0;
 		left: 0;
+		text-align: center;
+		color: white;
+		font-size: 14px;
+		padding: 2px;
+		width: 100%;
+		background-color: rgba(0,0,0,0);
+		-webkit-transition: all 0.35s;
+		transition: all 0.35s;
+		-webkit-transform: translate3d(-100%,0,0);
+	    transform: translate3d(0, -100%, 0);
+		-webkit-transition-delay: 0.1s;
+	    transition-delay: 0.1s;
+	}
+
+	.overlay.selected ~ .descriptionText,
+	&:hover .descriptionText{
+		-webkit-transform: translate3d(0,0,0);
+		transform: translate3d(0,0,0);
+	}
+
+	.overlay {
 		font-size: 10px;
 		overflow: hidden;
-		width: 100%;
-		height: 100%;
+		top: auto;
+		bottom: 0;
 		z-index: 1;
-		text-align: center;
-		color: #151515;
-		background-repeat: no-repeat;
-		background-size: 75px;
-		// background-image: @TagColor;
-		display: inline-block;
-		transition: background-color 0.25s ease-out;
-		-webkit-transition: background-color 0.25s ease-out;
-		-moz-transition: background-color 0.25s ease-out;
-		-ms-transition: background-color 0.25s ease-out;
-		-o-transition: background-color 0.25s ease-out;
+		position: absolute;
+		padding: 1em;
+		width: 100%;
+		height: 4.75em;
+		
+		background-color: rgba(0,0,0,0);
+
+		color: #3c4a50;
+		-webkit-transition: -webkit-transform 0.35s;
+		transition: transform 0.35s;
+		-webkit-transform: translate3d(0,100%,0);
+		transform: translate3d(0,100%,0);
+
 
 		.rank {
 			font-size: 30px;
 			float: left;
-			padding: 10px;
-
+			padding-left: 10px;
+			color: white;
+			letter-spacing: -15px;
+			-webkit-transition: -webkit-transform 0.35s;
+			transition: transform 0.35s, letter-spacing 0.5s;
+			-webkit-transform: translate3d(0,200%,0);
+			transform: translate3d(0,200%,0);
 			p {
 				margin: -10px -5px 0px;
 			}
@@ -921,7 +1009,37 @@ body {
 			opacity: 1;
 			background-image: url('/images/likeSelected.png');
 		}
+
+		.icon-links{	
+		    bottom: 0;
+		    position: absolute;
+		    right: 10px;
+			
+			a {
+				float: right;
+				color: white;
+				font-size: 2.4em;
+	    		padding: 0 10px;
+				-webkit-transition: -webkit-transform 0.35s;
+				transition: transform 0.35s;
+				-webkit-transform: translate3d(0,200%,0);
+				transform: translate3d(0,200%,0);
+
+				&:first-child {
+					color: #fc2f88;
+				}
+			}
+		}
+
+		&.selected,
+		&.selected .rank,
+		&.selected .icon-links a {
+			-webkit-transform: translate3d(0,0,0);
+			transform: translate3d(0,0,0);
+		}
+
 	}
+
 
 	.overlay:hover .like{
 		 opacity: 1;

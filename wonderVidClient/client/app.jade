@@ -4,6 +4,7 @@ head
 	title kikbak.tv
 	link(href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css')
 	link(rel='icon' href='/images/favicon.ico')
+	link(rel="stylesheet" href="fonts/font-awesome-4.4.0/css/font-awesome.min.css")
 
 body
 
@@ -95,12 +96,22 @@ template(name='gridThumbs')
 		.flex-container
 			+each videos
 				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
-					.overlay(class="{{#if isSelected}}selected{{/if}}" style="background-image: {{colorImage}};" )
-						.rank(style="color: {{fontColor}}")
+					.overlay(class="{{#if isSelected}}selected{{/if}}")
+						.rank
 							p #{this.rank}
-						.like(class="{{#if isLiked}}heart-red{{/if}}")
+						//- .like(class="{{#if isLiked}}heart-red{{/if}}")
+						.icon-links
+							a(href="#")
+								.fa(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
+							a(href="#")
+								.fa.fa-facebook
+							a(href="#")
+								.fa.fa-twitter
+					.gradient
 					.descriptionText
 						p #{this.title}
+					.play-icon
+						.fa.fa-play
 
 template(name="loading")
 	.wrap2
