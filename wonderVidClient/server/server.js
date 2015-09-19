@@ -95,15 +95,12 @@ Meteor.publish("userData", function () {
 
 Meteor.methods({
   flagVideo: function(videoId) {
-    Meteor.http.put(base_url + '/flag/' + videoId, function(err, res) {
-      if(res.statusCode == 200)
-        updateAll();
-    })
+    Meteor.http.put(base_url + '/flag/' + videoId);
   },
   likeVideo: function(id, like) {
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
     Meteor.http.post('https://www.googleapis.com/youtube/v3/videos/rate?id='+id+'&rating=' + like + '&key{'+apiKey+'}&access_token='+Meteor.user().services.google.accessToken, function(err, result) {
-      if(err.response.statusCode === 401) {
+      if(err.response && err.response.statusCode === 401) {
         Meteor.call('refreshOAuthToken', {name: 'google', url: 'https://accounts.google.com/o/oauth2/token'}, function(err, token) {
           if(!err) 
             Meteor.call('likeVideo', id, like);
