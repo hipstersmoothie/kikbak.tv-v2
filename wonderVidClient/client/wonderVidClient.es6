@@ -522,16 +522,20 @@ Template.gridThumbs.helpers({
 
 Template.gridThumbs.events({
 	"click .single": function (event) { // needs its own this
-		if (event.target.classList[0] == 'like' || event.target.nodeName == 'P')
-			return
-
-		var index = Session.get('playlist').indexOf(this.videoId);
-		if (index == -1) {
-			Session.set('currentVideo', Session.get('videos')[this.rank + 1]);
-			return video.playVideoAt(this.rank);
+		if (event.target.className == "fa fa-heart-o" || event.target.className == "fa fa-heart"){
+			if(!Meteor.user())
+				AntiModals.overlay('simpleModal');
+			else
+				hitLikeButton(this);
+		} else {
+			var index = Session.get('playlist').indexOf(this.videoId);
+			if (index == -1) {
+				Session.set('currentVideo', Session.get('videos')[this.rank + 1]);
+				return video.playVideoAt(this.rank);
+			}
+			hitSquare(this, index);
 		}
-
-		hitSquare(this, index);
+		
 	},
 	'click .like': function() { // needs its own this
 		if(!Meteor.user())
