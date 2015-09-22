@@ -6,9 +6,11 @@
 @GREENHEX: #31C663;
 @GREENRGB: rgba(49,198,99,0.5);
 @GREENTAG: url('/images/rankBackground.png');
-@BLUEHEX: #406EAA;
-@BLUERGB: rgba(64,110,170,0.5);
+
+@BLUEHEX: #480048;
+@BLUERGB: rgba(72,0,72,0.5);
 @BLUETAG: url('/images/rankBackgroundBlue.png');
+
 @YELLOWHEX: #F7DD72;
 @YELLOWRGB: rgba(247,221,114,0.5);
 @YELLOWTAG: url('/images/rankBackgroundYellow.png');
@@ -474,14 +476,22 @@ body {
 
 .downArrow{
 	margin: 2px 0 0 0;
-	width: 64px;
+	width: 100%;
+	text-align: center;
 	height: 64px;
+    font-size: 64px;
+    color: white;
 	opacity: 1;
 	position: fixed;
-	top: 50px;
-	left: 45%;
+	top: 30px;
 	// display: none;
 	z-index: 10000;
+}
+
+.navbar-center {
+	width: 100%;
+    position: fixed;
+    left: 0;
 }
 
 .about {
@@ -585,7 +595,7 @@ body {
 	margin-left: 20px;
 	width: 95%;
 	height: 90vh;
-  	top: 50px;
+  	top: 51px;
 	display: none;
 	position: fixed;
 	right: 3%;
@@ -615,6 +625,7 @@ body {
 		right: 15%;
 		position: absolute;
 		border-bottom-right-radius: 10px;
+		background-color: @BLUEHEX;
 		// background-color: rgba(0, 0, 0, 0.8);
 		transition: opacity 0.30s ease-in-out;
 		-webkit-transition: opacity 0.30s ease-in-out;
@@ -697,6 +708,8 @@ body {
 		position: absolute;
 		border-top-right-radius: 10px;
 		border-top-left-radius: 10px;
+		background: -webkit-linear-gradient(0deg, #c04848 -11%, #480048 30%);
+
 		// background-color: rgba(0, 0, 0, 0.8);
 
 
@@ -1058,7 +1071,6 @@ body {
 
 #headerLike {
 	opacity: 1;
- 	margin-top: 18px;
 }
 
 .keyRow {
@@ -1093,11 +1105,15 @@ body {
 	}
 }
 
+a {
+	color: #c04848;
+}
+
 .help {
 	color: #406EAA;
 	float: left;
 	height: 50px;
-	padding: 15px 15px;
+	padding: 15px 15px 15px 0px;
 	font-size: 18px;
 	line-height: 20px;
 }
@@ -1144,7 +1160,7 @@ body {
 	display:inline-block;
 	*display:inline; /* ie7 fix */
 	*zoom:1; /* hasLayout ie7 trigger */
-	vertical-align: top;
+	vertical-align: middle;
 }
 
 .navbar-collapse {
@@ -1155,9 +1171,18 @@ body {
 	margin-left: 0;
 	position: fixed;
 	width: 100%;
-	height: 50px;
 	z-index: 3;
 	border-radius: 0px;
+	background: -webkit-linear-gradient(0deg, rgb(192, 72, 72) 10%, rgb(72, 0, 72) 90%);
+
+	* {
+		color: white;
+	}	
+
+	 .navbar-brand {
+	 	color: white;
+		font-size: 24px;
+	}
 }
 
 .navbar-header:hover .headerColor{
@@ -1169,11 +1194,20 @@ body {
 	color: white;
 }
 
+#login-buttons-logout {
+	color: red !important;
+    border: 1px solid red !important;
+}
+
+.fa {
+	color: white;
+}
+
 .navbar-inverse .navbar-toggle {
 	border-color: rgba(0,0,0,0);
 }
 .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
-	color: @HexColor;
+	color: white;
 	background-color: rgba(0,0,0,0);
 }
 .dropdown-menu {
@@ -1181,14 +1215,10 @@ body {
 	border: 0px;
 }
 .dropdown-menu > li > a {
-	color: @HexColor;
+	color: white;
 }
 .navbar-inverse .navbar-nav > li > a {
-	color: @HexColor;
-}
-.navbar-inverse .navbar-brand {
-	color: @HexColor;
-	font-size: 24px;
+	color: white;
 }
 
 .headerTitle{
@@ -1243,10 +1273,15 @@ body {
 	color: black;
 }
 
-// #login-buttons .login-button:hover, .accounts-dialog .login-button:hover{
-// 	background: @HexColor;
-// 	border: 1px solid @RGBColor;
-// }
+#login-buttons {
+	padding: 0;
+
+	.login-button, .single login-button, .login-buttons-with-only-one-button .login-button {
+		background-color: transparent;
+		border: transparent;
+		font-size: 14px;
+	}
+}
 
 .nextButton,
 .prevButton,
@@ -1287,12 +1322,11 @@ body {
 	background: rgba(229, 94, 45, .8); /* Gecko Browsers */
 }
 
-.navBack {
-	background-color: transparent;
-}
-
 .small-nav {
 	 width: 51%;
+	 	width: 100%;
+    position: fixed;
+    left: 0;
 }
 
 .mobileToggle {
@@ -1303,9 +1337,6 @@ body {
 }
 
 @media (max-width: 1023px) {
-	.navBack {
-		background-color: #222;	
-	}
     .navbar-header {
         float: none;
     }
@@ -1342,7 +1373,6 @@ body {
 	}
 	.small-nav {
   		text-align: center;
-  		width: 66vw;
   		font-size: 1.7vw;
   		height: 50px;
   		line-height: 50px;

@@ -60,7 +60,8 @@ template(name='player')
 	.appBody 
 	+if pushedTop
 		.downArrow(id="downArrow")
-			img(src="/images/downArrow.png")
+			<i class="fa fa-chevron-down"></i>
+
 	.playerContainer(id="playerContainer")
 		+unless or screensize_small screensize_medium
 			.playerSideBar(id="playerSideBar")
@@ -68,7 +69,7 @@ template(name='player')
 					p {{currentVideo.title}}
 				.sideDate
 					p #{formedDate}
-				.sideRank(style="color: {{color}};")
+				.sideRank(style="color: #c04848")
 					p(class="rankDesc") rank
 					p(class="number") {{currentVideo.rank}}
 				.stats
@@ -79,7 +80,7 @@ template(name='player')
 				+lmSocialShare opts=sharedata
 				.sideDescription 
 					p {{#autolink}}{{currentVideo.description}}{{/autolink}}			
-			.playerNavBar(id="playerNavBar" style="background-color: {{color}}")
+			.playerNavBar(id="playerNavBar")
 				.togglePlayer(id="togglePlayer")
 					img(style="width:36px" src="images/{{colorFontClose}}")
 					p(style="color:{{fontColor}}") close
@@ -90,7 +91,7 @@ template(name='player')
 				.minimizePlayer(id="minimizePlayer")
 					p(style="color:{{fontColor}}") minimize
 					img(style="width:48px" src="images/{{colorFontMinimize}}")
-			.playerNavBarMinimized(id="playerNavBarMinimized" style="background-color: {{color}}")
+			.playerNavBarMinimized(id="playerNavBarMinimized")
 					.closePlayer(id="closePlayer")
 						p(style="color:{{fontColor}}") close
 						img(style="width:16px" src="images/{{colorFontClose}}")
