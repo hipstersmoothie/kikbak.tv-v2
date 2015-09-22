@@ -17,7 +17,10 @@ nav.navbar.navbar-inverse
       +if isVideo
         ul.nav.navbar-nav.navbar-left
           li
-            img#prevButton.navbar-brand.prevButton(src="/images/prev.png")
+            //- img#prevButton.navbar-brand.prevButton(src="/images/prev.png")
+            a(href="")
+              <i class="fa fa-fast-backward"></i>
+
             img#playButton.navbar-brand.playButton(src="/images/{{stateImage}}")
             img#nextButton.navbar-brand.nextButton(src="/images/next.png")
       ul.nav.navbar-nav.navbar-center
