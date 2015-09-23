@@ -156,8 +156,8 @@ function likeVid(video, index, rating) {
 
 // ============== Helpers ============== //
 video = null;
-var playButton = "playButton.png", 
-		pauseButton = "pauseButton.png", tlMinimize = null, 
+var playButton = "fa-play", 
+		pauseButton = "fa-pause", tlMinimize = null, 
 		tlDropdown = null, ytPlaylist = [];
 
 Template.registerHelper('color', () => {
@@ -302,11 +302,12 @@ Template.header.events({
 			Session.set('stateImage', pauseButton);
 		} else {
 			video.pauseVideo();
-			Session.set('stateImage', playButtonn);
+			Session.set('stateImage', playButton);
 		}
 		restartDropDown();
 	},
 	"click .nextButton": () => {
+		console.log('here')
 		Session.set('stateImage', pauseButton);
 		video.nextVideo();	
 	},
