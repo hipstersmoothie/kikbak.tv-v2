@@ -463,11 +463,7 @@ Template.player.helpers({
 			return `${dateString.substring(5,7)} • ${dateString.substring(8,10)} • ${dateString.substring(0,4)}`;
 		}
 	},
-	fontColor: _.bind(determineColor, null, "#151515", "white"),
-	colorFontClose: _.bind(determineColor, null, "cancel.png", "cancelWhite.png"),
-	colorFontExpand: _.bind(determineColor, null, "expand.png", "expandWhite.png"),
-	colorFontMinimize: _.bind(determineColor, null, "minimize.png", "minimizeWhite.png"),
-	colorFontFlag: _.bind(determineColor, null, "flag.png", "flagWhite.png")
+	fontColor: _.bind(determineColor, null, "#151515", "white")
 });
 
 
