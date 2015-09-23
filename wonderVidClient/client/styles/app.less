@@ -622,7 +622,7 @@ body {
 
 	.playerNavBar{
 		color: white;
-		width: 5%;
+		width: 56px;
 		height: 100%;
 		right: 15%;
 		position: absolute;
@@ -635,13 +635,23 @@ body {
 		-ms-transition: opacity 0.30s ease-in-out;
 		-o-transition: opacity 0.30s ease-in-out;
 
+		display:flex;
+	    flex-direction: column;
+	    flex-wrap: nowrap;
+	    justify-content: space-between;
+	    align-content: flex-start;
+	    align-items: center;
+
 		.togglePlayer{  
 			width: 45%;
 			height: 10%;
-			position: absolute;
-			/* float: right; */
-			right: 17px;
+			margin-top: 5px;
 			font-size: 41px;
+			display: flex;
+		    flex-direction: column;
+		    align-content: center;
+		    justify-content: center;
+		    align-items: center;
 
 			p{
 				opacity: 0;
@@ -659,15 +669,13 @@ body {
 		.togglePlayer:hover p{ opacity: 1; }
 
 		.flagVideo{  
-			position: absolute;
 			width: 77%;
-			right: 4px;
-			top: 81px;
 			font-size: 40px;
-
-			i {
-				margin-left: 6px;
-			}
+			display: flex;
+		    flex-direction: column;
+		    align-content: center;
+		    justify-content: center;
+		    align-items: center;
 
 			p{
 				opacity: 0;
@@ -686,21 +694,17 @@ body {
 		.minimizePlayer{  
 			width: 92%;
 			height: 14%;
-			position: absolute;
-			/* float: right; */
-			right: -2px;
-			bottom: -5px;
 			font-size: 40px;
-
+			display: flex;
+		    flex-direction: column;
+		    align-content: center;
+		    justify-content: center;
+		    align-items: center;
 
 			img {
 				margin-left: 7px;
 			}
-			
-			i {
-			    right: 17px;
-			    position: absolute;
-			}
+
 			p{
 				opacity: 0;
 				text-align: center;
@@ -713,8 +717,6 @@ body {
 			}
 		}
 		.minimizePlayer:hover p{ opacity: 1; }
-
-		 
 	}
 
 	.playerNavBarMinimized{
