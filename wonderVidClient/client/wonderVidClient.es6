@@ -425,7 +425,7 @@ function createDropDownAnimation() {
 	TweenLite.to(".playerContainer", 0, {autoAlpha:1, display:"block"});
 	tlDropdown.from(".playerContainer", 0.5, {x:0, y: -screen.height, z: 0});
 	tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
-	tlDropdown.to(".playerNavBar", 0.55, {ease: Expo.easeIn, right: "-20px"});
+	tlDropdown.to(".playerNavBar", 0.55, {ease: Expo.easeIn, right: "-16px"});
 	tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}, '-=0.5');
 }
 
