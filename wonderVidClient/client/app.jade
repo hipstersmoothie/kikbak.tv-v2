@@ -61,7 +61,7 @@ template(name='player')
 	.appBody 
 	+if pushedTop
 		.downArrow(id="downArrow")
-			<i class="fa fa-chevron-down"></i>
+			i.fa.fa-chevron-down.bounce
 
 	.playerContainer(id="playerContainer")
 		+unless or screensize_small screensize_medium
@@ -95,9 +95,9 @@ template(name='player')
 			.playerNavBarMinimized(id="playerNavBarMinimized")
 				.closePlayer(id="closePlayer")
 					p close
-					i.fa.fa-times.mini-exit
+					i.fa.fa-times.mini-exit.grow
 				.expandPlayer(id="expandPlayer")
-					i.fa.fa-expand.fa-flip-vertical.mini-expand
+					i.fa.fa-expand.fa-flip-vertical.mini-expand.grow-flipped
 					p expand
 		else
 			.togglePlayer.mobileToggle(id="togglePlayer")
@@ -118,11 +118,11 @@ template(name='gridThumbs')
 							p #{this.rank}
 						.icon-links
 							a(href="#")
-								.fa(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
+								.fa.faa-pulse.animated-hover(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
 							a(href="#")
-								.fa.fa-facebook
+								.fa.fa-facebook.faa-bounce.animated-hover
 							a(href="#")
-								.fa.fa-twitter
+								.fa.fa-twitter.faa-shake.animated-hover
 					.gradient
 					.descriptionText
 						p #{this.title}

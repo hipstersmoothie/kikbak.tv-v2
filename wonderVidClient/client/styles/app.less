@@ -721,11 +721,8 @@ body {
 			width: 65px;
 			height: 30px;
 			position: absolute;
-			/* float: right; */
 			right: 10px;
-			// top: 13%;
-			// font-size: 25px;
-			// display: none;
+			color: white;
 
 			p{
 				opacity: 0;
@@ -750,6 +747,7 @@ body {
 			/* float: right; */
 			// top: 13%;
 			left: 2.5%;
+			color: white;
 
 			p {
 				opacity: 0;
@@ -1087,6 +1085,24 @@ body {
 .fa-heart-o:hover:before {
 	content: "\f004";
 	color: pink;
+}
+
+.grow {
+	transition: all .2s ease-in-out;
+}
+.grow:hover {
+	-webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+}
+
+.grow-flipped{
+	transition: all .2s ease-in-out;
+}
+.grow-flipped:hover {
+	-webkit-transform: scale3d(1.2,-1.2,1.2);
+    -ms-transform: scale3d(1.2,-1.2,1.2);
+    transform: scale3d(1.2,-1.2,1.2);
 }
 
 #headerLike {
