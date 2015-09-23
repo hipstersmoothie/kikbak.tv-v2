@@ -462,10 +462,8 @@ Template.player.helpers({
 			var dateString = Session.get("currentVideo").youTubePostDate;
 			return `${dateString.substring(5,7)} • ${dateString.substring(8,10)} • ${dateString.substring(0,4)}`;
 		}
-	},
-	fontColor: _.bind(determineColor, null, "#151515", "white")
+	}
 });
-
 
 Template.player.events({
 	'click .blackOverlay': reverseDropDownAnimation,
@@ -508,9 +506,6 @@ Template.gridThumbs.helpers({
 	},
 	featured() {
 		return (this.rank == 1 || (this.rank - 1) % 13 == 0) ? "featured" : "";
-	},
-	fontColor() {
-		return determineColor("#151515", "white")
 	},
 	videos() {
 		return Session.get('videos');
