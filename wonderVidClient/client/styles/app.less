@@ -3,23 +3,8 @@
 @tall:   ~"only screen and (min-height: 501px) and (max-height: 715px)";
 @medium:    ~"only screen and (min-height: 321px) and (max-height: 500px)";
 // @short:    ~"only screen and (min-width: 720px) and (max-width: 959px)";406EAA
-@GREENHEX: #31C663;
-@GREENRGB: rgba(49,198,99,0.5);
-@GREENTAG: url('/images/rankBackground.png');
 
-@BLUEHEX: #480048;
-@BLUERGB: rgba(72,0,72,0.5);
-@BLUETAG: url('/images/rankBackgroundBlue.png');
-
-@YELLOWHEX: #F7DD72;
-@YELLOWRGB: rgba(247,221,114,0.5);
-@YELLOWTAG: url('/images/rankBackgroundYellow.png');
-@REDHEX: #D6373A;
-@REDRGB: rgba(214,55,58,0.5);
-@REDTAG: url('/images/rankBackgroundRed.png');
-@HexColor: @BLUEHEX;
-@RGBColor: @BLUERGB;
-@TagColor: @BLUETAG;
+@HexColor: #AA3B48;
 
 html {
 	height: 100%;
@@ -627,7 +612,7 @@ body {
 		right: 15%;
 		position: absolute;
 		border-bottom-right-radius: 10px;
-		background-color: @BLUEHEX;
+		background-color: @HexColor;
 		// background-color: rgba(0, 0, 0, 0.8);
 		transition: opacity 0.30s ease-in-out;
 		-webkit-transition: opacity 0.30s ease-in-out;
@@ -1243,8 +1228,8 @@ a {
 }
 
 #login-buttons-logout {
-	color: red !important;
-    border: 1px solid red !important;
+	color: white !important;
+    border: 1px solid white !important;
 }
 
 .fa {
@@ -1288,26 +1273,6 @@ a {
 	-moz-transition: opacity 0.30s ease-in-out;
 	-ms-transition: opacity 0.30s ease-in-out;
 	-o-transition: opacity 0.30s ease-in-out;
-}
-
-.green{
-	left: 11px;
-	background-color: @GREENHEX;
-}
-
-.red{
-	left: 85px;
-	background-color: @REDHEX;
-}
-
-.yellow{
-	left: 122px;
-	background-color: @YELLOWHEX;
-}
-
-.blue{
-	left: 48px;
-	background-color: @BLUEHEX;
 }
 
 .nextButton,
@@ -1369,7 +1334,7 @@ a {
 ::-webkit-scrollbar-thumb {
 		-webkit-border-radius: 15px;
 		border-radius: 15px;
-		// background: @HexColor; 
+		background: rgb(192, 72, 72); 
 }
 
 ::-webkit-scrollbar-corner,
@@ -1377,11 +1342,9 @@ a {
 			background-color: rgba(0,0,0,0);
 } 
 
-::selection {
-	background: rgba(255, 255, 255, .75); /* WebKit/Blink Browsers */
-}
+::selection,
 ::-moz-selection {
-	background: rgba(229, 94, 45, .8); /* Gecko Browsers */
+	background: rgba(192, 72, 72, 0.55);
 }
 
 .small-nav {
