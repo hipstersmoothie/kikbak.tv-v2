@@ -32,7 +32,7 @@ nav.navbar.navbar-inverse
       ul.nav.navbar-nav.navbar-right
         +if isVideo
           li
-            #headerLike(class="like {{#if isLiked}}heart-red{{/if}}")  
+            .fa#headerLike(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
         li
           +loginButtons
         li.dropdown

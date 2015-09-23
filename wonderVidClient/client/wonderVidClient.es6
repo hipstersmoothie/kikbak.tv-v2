@@ -325,7 +325,7 @@ Template.header.events({
 		else
 			Router.go('/likes');
 	},
-	'click .like': () => {
+	'click #headerLike': () => {
 		hitLikeButton(Session.get("currentVideo"));
 	}
 });
