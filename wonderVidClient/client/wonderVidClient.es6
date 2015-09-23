@@ -156,8 +156,8 @@ function likeVid(video, index, rating) {
 
 // ============== Helpers ============== //
 video = null;
-var playButton = "playButton.png", 
-		pauseButton = "pauseButton.png", tlMinimize = null, 
+var playButton = "fa-play", 
+		pauseButton = "fa-pause", tlMinimize = null, 
 		tlDropdown = null, ytPlaylist = [];
 
 Template.registerHelper('color', () => {
@@ -302,11 +302,12 @@ Template.header.events({
 			Session.set('stateImage', pauseButton);
 		} else {
 			video.pauseVideo();
-			Session.set('stateImage', playButtonn);
+			Session.set('stateImage', playButton);
 		}
 		restartDropDown();
 	},
 	"click .nextButton": () => {
+		console.log('here')
 		Session.set('stateImage', pauseButton);
 		video.nextVideo();	
 	},
@@ -324,7 +325,7 @@ Template.header.events({
 		else
 			Router.go('/likes');
 	},
-	'click .like': () => {
+	'click #headerLike': () => {
 		hitLikeButton(Session.get("currentVideo"));
 	}
 });
@@ -461,14 +462,8 @@ Template.player.helpers({
 			var dateString = Session.get("currentVideo").youTubePostDate;
 			return `${dateString.substring(5,7)} • ${dateString.substring(8,10)} • ${dateString.substring(0,4)}`;
 		}
-	},
-	fontColor: _.bind(determineColor, null, "#151515", "white"),
-	colorFontClose: _.bind(determineColor, null, "cancel.png", "cancelWhite.png"),
-	colorFontExpand: _.bind(determineColor, null, "expand.png", "expandWhite.png"),
-	colorFontMinimize: _.bind(determineColor, null, "minimize.png", "minimizeWhite.png"),
-	colorFontFlag: _.bind(determineColor, null, "flag.png", "flagWhite.png")
+	}
 });
-
 
 Template.player.events({
 	'click .blackOverlay': reverseDropDownAnimation,
@@ -511,9 +506,6 @@ Template.gridThumbs.helpers({
 	},
 	featured() {
 		return (this.rank == 1 || (this.rank - 1) % 13 == 0) ? "featured" : "";
-	},
-	fontColor() {
-		return determineColor("#151515", "white")
 	},
 	videos() {
 		return Session.get('videos');

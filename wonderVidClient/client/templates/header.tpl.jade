@@ -20,13 +20,15 @@ nav.navbar.navbar-inverse
     .collapse.navbar-collapse#bs-example-navbar-collapse-1
       +if isVideo
         ul.nav.navbar-nav.navbar-left
-          li
-            //- img#prevButton.navbar-brand.prevButton(src="/images/prev.png")
-            a(href="")
-              <i class="fa fa-fast-backward"></i>
-
-            img#playButton.navbar-brand.playButton(src="/images/{{stateImage}}")
-            img#nextButton.navbar-brand.nextButton(src="/images/next.png")
+          li.prevButton
+            a(href="" onclick="return false")
+              i.fa.fa-fast-backward
+          li.playButton
+            a(href="" onclick="return false")
+              i.fa(class="{{stateImage}}")
+          li.nextButton
+            a(href="" onclick="return false")
+              i.fa.fa-fast-forward
       ul.nav.navbar-nav.navbar-center
         li
           a(href="") {{currentVideo.title}}
@@ -34,9 +36,8 @@ nav.navbar.navbar-inverse
       ul.nav.navbar-nav.navbar-right
         +if isVideo
           li
-            #headerLike(class="like {{#if isLiked}}heart-red{{/if}}")  
+            .fa#headerLike(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
         li
-          //- a(href="")
           +loginButtons
         li.dropdown
           a.dropdown-toggle(href="#" data-toggle="dropdown" role="button" aria-expanded="false") 
