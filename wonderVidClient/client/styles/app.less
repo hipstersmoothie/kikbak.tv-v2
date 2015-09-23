@@ -923,7 +923,7 @@ body {
 		transition: all 0.35s;
 	}
 	.overlay.selected ~ .gradient,
-	&:hover .gradient{
+	&:hover .gradient {
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+1,000000+100&amp;0.75+0,0.2+100 */
 	background: -moz-linear-gradient(top,  rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.74) 1%, rgba(0,0,0,0.2) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.75)), color-stop(1%,rgba(0,0,0,0.74)), color-stop(100%,rgba(0,0,0,0.2))); /* Chrome,Safari4+ */
@@ -1074,9 +1074,11 @@ body {
 	}
 
 
-	.overlay:hover .like{
-		 opacity: 1;
-	} 
+	// .overlay:hover {
+	// 	.like {
+	// 	 	opacity: 1;
+	// 	} 
+	// }
 }
 
 .fa-heart {
@@ -1550,7 +1552,7 @@ a {
   }
 }
 
-.bounce:hover {
-	-webkit-animation: vert 3s ease infinite;
-  	animation: vert 3s ease infinite;
+.bounce {
+	-webkit-animation: vert 3s ease;
+  	animation: vert 3s ease;
 }

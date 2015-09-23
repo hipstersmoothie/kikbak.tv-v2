@@ -200,7 +200,6 @@ function colorSwap(color) {
 	setPseudoClass(".middle", "background", `-o-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
 	setPseudoClass(".middle", "background", `linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
 
-	// setPseudoClass("::-webkit-scrollbar-thumb", "background", color.hex);
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", color.hex);
 	setPseudoClass("#login-buttons .login-button:hover, .accounts-dialog .login-button:hover", "color", color.hex);
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "border", `1px solid ${color.rgb}`);
@@ -472,6 +471,13 @@ Template.player.events({
 	"click .expandPlayer": expandPlayerAnimation,
 	"click .closePlayer": closeVideoAnimation,
 	"click .downArrow": restartDropDown,
+	"mouseenter .fa-chevron-down": function (evt) {
+		console.log('here', evt)
+		$(evt.currentTarget).removeClass("bounce");
+		setTimeout(function() {
+			$(evt.currentTarget).addClass("bounce");
+		},0)
+	},
 	'click .flagVideo': () => {
 		new Confirmation({
 			message: "Are you sure this isnt a video?",
