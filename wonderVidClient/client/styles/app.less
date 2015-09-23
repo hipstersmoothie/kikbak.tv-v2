@@ -703,7 +703,7 @@ body {
 
 	.playerNavBarMinimized{
 		width: 100%;
-		height: 20%;
+		height: 36px;
 		top: 0%;
 		display: none;
 		position: absolute;
@@ -719,8 +719,9 @@ body {
 			height: 30px;
 			position: absolute;
 			/* float: right; */
-			right: 0;
-			top: 13%;
+			right: 10px;
+			// top: 13%;
+			// font-size: 25px;
 			// display: none;
 
 			p{
@@ -728,6 +729,7 @@ body {
 				font-size: 12px;
 				display: inline-block;
 				margin-right: 10px;
+				line-height: 35px;
 				transition: opacity 0.30s ease-in-out;
 				-webkit-transition: opacity 0.30s ease-in-out;
 				-moz-transition: opacity 0.30s ease-in-out;
@@ -743,14 +745,18 @@ body {
 			height: 30px;
 			position: absolute;
 			/* float: right; */
-			top: 13%;
+			// top: 13%;
 			left: 2.5%;
 
-			p{
+			p {
 				opacity: 0;
 				font-size: 12px;
 				display: inline-block;
 				margin-left: 10px;
+				line-height: 35px;
+				height: 20px;
+				position: absolute;
+    			line-height: 35px;
 				transition: opacity 0.30s ease-in-out;
 				-webkit-transition: opacity 0.30s ease-in-out;
 				-moz-transition: opacity 0.30s ease-in-out;
@@ -895,7 +901,16 @@ body {
 	right: 0px !important;
 }
 
+.mini-exit {
+	float: right;
+	font-size: 25px !important;
+    margin-top: 5px;
+}
 
+.mini-expand {
+	font-size: 25px !important;
+	margin-top: 3px;
+}
 
 .single{
 	overflow: hidden;
@@ -1267,6 +1282,15 @@ a {
 	width: 44px;
 	height: 46px;
 	display: none;
+}
+
+.playButton {
+	width: 24px;
+
+	a {
+		padding-left: 0 !important;
+    	padding-right: 0 !important;
+	}
 }
 
 #login-buttons .login-button, .accounts-dialog .login-button {
