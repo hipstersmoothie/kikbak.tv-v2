@@ -1431,3 +1431,126 @@ a {
   		line-height: 50px;
 	}
 }
+
+// @-webkit-keyframes bounceDown {
+//   0%, 20%, 50%, 80%, 100% {
+//     -webkit-transform: transform(translateY(0));
+//     transform: transform(translateY(0));
+//   }
+
+//   40% {
+//     -webkit-transform: transform(translateY(-30px));
+//     transform: transform(translateY(-30px));
+//   }
+
+//   60% {
+//     -webkit-transform: transform(translateY(-15px));
+//     transform: transform(translateY(-15px));
+//   }
+// }
+
+// @keyframes bounceDown {
+//   0%, 20%, 50%, 80%, 100% {
+//     -webkit-transform: transform(translateY(0));
+//     -ms-transform: translate(translateY(0));
+//     transform: transform(translateY(0));
+//   }
+
+//   40% {
+//     -webkit-transform: transform(translateY(-30px));
+//     -ms-transform: translate(translateY(-30px));
+//     transform: transform(translateY(-30px));
+//   }
+
+//   60% {
+//     -webkit-transform: transform(translateY(-15px));
+//     -ms-transform: translate(translateY(-15px));
+//     transform: transform(translateY(-15px));
+//   }
+// }
+
+@-webkit-keyframes vert {
+  0% {
+    -webkit-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+
+  6% {
+    -webkit-transform: translate(0px, 20px);
+    transform: translate(0px, 20px);
+  }
+
+  12% {
+    -webkit-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+
+  18% {
+    -webkit-transform: translate(0px, 20px);
+    transform: translate(0px, 20px);
+  }
+
+  24% {
+    -webkit-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+
+  30% {
+    -webkit-transform: translate(0px, 20px);
+    transform: translate(0px, 20px);
+  }
+
+  36%, 100% {
+    -webkit-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+}
+
+@keyframes vert {
+  0% {
+    -webkit-transform: translate(0,0);
+    -ms-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+
+  6% {
+    -webkit-transform: translate(0, 20px);
+    -ms-transform: translate(0, 20px);
+    transform: translate(0, 20px);
+  }
+
+  12% {
+    -webkit-transform: translate(0,0);
+    -ms-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+
+  18% {
+    -webkit-transform: translate(0, 20px);
+    -ms-transform: translate(0, 20px);
+    transform: translate(0, 20px);
+  }
+
+  24% {
+    -webkit-transform: translate(0,0);
+    -ms-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+
+  30% {
+    -webkit-transform: translate(0, 20px);
+    -ms-transform: translate(0, 20px);
+    transform: translate(0, 20px);
+  }
+
+  36%, 100% {
+    -webkit-transform: translate(0,0);
+    -ms-transform: translate(0,0);
+    transform: translate(0,0);
+  }
+}
+
+.bounce:hover {
+	-webkit-animation: vert 3s ease infinite;
+  	animation: vert 3s ease infinite;
+}
