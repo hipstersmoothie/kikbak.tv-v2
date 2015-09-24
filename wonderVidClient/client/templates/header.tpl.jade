@@ -14,7 +14,7 @@ nav.navbar.navbar-inverse
       +if screensize_medium
         ul.nav.small-nav
           li
-            span(href="") {{currentVideo.title}}
+            span(href="") #{currentVideo.title}
 
     .collapse.navbar-collapse#bs-example-navbar-collapse-1
       +if isVideo
@@ -24,7 +24,7 @@ nav.navbar.navbar-inverse
               i.fa.fa-fast-backward
           li.playButton
             a(href="" onclick="return false")
-              i.fa(class="{{stateImage}}")
+              i.fa(class="#{stateImage}")
           li.nextButton
             a(href="" onclick="return false")
               i.fa.fa-fast-forward
@@ -33,19 +33,19 @@ nav.navbar.navbar-inverse
               i.fa#headerLike.faa-pulse.animated-hover(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
       ul.nav.navbar-nav.navbar-center
         li
-          a(href="") {{currentVideo.title}}
+          a(href="") #{currentVideo.title}
               
       ul.nav.navbar-nav.navbar-right
         li
           +loginButtons
         li.dropdown
           a.dropdown-toggle(href="#" data-toggle="dropdown" role="button" aria-expanded="false") 
-            | {{selectedGenre}}
+            | #{selectedGenre}
             span.caret
           ul.dropdown-menu(role="menu")
             each genres
               li
-                a(href="#" class="{{this.className}}" onclick="return false;") {{this.type}}
+                a(href="#" class="#{this.className}" onclick="return false;") #{this.type}
             li.divider(role="presentation")
             li
               a(href="#" class="likedVideos" onclick="return false;") Likes
