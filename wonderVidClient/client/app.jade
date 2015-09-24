@@ -29,7 +29,7 @@ template(name="turnScreenModal")
 template(name="simpleModal")
 	.anti-modal-box
 		.anti-modal-header 
-			.anti-modal-title {{loggedIn}}
+			.anti-modal-title #{loggedIn}
 			.anti-modal-closer &times;
 		.anti-modal-body 
 			p Log in with your google account to like videos and view all your youtube likes.
@@ -51,9 +51,9 @@ template(name="helpModal")
 			+each shortcut
 				.keyRow
 					.left
-						span.key {{this.key}}
+						span.key #{this.key}
 					.right
-						p.keyExp {{this.exp}}
+						p.keyExp #{this.exp}
 			
 template(name='player')
 	+if needOverlay
@@ -67,7 +67,7 @@ template(name='player')
 		+unless or screensize_small screensize_medium
 			.playerSideBar(id="playerSideBar")
 				.sideTitle
-					p {{currentVideo.title}}
+					p #{currentVideo.title}
 				.sideDate
 					p #{formedDate}
 				.sideRank(style="color: #c04848")
@@ -80,7 +80,7 @@ template(name='player')
 						p #{currentVideo.shareCounts.Twitter}}
 				+lmSocialShare opts=sharedata
 				.sideDescription 
-					p {{#autolink}}{{currentVideo.description}}{{/autolink}}			
+					p {{#autolink}}#{currentVideo.description}{{/autolink}}			
 			.playerNavBar(id="playerNavBar")
 				.togglePlayer(id="togglePlayer")
 					i.fa.fa-times
@@ -101,7 +101,7 @@ template(name='player')
 					p expand
 		else
 			.togglePlayer.mobileToggle(id="togglePlayer")
-					img(style="width:36px" src="images/{{colorFontClose}}")
+					img(style="width:36px" src="images/#{colorFontClose}")
 					p close
 
 		.player(class="{{#if or screensize_small screensize_medium}}smallPlayer{{/if}}")
@@ -109,7 +109,7 @@ template(name='player')
 
 template(name='gridThumbs')
 	.container
-		{{turnDevice}}
+		#{turnDevice}
 		.flex-container
 			+each videos
 				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
