@@ -523,28 +523,31 @@ body {
 	position: relative;
 }
 
-.featured {
-	background-size: initial;
-	width: 115vh !important;
-	-webkit-flex-basis: 100% !important;
-	flex-basis: 100% !important;
+@media only screen and (min-height: 321px) {
+	.flex-container .featured {
+		background-position-y: 0px;
+		background-size: initial;
+		width: 115vh !important;
+		-webkit-flex-basis: 100% !important;
+		flex-basis: 100% !important;
 
-	&.single {
-		.overlay {
-			height: 10em;
-			.rank{
-				font-size: 8em;
+		&.single {
+			.overlay {
+				height: 10em;
+				.rank{
+					font-size: 8em;
+				}
+				.icon-links {
+					font-size: 2em;
+				}
 			}
-			.icon-links {
+			.descriptionText{
 				font-size: 2em;
 			}
-		}
-		.descriptionText{
-			font-size: 2em;
-		}
 
-		&:hover .play-icon{	
-			font-size: 7em;
+			&:hover .play-icon{	
+				font-size: 7em;
+			}
 		}
 	}
 }
@@ -560,8 +563,8 @@ body {
 @media @tall {
 	.flex-items-default {
 		-webkit-flex-basis: 33%;
-			flex-basis: 33%;
-			width: 54vh;
+		flex-basis: 33%;
+		width: 54vh;
 	}	
 }
 
@@ -578,10 +581,11 @@ body {
 	transition: translate3d 0.5s ease-out;
 	-webkit-transform: translate3d(0px, 0px, 0px);
 	transform: translate3d(0px, 0px, 0px); 
-	margin-left: 20px;
 	width: 95%;
-	height: 90vh;
-  	top: 51px;
+	height: ~"-webkit-calc(100% - 60px)";
+	height: ~"-moz-calc(100% - 60px)";
+	height: ~"calc(100% - 60px)";
+  	top: 50px;
 	display: none;
 	position: fixed;
 	right: 3%;
@@ -628,8 +632,6 @@ body {
 	    align-items: center;
 
 		.togglePlayer{  
-			width: 45%;
-			height: 10%;
 			margin-top: 5px;
 			font-size: 41px;
 			display: flex;
@@ -637,7 +639,7 @@ body {
 		    align-content: center;
 		    justify-content: center;
 		    align-items: center;
-
+			
 			p{
 				opacity: 0;
 				text-align: center;
@@ -677,9 +679,8 @@ body {
 		.flagVideo:hover p{ opacity: 1; }
 
 		.minimizePlayer{  
-			width: 92%;
-			height: 14%;
 			font-size: 40px;
+			margin-bottom: 5px;
 			display: flex;
 		    flex-direction: column;
 		    align-content: center;
@@ -771,11 +772,12 @@ body {
 
 	.playerSideBar{
 		width: 22%;
+		display: none;
 		height: 100%;
 		left: 23%;
 		position: absolute;
 		color: white;
-		padding: 70px 20px 0 20px;
+		
 		border-bottom-left-radius: 10px;
 		overflow-y: scroll;
 		background-color: rgba(0, 0, 0, 0.8);
@@ -784,6 +786,15 @@ body {
 			width: 1px;
 		}
 		 
+		.sideBarTop {
+			padding: 50px 10px 0 10px; 
+			margin-bottom: 20px;
+			background: -webkit-linear-gradient(0deg, #c04848 41%, #AD3C48 100%)
+		}
+
+		.sideBarRest {
+			padding: 0 20px;
+		}
 
 		.lm-social-share-btn{
 			display: inline-block;
@@ -827,29 +838,29 @@ body {
 
 
 		.sideDate{
-				font-size: 14px;
+			font-size: 14px;
 			margin-top: -12px;
-			color: #888888;
-				padding: 5px;
-				width: 100%;
-				text-align: center;
+			color: lightgray;
+			padding: 5px;
+			width: 100%;
+			text-align: center;
 		}
 
 		.sideRank{
-			color: @HexColor;
-				padding: 5px;
-				width: 100%;
-				font-size: 14px;
-				text-align: center;
-				
-				.rankDesc{
-					margin-bottom: -25px;
-					font-size: 20px;
-				}
+			color: white;
+			padding: 5px;
+			width: 100%;
+			font-size: 14px;
+			text-align: center;
+			
+			.rankDesc{
+				margin-bottom: -25px;
+				font-size: 20px;
+			}
 
-				.number{
-					font-size: 72px;
-				}
+			.number{
+				font-size: 72px;
+			}
 		}
 
 		.stats {
@@ -914,6 +925,11 @@ body {
 
 .single{
 	overflow: hidden;
+	background-position-y: -37px;
+	
+	.fa-play {
+		margin-top: 25px;
+	}
 
 	.gradient {
 		width: 100%;
@@ -1228,6 +1244,7 @@ a {
 	width: 100%;
 	z-index: 3;
 	border-radius: 0px;
+	border: none;
 	background: -webkit-linear-gradient(0deg, rgb(192, 72, 72) 10%, rgb(72, 0, 72) 90%);
 
 	* {
@@ -1286,7 +1303,7 @@ a {
 	background-color: rgba(0,0,0,0);
 }
 .dropdown-menu {
-	background-color: rgb(0,0,0);
+	background-color: @HexColor;
 	border: 0px;
 }
 .dropdown-menu > li > a {
@@ -1401,16 +1418,34 @@ a {
   	right: 0;
   	top: 10px;
   	z-index: 1000;
+  	font-size: 35px;
+
+  	p {
+  		font-size: 12px;
+  		color: white;
+  		text-align: center;
+  	}
 }
 
 .navbar-left {
 	font-size: 16px;
 }
-
+@media (min-width: 1023px) {
+	.playerContainer {
+		.playerSideBar {
+			display: block;
+		}
+	}
+}
 @media (max-width: 1023px) {
     .navbar-header {
         float: none;
     }
+
+    .playerSideBar {
+		display: block;
+    }
+
     .navbar-left,.navbar-right {
         float: none !important;
     }
@@ -1571,4 +1606,8 @@ a {
 .bounce {
 	-webkit-animation: vert 3s ease;
   	animation: vert 3s ease;
+}
+
+@media only screen and (min-width: 641px) and (max-width: 1023px) {
+	
 }

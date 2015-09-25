@@ -356,6 +356,7 @@ function minimizePlayerAnimation() {
 	if(tlMinimize == null){
 		tlMinimize = new TimelineLite();
 		tlMinimize.to(".playerNavBar", 0.25, {ease: Expo.easeIn, right: "15%"});
+		tlMinimize.to(".togglePlayer", 0.25, {ease: Expo.easeIn, opacity: "0"});
 		tlMinimize.to(".playerSideBar", 0.25, {ease: Expo.easeIn, left: "23%"});
 		tlMinimize.insert( new TweenLite(".player", 0.5, {width: "100%", height: "100%", right: 0}), 0);
 		tlMinimize.to(".playerContainer", 0.5, {ease: Expo.easeOut, width: "25%", height: "25%", bottom: 0, right: 0, top: "initial"});

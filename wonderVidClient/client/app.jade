@@ -64,15 +64,16 @@ template(name='player')
 			i.fa.fa-chevron-down
 
 	.playerContainer(id="playerContainer")
-		+unless or screensize_small screensize_medium
-			.playerSideBar(id="playerSideBar")
+		.playerSideBar(id="playerSideBar")
+			.sideBarTop
 				.sideTitle
 					p #{currentVideo.title}
 				.sideDate
 					p #{formedDate}
-				.sideRank(style="color: #c04848")
+				.sideRank
 					p(class="rankDesc") rank
 					p(class="number") #{currentVideo.rank}
+			.sideBarRest
 				.stats
 					.sideLikes
 						p #{currentVideo.shareCounts.Facebook.total_count}
@@ -81,34 +82,30 @@ template(name='player')
 				+lmSocialShare opts=sharedata
 				.sideDescription 
 					p {{#autolink}}#{currentVideo.description}{{/autolink}}			
-			.playerNavBar(id="playerNavBar")
-				.togglePlayer(id="togglePlayer")
-					i.fa.fa-times
-					p close
-				+if isDevEnvironment
-					.flagContainer
-						#flagStyle.btn-group(role="group" aria-label="...")
-							.btn.btn-default.flag-live(type="button") Live
-							.btn.btn-default.flag-lievhh(type="button") LiveHH
-							.btn.btn-default.flag-interview(type="button") Interv
-							.btn.btn-default.flag-still(type="button") Still
-						.flagVideo(id="flagVideo")
-							i.fa.fa-flag
-							p flag
-				.minimizePlayer(id="minimizePlayer")
-					p minimize
-					i.fa.fa-compress
-			.playerNavBarMinimized(id="playerNavBarMinimized")
-				.closePlayer(id="closePlayer")
-					p close
-					i.fa.fa-times.mini-exit.grow
-				.expandPlayer(id="expandPlayer")
-					i.fa.fa-expand.fa-flip-vertical.mini-expand.grow-flipped
-					p expand
-		else
-			.togglePlayer.mobileToggle(id="togglePlayer")
-					img(style="width:36px" src="images/#{colorFontClose}")
-					p close
+		.playerNavBar(id="playerNavBar")
+			.togglePlayer(id="togglePlayer")
+				i.fa.fa-times-circle-o
+				p close
+			+if isDevEnvironment
+				.flagVideo(id="flagVideo")
+					i.fa.fa-flag
+					p flag
+			.minimizePlayer(id="minimizePlayer")
+				p minimize
+				i.fa.fa-compress
+		.playerNavBarMinimized(id="playerNavBarMinimized")
+			.closePlayer(id="closePlayer")
+				p close
+				i.fa.fa-times.mini-exit.grow
+			.expandPlayer(id="expandPlayer")
+				i.fa.fa-expand.fa-flip-vertical.mini-expand.grow-flipped
+				p expand
+		//- else
+		//- 	.togglePlayer.mobileToggle(id="togglePlayer")
+		//- 			//- img(style="width:36px" src="images/#{colorFontClose}")
+		//- 			i.fa.fa-times-circle-o
+
+		//- 			p close
 
 		.player(class="{{#if or screensize_small screensize_medium}}smallPlayer{{/if}}")
 			#player
