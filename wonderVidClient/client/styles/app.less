@@ -583,8 +583,10 @@ body {
 	transform: translate3d(0px, 0px, 0px); 
 	margin-left: 20px;
 	width: 95%;
-	height: 90vh;
-  	top: 51px;
+	height: ~"-webkit-calc(100% - 60px)";
+	height: ~"-moz-calc(100% - 60px)";
+	height: ~"calc(100% - 60px)";
+  	top: 50px;
 	display: none;
 	position: fixed;
 	right: 3%;
