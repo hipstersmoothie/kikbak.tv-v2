@@ -70,7 +70,7 @@ template(name='player')
 					p #{currentVideo.title}
 				.sideDate
 					p #{formedDate}
-				.sideRank
+				.bigRank
 					p(class="rankDesc") rank
 					p(class="number") #{currentVideo.rank}
 			.sideBarRest
@@ -100,15 +100,24 @@ template(name='player')
 			.expandPlayer(id="expandPlayer")
 				i.fa.fa-expand.fa-flip-vertical.mini-expand.grow-flipped
 				p expand
-		//- else
-		//- 	.togglePlayer.mobileToggle(id="togglePlayer")
-		//- 			//- img(style="width:36px" src="images/#{colorFontClose}")
-		//- 			i.fa.fa-times-circle-o
-
-		//- 			p close
 
 		.player(class="{{#if or screensize_small screensize_medium}}smallPlayer{{/if}}")
 			#player
+			+if or screensize_small screensize_medium
+				.mobile-info.col-xs-12
+					.title.row
+						p #{currentVideo.title}
+						.sideDate
+								p #{formedDate}
+					.row.details
+						.col-xs-3.left
+							.bigRank
+								p(class="rankDesc") rank
+								p(class="number") #{currentVideo.rank}
+						.col-xs-9
+							.description 
+								p {{#autolink}}#{currentVideo.description}{{/autolink}}	
+
 
 template(name='gridThumbs')
 	.container

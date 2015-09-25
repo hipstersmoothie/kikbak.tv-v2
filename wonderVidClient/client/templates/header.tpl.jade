@@ -6,6 +6,9 @@ nav.navbar.navbar-inverse
         span.icon-bar 
         span.icon-bar 
         span.icon-bar 
+      +if and isVideo notPlayerPushedTop
+        .navbar-btn.collapsed.mobile-exit
+          i.fa.fa-times-circle-o
       a.navbar-brand(href="/")
         .logo
           p.k K
@@ -31,9 +34,15 @@ nav.navbar.navbar-inverse
           li
             a(href="" onclick="return false")
               i.fa#headerLike.faa-pulse.animated-hover(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
-      ul.nav.navbar-nav.navbar-center
-        li
-          a(href="") #{currentVideo.title}
+      
+        if or playerMinimized playerPushedTop
+          ul.nav.navbar-nav.navbar-center
+            li
+              a(href="") #{currentVideo.title}
+        else if or screensize_small screensize_medium
+          ul.nav.navbar-nav.navbar-center
+            li
+              a(href="") #{currentVideo.title}
               
       ul.nav.navbar-nav.navbar-right
         li

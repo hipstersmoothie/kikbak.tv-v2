@@ -172,6 +172,19 @@ Template.registerHelper('big', ()  => {
 	return Session.get('device-screensize') != 'small' && Session.get('device-screensize') != 'medium';
 });
 
+Template.registerHelper('playerPushedTop', function() {
+	return Session.get('playerPushedTop');
+})
+
+Template.registerHelper('playerMinimized', function() {
+	return Session.get('playerMinimized');
+})
+
+Template.registerHelper('notPlayerPushedTop', function() {
+	return !Session.get('playerPushedTop' );
+})
+
+
 Template.registerHelper('and', function () {
   var args = Array.prototype.slice.call(arguments, 0, -1);  // exclude key=value args
   var parameters = arguments[arguments.length - 1];  // key: value arguments
@@ -314,10 +327,6 @@ Template.header.events({
 		Session.set('stateImage', pauseButton);
 		video.previousVideo();	
 	},
-	"click .red": _.enFunction(changeColor, colors.red),
-	"click .green": _.enFunction(changeColor, colors.green),
-	"click .yellow": _.enFunction(changeColor, colors.yellow),
-	"click .blue": _.enFunction(changeColor, colors.blue),
 	'click .likedVideos' : () => {
 		if(!Meteor.user())
 			AntiModals.overlay('simpleModal');
@@ -326,7 +335,8 @@ Template.header.events({
 	},
 	'click #headerLike': () => {
 		hitLikeButton(Session.get("currentVideo"));
-	}
+	},
+	'click .mobile-exit': reverseDropDownAnimation
 });
 
 // ============== Body ============== //
