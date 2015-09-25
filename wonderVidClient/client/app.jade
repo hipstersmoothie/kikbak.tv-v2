@@ -124,7 +124,7 @@ template(name='gridThumbs')
 							a(href="#")
 								.fa.fa-twitter.faa-shake.animated-hover
 					.gradient
-					.descriptionText
+					.descriptionText(style="{{#if alwaysShowTitles}}top:40px{{/if}}")
 						p #{this.title}
 					.play-icon
 						.fa.fa-play
