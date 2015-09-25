@@ -523,28 +523,31 @@ body {
 	position: relative;
 }
 
-.featured {
-	background-size: initial;
-	width: 115vh !important;
-	-webkit-flex-basis: 100% !important;
-	flex-basis: 100% !important;
+@media only screen and (min-height: 321px) {
+	.flex-container .featured {
+		background-position-y: 0px;
+		background-size: initial;
+		width: 115vh !important;
+		-webkit-flex-basis: 100% !important;
+		flex-basis: 100% !important;
 
-	&.single {
-		.overlay {
-			height: 10em;
-			.rank{
-				font-size: 8em;
+		&.single {
+			.overlay {
+				height: 10em;
+				.rank{
+					font-size: 8em;
+				}
+				.icon-links {
+					font-size: 2em;
+				}
 			}
-			.icon-links {
+			.descriptionText{
 				font-size: 2em;
 			}
-		}
-		.descriptionText{
-			font-size: 2em;
-		}
 
-		&:hover .play-icon{	
-			font-size: 7em;
+			&:hover .play-icon{	
+				font-size: 7em;
+			}
 		}
 	}
 }
@@ -560,8 +563,8 @@ body {
 @media @tall {
 	.flex-items-default {
 		-webkit-flex-basis: 33%;
-			flex-basis: 33%;
-			width: 54vh;
+		flex-basis: 33%;
+		width: 54vh;
 	}	
 }
 
@@ -923,6 +926,7 @@ body {
 
 .single{
 	overflow: hidden;
+	background-position-y: -37px;
 	
 	.fa-play {
 		margin-top: 25px;
