@@ -478,15 +478,54 @@ Template.player.events({
 			$(evt.currentTarget).addClass("bounce");
 		},0)
 	},
-	'click .flagVideo': () => {
+	'click .flag-live': () => {
 		new Confirmation({
-			message: "Are you sure this isnt a video?",
+			message: "Are you sure this is a high quality live video?",
 			title: "Flag Video",
 			cancelText: "Cancel",
 			okText: "Ok",
 			success: true // wether the button should be green or red
 		}, ok => {
-			Meteor.call('flagVideo', Session.get('currentVideo').videoId, () => {
+			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "live-high-quality", () => {
+				Router.go(Router.current());
+			});
+		});
+	},
+	'click .flag-livehh': () => {
+		new Confirmation({
+			message: "Are you sure this is a handheld live video?",
+			title: "Flag Video",
+			cancelText: "Cancel",
+			okText: "Ok",
+			success: true // wether the button should be green or red
+		}, ok => {
+			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "live-handheld", () => {
+				Router.go(Router.current());
+			});
+		});
+	},
+	'click .flag-interview': () => {
+		new Confirmation({
+			message: "Are you sure this is an interview?",
+			title: "Flag Video",
+			cancelText: "Cancel",
+			okText: "Ok",
+			success: true // wether the button should be green or red
+		}, ok => {
+			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "interview", () => {
+				Router.go(Router.current());
+			});
+		});
+	},
+	'click .flag-still': () => {
+		new Confirmation({
+			message: "Are you sure this is a still frame?",
+			title: "Flag Video",
+			cancelText: "Cancel",
+			okText: "Ok",
+			success: true // wether the button should be green or red
+		}, ok => {
+			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "still-shot", () => {
 				Router.go(Router.current());
 			});
 		});

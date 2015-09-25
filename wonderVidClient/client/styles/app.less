@@ -1177,6 +1177,21 @@ a {
 	background-color: @HexColor;
 }
 
+#flagStyle {
+	position: absolute;
+    width: 250px;
+    left: -162px;
+    z-index: 1;
+    margin-top: -20px;
+    display: none;
+}
+
+.flagContainer:hover {
+	#flagStyle {
+		display: inherit;
+	}
+}
+
 .anti-modal-box, .anti-modal-header {
 	max-width: 500px;
 	width: auto;

@@ -86,9 +86,15 @@ template(name='player')
 					i.fa.fa-times
 					p close
 				+if isDevEnvironment
-					.flagVideo(id="flagVideo")
-						i.fa.fa-flag
-						p flag
+					.flagContainer
+						#flagStyle.btn-group(role="group" aria-label="...")
+							.btn.btn-default.flag-live(type="button") Live
+							.btn.btn-default.flag-lievhh(type="button") LiveHH
+							.btn.btn-default.flag-interview(type="button") Interv
+							.btn.btn-default.flag-still(type="button") Still
+						.flagVideo(id="flagVideo")
+							i.fa.fa-flag
+							p flag
 				.minimizePlayer(id="minimizePlayer")
 					p minimize
 					i.fa.fa-compress

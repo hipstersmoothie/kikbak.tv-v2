@@ -76,9 +76,8 @@ var startExpress = function() {
 	});
 
 	app.put('/flag/:videoId', function (req, res) {
-		console.log(req.params.videoId)
-		db.videos.update({videoId : req.params.videoId}, {$addToSet: {tags: "NotAVid"}}, function(err, result) {
-			console.log(err, result)
+		var tag = req.query.tag;
+		db.videos.update({videoId : req.params.videoId}, {$addToSet: {tags: {$each: ["NotAVid", tag]}}}, function(err, result) {
 			if(result)
 				res.send("Video Flagged");
 		});

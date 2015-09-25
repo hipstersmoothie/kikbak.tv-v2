@@ -94,8 +94,8 @@ Meteor.publish("userData", function () {
 });
 
 Meteor.methods({
-  flagVideo: function(videoId) {
-    Meteor.http.put(base_url + '/flag/' + videoId);
+  flagVideo: function(videoId, tag) {
+    Meteor.http.put(base_url + '/flag/' + videoId + '?tag=' + tag);
   },
   likeVideo: function(id, like) {
     var apiKey = 'AIzaSyBbd9SAd34t1c1Z12Z0qLhFDfG3UKksWzg';
