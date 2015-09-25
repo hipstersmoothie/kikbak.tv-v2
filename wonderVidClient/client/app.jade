@@ -66,21 +66,23 @@ template(name='player')
 	.playerContainer(id="playerContainer")
 		+unless or screensize_small screensize_medium
 			.playerSideBar(id="playerSideBar")
-				.sideTitle
-					p #{currentVideo.title}
-				.sideDate
-					p #{formedDate}
-				.sideRank(style="color: #c04848")
-					p(class="rankDesc") rank
-					p(class="number") #{currentVideo.rank}
-				.stats
-					.sideLikes
-						p #{currentVideo.shareCounts.Facebook.total_count}
-					.sideDislikes
-						p #{currentVideo.shareCounts.Twitter}}
-				+lmSocialShare opts=sharedata
-				.sideDescription 
-					p {{#autolink}}#{currentVideo.description}{{/autolink}}			
+				.sideBarTop
+					.sideTitle
+						p #{currentVideo.title}
+					.sideDate
+						p #{formedDate}
+					.sideRank
+						p(class="rankDesc") rank
+						p(class="number") #{currentVideo.rank}
+				.sideBarRest
+					.stats
+						.sideLikes
+							p #{currentVideo.shareCounts.Facebook.total_count}
+						.sideDislikes
+							p #{currentVideo.shareCounts.Twitter}}
+					+lmSocialShare opts=sharedata
+					.sideDescription 
+						p {{#autolink}}#{currentVideo.description}{{/autolink}}			
 			.playerNavBar(id="playerNavBar")
 				.togglePlayer(id="togglePlayer")
 					i.fa.fa-times-circle-o
