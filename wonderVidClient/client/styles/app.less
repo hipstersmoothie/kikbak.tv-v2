@@ -581,7 +581,6 @@ body {
 	transition: translate3d 0.5s ease-out;
 	-webkit-transform: translate3d(0px, 0px, 0px);
 	transform: translate3d(0px, 0px, 0px); 
-	margin-left: 20px;
 	width: 95%;
 	height: ~"-webkit-calc(100% - 60px)";
 	height: ~"-moz-calc(100% - 60px)";
@@ -640,7 +639,7 @@ body {
 		    align-content: center;
 		    justify-content: center;
 		    align-items: center;
-
+			
 			p{
 				opacity: 0;
 				text-align: center;
@@ -773,6 +772,7 @@ body {
 
 	.playerSideBar{
 		width: 22%;
+		display: none;
 		height: 100%;
 		left: 23%;
 		position: absolute;
@@ -1228,6 +1228,7 @@ a {
 	width: 100%;
 	z-index: 3;
 	border-radius: 0px;
+	border: none;
 	background: -webkit-linear-gradient(0deg, rgb(192, 72, 72) 10%, rgb(72, 0, 72) 90%);
 
 	* {
@@ -1401,16 +1402,34 @@ a {
   	right: 0;
   	top: 10px;
   	z-index: 1000;
+  	font-size: 35px;
+
+  	p {
+  		font-size: 12px;
+  		color: white;
+  		text-align: center;
+  	}
 }
 
 .navbar-left {
 	font-size: 16px;
 }
-
+@media (min-width: 1023px) {
+	.playerContainer {
+		.playerSideBar {
+			display: block;
+		}
+	}
+}
 @media (max-width: 1023px) {
     .navbar-header {
         float: none;
     }
+
+    .playerSideBar {
+		display: block;
+    }
+
     .navbar-left,.navbar-right {
         float: none !important;
     }
@@ -1571,4 +1590,8 @@ a {
 .bounce {
 	-webkit-animation: vert 3s ease;
   	animation: vert 3s ease;
+}
+
+@media only screen and (min-width: 641px) and (max-width: 1023px) {
+	
 }
