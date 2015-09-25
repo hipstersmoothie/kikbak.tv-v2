@@ -607,7 +607,7 @@ body {
 		width: 100%;
 
 		.mobile-info {
-			background: rgb(72, 0, 72);
+			background: #544645;
 			color: white; 
 
 			.details {
@@ -616,8 +616,17 @@ body {
 
 			.title {
 				text-align: center;
-				// color: white;
+				margin-top: 10px;
+				margin-bottom: 10px;
 				font-size: 20px;
+				
+				.song {
+					margin-bottom: 0;
+				}
+			}
+
+			.date {
+				font-size: 12px;
 			}
 
 			.description {
@@ -1035,12 +1044,6 @@ body {
 		padding: 2px;
 		width: 100%;
 		background-color: rgba(0,0,0,0);
-		-webkit-transition: all 0.35s;
-		transition: all 0.35s;
-		-webkit-transform: translate3d(-100%,0,0);
-	    transform: translate3d(0, -100%, 0);
-		-webkit-transition-delay: 0.1s;
-	    transition-delay: 0.1s;
 	}
 
 	.overlay.selected ~ .descriptionText,
@@ -1086,9 +1089,9 @@ body {
 		}
 
 		.icon-links{	
-		    bottom: 0;
 		    position: absolute;
 		    right: 10px;
+		    bottom: 6px;
 			
 			a {
 				float: right;
@@ -1485,6 +1488,17 @@ a {
 
 		.playerNavBar {
 			display: flex;
+		}
+	}
+
+	.single {
+		.descriptionText {
+			-webkit-transition: all 0.35s;
+			transition: all 0.35s;
+			-webkit-transform: translate3d(-100%,0,0);
+		    transform: translate3d(0, -100%, 0);
+			-webkit-transition-delay: 0.1s;
+		    transition-delay: 0.1s;
 		}
 	}
 }

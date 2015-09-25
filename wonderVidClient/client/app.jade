@@ -106,8 +106,8 @@ template(name='player')
 			+if or screensize_small screensize_medium
 				.mobile-info.col-xs-12
 					.title.row
-						p #{currentVideo.title}
-						.sideDate
+						p.song #{currentVideo.title}
+						.date
 								p #{formedDate}
 					.row.details
 						.col-xs-3.left
@@ -136,7 +136,7 @@ template(name='gridThumbs')
 							a(href="#")
 								.fa.fa-twitter.faa-shake.animated-hover
 					.gradient
-					.descriptionText(style="{{#if alwaysShowTitles}}top:40px{{/if}}")
+					.descriptionText(style="{{#if alwaysShowTitles}}top:40px{{else}}{{#if or screensize_small screensize_medium}}top:20px{{/if}}{{/if}}")
 						p #{this.title}
 					.play-icon
 						.fa.fa-play
