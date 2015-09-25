@@ -534,6 +534,9 @@ Template.player.events({
 
 // ============== Grid Thumbs ============== //
 Template.gridThumbs.helpers({
+	alwaysShowTitles: function() {
+		return Session.get('alwaysShowTitles');
+	},
 	turnDevice() {
 		if(Session.get('device-orientation') == 'portrait')
 			AntiModals.overlay('turnScreenModal')
