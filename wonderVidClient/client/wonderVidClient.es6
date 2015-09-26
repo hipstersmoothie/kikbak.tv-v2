@@ -119,7 +119,6 @@ Meteor.logout = function customLogout() {
 Accounts.onLogin(getLikes);
 function getLikes() {
 	Meteor.call('likedVideos', function(err, res) {
-		console.log(res);
 		if(!err) 
 			Session.set('userLikes', res);
 	}); 
@@ -319,7 +318,6 @@ Template.header.events({
 		restartDropDown();
 	},
 	"click .nextButton": () => {
-		console.log('here')
 		Session.set('stateImage', pauseButton);
 		video.nextVideo();	
 	},
@@ -483,7 +481,6 @@ Template.player.events({
 	"click .closePlayer": closeVideoAnimation,
 	"click .downArrow": restartDropDown,
 	"mouseenter .fa-chevron-down": function (evt) {
-		console.log('here', evt)
 		$(evt.currentTarget).removeClass("bounce");
 		setTimeout(function() {
 			$(evt.currentTarget).addClass("bounce");
