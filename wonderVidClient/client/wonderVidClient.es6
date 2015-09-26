@@ -573,7 +573,7 @@ Template.gridThumbs.helpers({
 
 Template.gridThumbs.events({
 	"click .single": function (event) { // needs its own this
-		if (event.target.className == "fa fa-heart-o" || event.target.className == "fa fa-heart"){
+		if (event.target.className.indexOf("fa-heart-o") > -1 || event.target.className.indexOf("fa-heart") > -1){
 			if(!Meteor.user())
 				AntiModals.overlay('simpleModal');
 			else
