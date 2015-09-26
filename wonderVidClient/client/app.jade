@@ -74,12 +74,14 @@ template(name='player')
 					p(class="rankDesc") rank
 					p(class="number") #{currentVideo.rank}
 			.sideBarRest
+				+lmSocialShare opts=sharedata
 				.stats
 					.sideLikes
-						p #{currentVideo.shareCounts.Facebook.total_count}
+						.fa.fa-facebook
+						p #{fbCounter}
 					.sideDislikes
-						p #{currentVideo.shareCounts.Twitter}}
-				+lmSocialShare opts=sharedata
+						.fa.fa-twitter
+						p #{twCounter}
 				.sideDescription 
 					p {{#autolink}}#{currentVideo.description}{{/autolink}}			
 		.playerNavBar(id="playerNavBar")

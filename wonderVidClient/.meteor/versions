@@ -73,6 +73,7 @@ mquandalle:jade@0.4.3_1
 mquandalle:jade-compiler@0.4.3
 mrt:gsap@1.11.8
 mrt:jquery-mousewheel@0.1.0
+mrt:jquery-ui@1.9.2
 mrt:moment@2.8.1
 msavin:jetsetter@1.0.20
 natestrauser:font-awesome@4.4.0

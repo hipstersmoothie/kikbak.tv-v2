@@ -67,6 +67,7 @@ Meteor.startup(() => {
 	Mousetrap.bind('down', restartDropDown);
 	Mousetrap.bind('m',  minimizePlayerAnimation);
 	Mousetrap.bind('space', togglePlayState);
+
 });
 
 function videoShortcut(direction, test) { // needs a this context
@@ -358,6 +359,9 @@ Template.body.rendered = () => {
 				window.scrollBy(0, singleDelta * -30);
 		}		
 	});
+
+	$('.lm-social-share-facebook').text("");
+	$('.lm-social-share-twitter').text("");
 }
 
 // ============== Animations ============== //
@@ -440,6 +444,11 @@ function createDropDownAnimation() {
 	tlDropdown.to(".playerContainer", 0.5, {ease: Expo.easeIn, x:0, y: 0, z: 0});
 	tlDropdown.to(".playerNavBar", 0.55, {ease: Expo.easeIn, right: "-16px"});
 	tlDropdown.to(".playerSideBar", 0.5, {ease: Expo.easeIn, left: "0%"}, '-=0.5');
+
+	setTimeout(function() {
+		$('.lm-social-share-facebook').text("");
+		$('.lm-social-share-twitter').text("");
+	},0);
 }
 
 // ============== Player ============== //
@@ -476,7 +485,42 @@ Template.player.helpers({
 			var dateString = Session.get("currentVideo").youTubePostDate;
 			return `${dateString.substring(5,7)} • ${dateString.substring(8,10)} • ${dateString.substring(0,4)}`;
 		}
+	},
+	fbCounter() {
+		var $el = $(".sideLikes p");
+		$el.text("");
+		if(Session.get('currentVideo') && Session.get('currentVideo').shareCounts){
+			var count = Session.get('currentVideo').shareCounts.Facebook.total_count;
+		    $({percentage: 0}).stop(true).animate({percentage: count}, {
+		        duration : 3000,
+        		easing: "easeOutExpo",
+		        step: function () {
+		            var percentageVal =  Math.round(this.percentage) ? Math.round(this.percentage) : 0;
+		            $el.text(percentageVal);
+		        }
+		    }).promise().done(function () {
+		        $el.text(count);
+		    });
+		}
+	},
+	twCounter() {
+		var $el = $(".sideDislikes p");
+		$el.text("");
+		if(Session.get('currentVideo') && Session.get('currentVideo').shareCounts){
+			var count = Session.get('currentVideo').shareCounts.Twitter;
+		    $({percentage: 0}).stop(true).animate({percentage: count}, {
+		        duration : 3000,
+        		easing: "easeOutExpo",
+		        step: function () {
+		            var percentageVal =  Math.round(this.percentage) ? Math.round(this.percentage) : 0;
+		            $el.text(percentageVal);
+		        }
+		    }).promise().done(function () {
+		        $el.text(count);
+		    });
+		}
 	}
+
 });
 
 Template.player.events({
