@@ -179,11 +179,6 @@ Template.registerHelper('playerMinimized', function() {
 	return Session.get('playerMinimized');
 })
 
-Template.registerHelper('notPlayerPushedTop', function() {
-	return !Session.get('playerPushedTop' );
-})
-
-
 Template.registerHelper('and', function () {
   var args = Array.prototype.slice.call(arguments, 0, -1);  // exclude key=value args
   var parameters = arguments[arguments.length - 1];  // key: value arguments
@@ -274,8 +269,18 @@ Template.header.helpers({
 	},
 	isVideo() {
 		return Session.get('currentVideo') != null;
+	},
+	notPlayerPushedTop() {
+		mobileSafariHack('.mobile-exit');
+		return !Session.get('playerPushedTop' );
 	}
 });
+
+function mobileSafariHack(className) {
+	Meteor.defer(function() {
+		$(className).on('click', function() {});
+	});
+}
 
 function likesIds() {
 	return Session.get('userLikes').map(like => like.videoId);
@@ -463,6 +468,7 @@ Template.player.helpers({
 		return Session.get('playerMinimized');
 	},
 	pushedTop() {
+		mobileSafariHack('.downArrow')
 		return Session.get('playerPushedTop') && Session.get('currentVideo') != null;
 	},
 	formedDate() {
