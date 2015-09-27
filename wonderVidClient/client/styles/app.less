@@ -1138,6 +1138,19 @@ body {
 	color: pink;
 }
 
+.shrink {
+	i {
+		transition: all .2s ease-in-out;
+	}
+}
+.shrink:hover {
+	i {
+		-webkit-transform: scale(0.8);
+	    -ms-transform: scale(0.8);
+	    transform: scale(0.8);
+	}
+}
+
 .grow {
 	transition: all .2s ease-in-out;
 }
