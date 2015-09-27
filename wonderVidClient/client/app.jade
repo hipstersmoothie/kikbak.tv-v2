@@ -85,7 +85,7 @@ template(name='player')
 				.sideDescription 
 					p {{#autolink}}#{currentVideo.description}{{/autolink}}			
 		.playerNavBar(id="playerNavBar")
-			.togglePlayer(id="togglePlayer")
+			.togglePlayer(id="togglePlayer").shrink
 				i.fa.fa-times-circle-o
 				p close
 			+if isDevEnvironment
@@ -99,7 +99,7 @@ template(name='player')
 						i.fa.fa-flag
 						p flag
 
-			.minimizePlayer(id="minimizePlayer")
+			.minimizePlayer(id="minimizePlayer").shrink
 				p minimize
 				i.fa.fa-compress
 		.playerNavBarMinimized(id="playerNavBarMinimized")
