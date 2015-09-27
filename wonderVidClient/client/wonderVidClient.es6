@@ -487,11 +487,12 @@ Template.player.helpers({
 		}
 	},
 	fbCounter() {
-		var $el = $(".sideLikes p");
+		var $el = $(".sideLikes p"), delay = 0;
 		$el.text("");
+		if(tlDropdown && tlDropdown.isActive()) delay = 2000;
 		if(Session.get('currentVideo') && Session.get('currentVideo').shareCounts){
 			var count = Session.get('currentVideo').shareCounts.Facebook.total_count;
-		    $({percentage: 0}).stop(true).animate({percentage: count}, {
+		    $({percentage: 0}).stop(true).delay(delay).animate({percentage: count}, {
 		        duration : 3000,
         		easing: "easeOutExpo",
 		        step: function () {
@@ -504,11 +505,12 @@ Template.player.helpers({
 		}
 	},
 	twCounter() {
-		var $el = $(".sideDislikes p");
+		var $el = $(".sideDislikes p"), delay = 0;
 		$el.text("");
+		if(tlDropdown && tlDropdown.isActive()) delay = 2000;
 		if(Session.get('currentVideo') && Session.get('currentVideo').shareCounts){
 			var count = Session.get('currentVideo').shareCounts.Twitter;
-		    $({percentage: 0}).stop(true).animate({percentage: count}, {
+		    $({percentage: 0}).stop(true).delay(delay).animate({percentage: count}, {
 		        duration : 3000,
         		easing: "easeOutExpo",
 		        step: function () {
