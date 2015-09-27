@@ -841,12 +841,22 @@ body {
 		    left: 65px;
 		    padding: 5px 15px;
 		    height: 50px;
+
+		    &:hover ~ .stats .sideLikes,
+		    &:hover ~ .stats .sideLikes .fa{
+			    color: #3b5998;
+			}
 		}
 
 		.lm-social-share-twitter{
 		    right: 65px;
 		    padding: 5px 15px;
 		    height: 50px;
+
+		    &:hover ~ .stats .sideDislikes,
+		    &:hover ~ .stats .sideDislikes .fa{
+			    color: #4099FF;
+			}
 		}
 
 		.sideTitle{
@@ -893,10 +903,15 @@ body {
 				color: white;
 				float: left;
 				margin: 0;
+    			height: 40px;
+				-webkit-transition: all 0.2s;
+				transition: all 0.2s;
 			}
 
 			.fa{
 				font-size: 24px;
+				-webkit-transition: all 0.2s;
+				transition: all 0.2s;
 			}
 
 			.sideDislikes{
@@ -905,7 +920,10 @@ body {
 				width: 48%;
 				float: right;
 				font-size: 10px;
-				color: white;		
+				color: white;	
+    			height: 40px;
+				-webkit-transition: all 0.2s;
+				transition: all 0.2s;	
 			}
 			p {
 				margin: 0;
