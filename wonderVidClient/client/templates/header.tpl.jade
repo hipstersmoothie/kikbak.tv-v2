@@ -6,14 +6,21 @@ nav.navbar.navbar-inverse
         span.icon-bar 
         span.icon-bar 
         span.icon-bar 
+
       +if and isVideo notPlayerPushedTop
         .navbar-btn.collapsed.mobile-exit
           i.fa.fa-times-circle-o
+
       a.navbar-brand(href="/")
         .logo
           p.k K
           img.logo(src="/images/logo.png")
           p.b B
+          
+      +if and isVideo notPlayerPushedTop
+        .navbar-btn.collapsed.mobile-heart
+          i.fa#headerLike.faa-pulse.animated-hover(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
+
       +if screensize_medium
         ul.nav.small-nav
           li
