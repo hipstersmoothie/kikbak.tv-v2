@@ -344,8 +344,8 @@ Template.header.events({
 });
 
 // ============== Body ============== //
-Template.body.rendered = () => {
-	$("body").mousewheel(function(event, delta, deltaX, deltaY) {
+Template.gridThumbs.rendered = () => {
+	$(".scroll-container").mousewheel(function(event, delta, deltaX, deltaY) {
 		var singleDelta = (Math.abs(deltaX)>Math.abs(deltaY)) ? (-1 * deltaX) : deltaY; 
 		if(Session.get('playerPushedTop') == true || Session.get('playerMinimized') == true) {
 			event.preventDefault();
@@ -353,10 +353,11 @@ Template.body.rendered = () => {
 			// Determine the proper way to scroll (vert or horizontal) by
 			// checking if the scrolling width exceeds the window width, and 
 			// if the scrolling height exceeds the window height.
-			if (this.scrollWidth > this.clientWidth)
-				window.scrollBy(singleDelta * -30, 0);
+			if (this.scrollWidth > this.clientWidth){
+				$(event.currentTarget).scrollLeft(event.currentTarget.scrollLeft + singleDelta * -30, 0);
+			}
 			else if (this.scrollHeight > this.clientHeight)
-				window.scrollBy(0, singleDelta * -30);
+				$(event.currentTarget).scrollLeft(0, event.currentTarget.scrollTop + singleDelta * -30);
 		}		
 	});
 
