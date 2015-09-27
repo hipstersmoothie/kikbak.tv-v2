@@ -13,8 +13,8 @@ head
 body
 
 template(name="layout")
-	+header
 	+player
+	+header
 	div(style="height:100%")
 		+yield
 
@@ -129,8 +129,7 @@ template(name='player')
 
 
 template(name='gridThumbs')
-	.container
-		#{turnDevice}
+	.scroll-container
 		.flex-container
 			+each videos
 				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
