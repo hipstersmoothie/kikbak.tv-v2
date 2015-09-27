@@ -540,58 +540,30 @@ Template.player.events({
 		},0)
 	},
 	'click .flag-live': () => {
-		new Confirmation({
-			message: "Are you sure this is a high quality live video?",
-			title: "Flag Video",
-			cancelText: "Cancel",
-			okText: "Ok",
-			success: true // wether the button should be green or red
-		}, ok => {
-			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "live-high-quality", () => {
-				Router.go(Router.current());
-			});
-		});
+		flagVideo("Are you sure this is a high quality live video?", "live-high-quality");
 	},
 	'click .flag-livehh': () => {
-		new Confirmation({
-			message: "Are you sure this is a handheld live video?",
-			title: "Flag Video",
-			cancelText: "Cancel",
-			okText: "Ok",
-			success: true // wether the button should be green or red
-		}, ok => {
-			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "live-handheld", () => {
-				Router.go(Router.current());
-			});
-		});
+		flagVideo("Are you sure this is a handheld live video?", "live-handheld");
 	},
 	'click .flag-interview': () => {
-		new Confirmation({
-			message: "Are you sure this is an interview?",
-			title: "Flag Video",
-			cancelText: "Cancel",
-			okText: "Ok",
-			success: true // wether the button should be green or red
-		}, ok => {
-			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "interview", () => {
-				Router.go(Router.current());
-			});
-		});
+		flagVideo("Are you sure this is an interview?", "interview");
 	},
 	'click .flag-still': () => {
-		new Confirmation({
-			message: "Are you sure this is a still frame?",
-			title: "Flag Video",
-			cancelText: "Cancel",
-			okText: "Ok",
-			success: true // wether the button should be green or red
-		}, ok => {
-			Meteor.call('flagVideo', Session.get('currentVideo').videoId, "still-shot", () => {
-				Router.go(Router.current());
-			});
-		});
+		flagVideo("Are you sure this is a still frame?", "still-shot");
 	}
 });
+
+function flagVideo(message, tag) {
+	new Confirmation({
+		message: message,
+		title: "Flag Video",
+		cancelText: "Cancel",
+		okText: "Ok",
+		success: true // wether the button should be green or red
+	}, ok => {
+		Meteor.call('flagVideo', Session.get('currentVideo').videoId, tag);
+	});
+}
 
 // ============== Grid Thumbs ============== //
 Template.gridThumbs.helpers({
