@@ -841,8 +841,6 @@ body {
 		    left: 65px;
 		    padding: 5px 15px;
 		    height: 50px;
-
-		    &:hover ~ .stats .sideLikes,
 		    &:hover ~ .stats .sideLikes .fa{
 			    color: #3b5998;
 			}
@@ -853,7 +851,6 @@ body {
 		    padding: 5px 15px;
 		    height: 50px;
 
-		    &:hover ~ .stats .sideDislikes,
 		    &:hover ~ .stats .sideDislikes .fa{
 			    color: #4099FF;
 			}
@@ -895,7 +892,7 @@ body {
 		.stats {
 			width: 100%;
 			margin: 0;
-				text-align: center;
+			text-align: center;
 			.sideLikes{
 				width: 48%;
 				top: 76px;
@@ -906,6 +903,7 @@ body {
     			height: 40px;
 				-webkit-transition: all 0.2s;
 				transition: all 0.2s;
+
 			}
 
 			.fa{
@@ -928,6 +926,7 @@ body {
 			p {
 				margin: 0;
 				padding-bottom: 2px;
+	    		letter-spacing: 2px;
 			}
 		}
 
@@ -998,6 +997,7 @@ body {
 	&:hover .overlay .icon-links a{
 		-webkit-transform: translate3d(0,0,0);
 		transform: translate3d(0,0,0);
+		letter-spacing: 0;
 	}
 
 	&:hover .overlay .rank {
