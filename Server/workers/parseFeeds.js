@@ -3,6 +3,7 @@ var http = require('http'),
 	_ = require('lodash'),
 	parser = require('parse-rss'),
 	request = require('request-enhanced'),
+	requestOrig = require('request'),
 	cheerio = require('cheerio'),
 	getYouTubeID = require('get-youtube-id'),
 	youtubeThumbnail = require('youtube-thumbnail'),
@@ -167,4 +168,61 @@ setInterval(function() {
 	}
 }, 120000)
 
+var async = require('async');
+var fs = require('fs');
+
+var download = function(uri, filename, callback){
+	requestOrig(uri).pipe(fs.createWriteStream(filename)).on('close', callback).on('error', function  (error) {
+		console.log(error)
+	});
+};
+
+function compareStills(video) {
+	// console.log(video)
+	var still1 = 'http://img.youtube.com/vi/' + video.videoId + '/1.jpg';
+	var still2 = 'http://img.youtube.com/vi/' + video.videoId + '/2.jpg';
+	var still3 = 'http://img.youtube.com/vi/' + video.videoId + '/3.jpg';
+	var stills = [still1, still2, still3];
+	var images = [];
+
+	async.each(stills, function(still, callback, index) {
+		download(still, video.videoId + stills.indexOf(still) + '.jpg', function(){
+		  images.push('./' + video.videoId + stills.indexOf(still) + '.jpg');
+
+		  callback();
+		});
+	}, function(err){
+		console.log(images)
+	    // if any of the file processing produced an error, err would equal that error
+	    if( err ) {
+	      // One of the iterations produced an error.
+	      // All processing will now stop.
+	      console.log('A file failed to process');
+	    } else {		
+
+	    console.log(resemble)	 
+			var diff = resemble(images[0]).compareTo(images[1]).ignoreNothing().onComplete(function(data){
+			    console.log(data);
+			    
+			    // {
+			    //   misMatchPercentage : 100, // %
+			    //   isSameDimensions: true, // or false
+			    //   dimensionDifference: { width: 0, height: -1 }, // defined if dimensions are not the same
+			    //   getImageDataUrl: function(){}
+			    // }
+			    
+			});
+		}
+	});
+}
+
+function findStills () {
+	db.videos.find({ }, function(err, videos) {
+		compareStills({
+			videoId: 'oU1roh5edj4'
+		})
+		// _.forEach(videos, compareStills);
+	});
+}
+// findStills();
 refreshBlogsFeeds();
