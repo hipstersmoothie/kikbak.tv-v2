@@ -124,6 +124,24 @@ var newVid = function(vidId, url, blog, $, link) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
 
+
+			var bigThumb;
+			var smallThumb;
+			if(result['items'][0]['snippet']['thumbnails'].maxres) {
+				bigThumb = result['items'][0]['snippet']['thumbnails'].maxres.url;
+			} else if (result['items'][0]['snippet']['thumbnails'].standard) {
+				bigThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
+			} else {
+				bigThumb = result['items'][0]['snippet']['thumbnails'].high.url;
+			}
+
+			if(result['items'][0]['snippet']['thumbnails'].standard) {
+				smallThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
+			} else {
+				smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
+			}
+
+
 			var blogs = blog.tags ? blog.tags : [];
 			var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
 			console.log('adding', result['items'][0]['snippet']['title'], vidId); 
@@ -135,6 +153,8 @@ var newVid = function(vidId, url, blog, $, link) {
 					origPosts : [link],
 					dateFound : _.now(),
 					thumbnail : youtubeThumbnail(url),
+					thumbHQ: bigThumb,
+					thumbSmall: smallThumb,
 					title : result['items'][0]['snippet']['title'],
 					description : result['items'][0]['snippet']['description'],
 					publishedBy : result['items'][0]['snippet']['channelTitle'],
@@ -224,5 +244,5 @@ function findStills () {
 		// _.forEach(videos, compareStills);
 	});
 }
-// findStills();
+
 refreshBlogsFeeds();

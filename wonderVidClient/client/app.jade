@@ -132,7 +132,7 @@ template(name='gridThumbs')
 	.scroll-container
 		.flex-container
 			+each videos
-				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-size: cover; background-repeat: no-repeat; background-image:url('#{this.thumbnail.high.url}')") 
+				.flex-items-default.single(id="#{this._id}" class="{{#if featured}}featured{{/if}}" style="background-repeat: no-repeat; background-position: center center; {{#if featured}}background-image:url('#{this.thumbHQ}'); background-size: contain; {{else}}background-image:url('#{this.thumbSmall}'); background-size: cover; {{/if}}") 
 					.overlay(class="{{#if isSelected}}selected{{/if}}")
 						.rank
 							p #{this.rank}
