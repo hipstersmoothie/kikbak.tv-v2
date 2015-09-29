@@ -525,6 +525,31 @@ body {
 	position: relative;
 }
 
+@media only screen and (max-width:1023px) {
+	.featured.single {
+		// font-size: 100px;
+		.overlay {
+			.icon-links {
+				.heart.liked {
+					transform: translate3d(0, -140%, 0);
+		    		padding-bottom: 5px;
+				}
+			}
+		}
+		&:hover {
+			.overlay {
+				.icon-links {
+					font-size: 100px;
+					a {
+						transform: translate3d(0, -140%, 0) !important;
+			    		padding-bottom: 5px;
+					}
+				}
+			}
+		}
+	}
+}
+
 @media only screen and (min-height: 321px) {
 	.flex-container .featured {
 		background-position-y: 0px;
@@ -542,6 +567,7 @@ body {
 				.icon-links {
 					font-size: 2em;
 				}
+
 			}
 			.descriptionText{
 				font-size: 2em;
@@ -1556,7 +1582,6 @@ a {
 				-webkit-transform: translate3d(0,200%,0);
 				transform: translate3d(0,200%,0);
 			}
-			
 		}
 
 		.overlay .icon-links .heart.liked {
