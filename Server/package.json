@@ -22,6 +22,7 @@
     "request": "^2.55.0",
     "request-enhanced": "^0.1.1",
     "youtube-node": "^1.2.0",
-    "youtube-thumbnail": "^1.2.0"
+    "youtube-thumbnail": "^1.2.0",
+    "async": "^1.4.2"
   }
 }

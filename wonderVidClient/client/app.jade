@@ -137,7 +137,7 @@ template(name='gridThumbs')
 						.rank
 							p #{this.rank}
 						.icon-links
-							a(href="#")
+							a.heart(href="#" class="{{#if isLiked}}liked{{/if}}")
 								.fa.faa-pulse.animated-hover(class="{{#if isLiked}}fa-heart{{else}}fa-heart-o{{/if}}")
 							a(href="#")
 								.fa.fa-facebook.faa-shake.animated-hover
