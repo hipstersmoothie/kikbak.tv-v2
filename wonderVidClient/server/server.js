@@ -150,6 +150,24 @@ Meteor.methods({
           if(item.snippet.thumbnails)
             item.thumbnail.high.url  = item.snippet.thumbnails.high.url;
 
+          var bigThumb;
+          var smallThumb;
+          if(item.snippet['thumbnails'].maxres) {
+            bigThumb = item.snippet['thumbnails'].maxres.url;
+          } else if (item.snippet['thumbnails'].standard) {
+            bigThumb = item.snippet['thumbnails'].standard.url;
+          } else {
+            bigThumb = item.snippet['thumbnails'].high.url;
+          }
+
+          if(item.snippet['thumbnails'].standard) {
+            smallThumb = item.snippet['thumbnails'].standard.url;
+          } else {
+            smallThumb = item.snippet['thumbnails'].high.url;
+          }
+          item.thumbHQ = bigThumb
+          item.thumbSmall = smallThumb;
+
           return item;
         });
 
