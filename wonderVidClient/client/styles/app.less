@@ -555,32 +555,6 @@ body {
 	position: relative;
 }
 
-@media only screen and (min-height: 321px) and (max-width:1023px) {
-	.featured.single {
-		// font-size: 100px;
-		.overlay {
-			.icon-links {
-				.heart.liked {
-					transform: translate3d(0, -140%, 0);
-		    		padding-bottom: 5px;
-				}
-			}
-		}
-		
-		&:hover {
-			.overlay {
-				.icon-links {
-					font-size: 100px;
-					a {
-						transform: translate3d(0, -140%, 0) !important;
-			    		padding-bottom: 5px;
-					}
-				}
-			}
-		}
-	}
-}
-
 @media only screen and (min-height: 321px) {
 	.flex-container .featured {
 		background-position-y: 0px;
@@ -606,6 +580,39 @@ body {
 
 			&:hover .play-icon{	
 				font-size: 7em;
+			}
+		}
+
+		&:hover {
+			.overlay {
+				.icon-links {
+					a {
+						transform: translate3d(0, -140%, 0) !important;
+			    		padding-bottom: 5px;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+@media only screen and (min-height: 321px) and (max-width:1023px) {
+	.featured {
+		.overlay {
+			.icon-links {
+				.heart.liked {
+					transform: translate3d(0, -140%, 0) !important;
+		    		padding-bottom: 5px;
+				}
+			}
+		}
+		.overlay.selected {
+			.icon-links {
+				a {
+					transform: translate3d(0, -140%, 0) !important;
+		    		padding-bottom: 5px;
+				}
 			}
 		}
 	}
@@ -1621,7 +1628,7 @@ a {
 			transform: translate3d(0,200%,0);
 		}
 
-		&:hover .overlay .icon-links .heart.liked {
+		&:hover:not(.featured) .overlay .icon-links .heart.liked {
 			transform: translate3d(0, -100%, 0) !important;
     		padding-bottom: 5px;
 		}
