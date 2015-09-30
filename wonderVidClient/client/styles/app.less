@@ -527,6 +527,13 @@ body {
 
 @media only screen and (min-height: 321px) and (max-width:1023px) {
 	.featured.single {
+		.dotbg {
+			background: 55px solid rgba(1, 1, 1, 0.2);
+		    height: 110px;
+		    width: 110px;
+		    bottom: -10px;
+		    left: 5px;
+		}
 		// font-size: 100px;
 		.overlay {
 			.icon-links {
@@ -996,6 +1003,40 @@ body {
 		margin-top: 25px;
 	}
 
+	.dotbg {
+		border: 23px solid rgba(1, 1, 1, 0.2);
+		background: rgba(1, 1, 1, 0.2);
+		-webkit-border-radius: 60px;
+		-moz-border-radius: 60px;
+		border-radius: 60px;
+		height: 46px;
+		width: 46px;
+		position: absolute;
+		bottom: 2px;
+		left: 10px;
+		z-index: 0;
+		opacity: 0;
+		-webkit-transition: all 0.3s ease-out;
+		-moz-transition: all 0.3s ease-out;
+		transition: all 0.3s ease-out;
+	}
+
+	&:nth-child(-n + 9) .dotbg {
+		left: 1px;
+	}
+
+	&:nth-child(100) .dotbg {
+ 		left: 20px;
+	}
+
+	&:hover .dotbg {
+		opacity: 1;
+		-webkit-transform: translate3d(0, 0, 0);
+    	transform: translate3d(0, 0, 0);
+    	transition-delay: 0.5s;
+    	-webkit-transition-delay:  0.5s;
+	}
+
 	.gradient {
 		width: 100%;
 		height: 100%;
@@ -1021,6 +1062,11 @@ body {
 		-webkit-transform: translate3d(0, -100%, 0);
     	transform: translate3d(0, -100%, 0);
     	padding-bottom: 5px;
+	}
+
+
+	.overlay.selected ~ .dotbg {
+		opacity: 1;
 	}
 
 	&:hover .icon-links a:nth-child(3) {
@@ -1103,6 +1149,7 @@ body {
 			-webkit-transform: translate3d(0, -100%, 0);
 	    	transform: translate3d(0, -100%, 0);
 	    	padding-bottom: 8px;
+
 			p {
 				margin: -10px -5px 0px;
 			}
