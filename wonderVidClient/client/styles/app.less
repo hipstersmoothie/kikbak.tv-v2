@@ -1051,7 +1051,7 @@ body {
 	// .overlay.selected ~ .rank,
 	.overlay.selected ~ .icon-links a,
 	// &:hover .overlay,
-	&:hover .overlay .rank,
+	// &:hover .overlay .rank,
 	&:hover .overlay .icon-links a {
 		// -webkit-transform: translate3d(0,0,0);
 		// transform: translate3d(0,0,0);
@@ -1059,6 +1059,12 @@ body {
 		-webkit-transform: translate3d(0, -100%, 0);
     	transform: translate3d(0, -100%, 0);
     	padding-bottom: 5px;
+	}
+
+	&:hover .overlay .rank {
+		-webkit-transform: translate3d(0, -100%, 0);
+    	transform: translate3d(0, -100%, 0);
+    	padding-bottom: 8px;
 	}
 
 	&:hover .icon-links a:nth-child(3) {
@@ -1173,11 +1179,17 @@ body {
 		}
 
 		// &.selected,
-		&.selected .rank,
+		// &.selected .rank,
 		&.selected .icon-links a {	
 			-webkit-transform: translate3d(0,-100%,0);
 			transform: translate3d(0,-100%,0);
 			padding-bottom: 5px;
+		}
+
+		&.selected .rank, {
+			-webkit-transform: translate3d(0,-100%,0);
+			transform: translate3d(0,-100%,0);
+			padding-bottom: 8px;
 		}
 
 	}
@@ -1594,11 +1606,12 @@ a {
 		    transform: translate3d(0, -100%, 0);
 			-webkit-transition-delay: 0.1s;
 		    transition-delay: 0.1s;
-		}
+		} 
 
 		.gradient {
 			-webkit-transition: all 0.35s;
 			transition: all 0.35s;
+			background: transparent;
 		}
 
 		.overlay.selected ~ .gradient,
