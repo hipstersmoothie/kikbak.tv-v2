@@ -14,6 +14,36 @@ html {
 	display: none;
 }
 
+.platform-ios {
+	.navbar-inverse {
+		padding-top: 18px;
+	}
+
+	.playerContainer {
+		margin-top: 18px;
+	}
+
+	.downArrow {
+		top: 50px;
+	}
+
+	.flex-container {
+		padding-top: 68px;
+	}
+}
+
+.platform-cordova, .platform-web, .platform-ios, .platform-android {
+	height: 100%
+}
+
+.platform-ios, .platform-android {
+	.single {
+		.fa-play {
+			display: none !important;
+		}
+	}
+}
+
 body {
 	background: black;
 	overflow-x: hidden;
@@ -536,6 +566,7 @@ body {
 				}
 			}
 		}
+		
 		&:hover {
 			.overlay {
 				.icon-links {
@@ -1013,7 +1044,7 @@ body {
 	// .overlay.selected ~ .rank,
 	.overlay.selected ~ .icon-links a,
 	// &:hover .overlay,
-	// &:hover .overlay .rank,
+	&:hover .overlay .rank,
 	&:hover .overlay .icon-links a {
 		// -webkit-transform: translate3d(0,0,0);
 		// transform: translate3d(0,0,0);
@@ -1134,11 +1165,12 @@ body {
 			}
 		}
 
-		&.selected,
+		// &.selected,
 		&.selected .rank,
-		&.selected .icon-links a {
-			-webkit-transform: translate3d(0,0,0);
-			transform: translate3d(0,0,0);
+		&.selected .icon-links a {	
+			-webkit-transform: translate3d(0,-100%,0);
+			transform: translate3d(0,-100%,0);
+			padding-bottom: 5px;
 		}
 
 	}
@@ -1584,22 +1616,36 @@ a {
 			}
 		}
 
-		.overlay .icon-links .heart.liked {
+		.overlay:not(.selected) .icon-links .heart.liked {
 			-webkit-transform: translate3d(0,200%,0);
 			transform: translate3d(0,200%,0);
 		}
 
-		.overlay.selected,
-		.overlay.selected ~ .rank,
-		.overlay.selected ~ .icon-links a,
-		&:hover .overlay,
-		&:hover .overlay .rank,
-		&:hover .overlay .icon-links a,
-		&:hover .overlay .icon-links .heart.liked 
-		{
-			-webkit-transform: translate3d(0,0,0);
-			transform: translate3d(0,0,0);
-			letter-spacing: 0;
+		&:hover .overlay .icon-links .heart.liked {
+			transform: translate3d(0, -100%, 0) !important;
+    		padding-bottom: 5px;
+		}
+
+		// // .overlay.selected,
+		// .overlay.selected ~ .rank,
+		// .overlay.selected ~ .icon-links a,
+		// // &:hover .overlay,
+		// &:hover .overlay .rank,
+		// &:hover .overlay .icon-links a,
+		// &:hover .overlay .icon-links .heart.liked 
+		// {
+		// 	-webkit-transform: translate3d(0,0,0);
+		// 	transform: translate3d(0,0,0);
+		// 	letter-spacing: 0;
+		// }
+	}
+
+	.featured.single .overlay.selected {
+		.icon-links {
+			a {
+				transform: translate3d(0, -140%, 0) !important;
+	    		padding-bottom: 5px;
+			}
 		}
 	}
 }

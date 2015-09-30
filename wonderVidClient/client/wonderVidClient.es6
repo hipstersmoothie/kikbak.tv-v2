@@ -365,6 +365,27 @@ Template.gridThumbs.rendered = () => {
 	$('.lm-social-share-twitter').text("");
 }
 
+Template.layout.helpers({
+	platformClasses: function () {
+	    var classes = [];
+
+	    if (Meteor.isCordova) {
+	      classes.push('platform-cordova');
+	    }
+	    if (Meteor.isClient) {
+	      classes.push('platform-web');
+	    }
+	    if ((Meteor.isCordova && Platform.isIOS()) || Session.get('platformOverride') === 'iOS') {
+	      classes.push('platform-ios');
+	    }
+	    if ((Meteor.isCordova && Platform.isAndroid()) || Session.get('platformOverride') === 'Android') {
+	      classes.push('platform-android');
+	    }
+
+	    return classes.join(' ');
+  }
+})
+
 // ============== Animations ============== //
 function determineColor(dark, white) {
 	return Session.equals("color", colors.yellow.hex) ? dark : white;
@@ -532,7 +553,7 @@ Template.player.events({
 	"click .minimizePlayer": minimizePlayerAnimation,
 	"click .expandPlayer": expandPlayerAnimation,
 	"click .closePlayer": closeVideoAnimation,
-	"click .downArrow": restartDropDown,
+	"click .fa-chevron-down": restartDropDown,
 	"mouseenter .fa-chevron-down": function (evt) {
 		$(evt.currentTarget).removeClass("bounce");
 		setTimeout(function() {
