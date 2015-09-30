@@ -386,6 +386,26 @@ Template.layout.helpers({
   }
 })
 
+if(Meteor.isCordova) {
+	Template.layout.helpers({
+	  templateGestures: {
+	    'doubletap *': function (event, templateInstance) {
+	    	console.log('closePlayer')
+	    	reverseDropDownAnimation()
+	      /* `event` is the Hammer.js event object */
+	       // `templateInstance` is the `Blaze.TemplateInstance` 
+	      /* `this` is the data context of the element in your template, so in this case `someField` from `someArray` in the template */
+	    },
+	  	'swipeleft *': function (event, templateInstance) {
+	    	video.nextVideo();
+	    },
+	  	'swiperight *': function (event, templateInstance) {
+	    	video.previousVideo();
+	    }
+	  }
+	});
+}
+
 // ============== Animations ============== //
 function determineColor(dark, white) {
 	return Session.equals("color", colors.yellow.hex) ? dark : white;

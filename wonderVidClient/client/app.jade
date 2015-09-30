@@ -14,7 +14,8 @@ body
 
 template(name="layout")
 	div(class="#{platformClasses}")
-		+player
+		+HammerTouchArea gestureMap=templateGestures
+			+player
 		+header
 		div(style="height:100%")
 			+yield
