@@ -561,7 +561,7 @@ body {
 }
 
 @media only screen and (min-height: 321px) {
-	.flex-container .featured {
+	.platform-web:not(.platform-ios):not(.platform-android) .featured {
 		background-position-y: 0px;
 		background-size: initial;
 		width: 115vh !important;
@@ -603,7 +603,7 @@ body {
 
 
 @media only screen and (min-height: 321px) and (max-width:1023px) {
-	.featured {
+	.platform-web:not(.platform-ios):not(.platform-android) .featured {
 		.overlay {
 			.icon-links {
 				.heart.liked {
@@ -1665,7 +1665,7 @@ a {
 		// }
 	}
 
-	.featured.single .overlay.selected {
+	.platform-web:not(.platform-ios):not(.platform-android) .featured.single .overlay.selected {
 		.icon-links {
 			a {
 				transform: translate3d(0, -140%, 0) !important;
