@@ -13,10 +13,12 @@ head
 body
 
 template(name="layout")
-	+player
-	+header
-	div(style="height:100%")
-		+yield
+	div(class="#{platformClasses}")
+		+HammerTouchArea gestureMap=templateGestures
+			+player
+		+header
+		div(style="height:100%")
+			+yield
 
 template(name="turnScreenModal")
 	.anti-modal-box
