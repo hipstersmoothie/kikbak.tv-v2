@@ -20,7 +20,7 @@ Router.route('/about', {
   }
 });
 
-var subs = new SubsManager({
+subs = new SubsManager({
   expireIn: 30
 });
 Router.route('/', {

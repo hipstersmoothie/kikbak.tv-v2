@@ -386,6 +386,20 @@ Template.layout.helpers({
   }
 })
 
+var lastTime;
+document.addEventListener("resume", function() {
+	if(!lastTime)
+		lastTime = currentTime;
+
+	var diffMS = new Date() - lastTime;
+	var minutes = (diffMS / (1000 * 60)).toFixed(1);
+
+	if(minutes > 30) {
+		subs.clear();
+		lastTime = new Date();
+	}
+}, false);
+
 Template.layout.helpers({
   templateGestures: {
     'doubletap *': function (event, templateInstance) {
