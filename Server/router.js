@@ -90,11 +90,13 @@ var startExpress = function() {
 	app.use(express.static(path.join(__dirname, '')));
 	app.get('/classify', function (req, res) {
 		db.blogs.find({ $where: "!this.tested" }, function(err, blogs) {
+			var index = blogs[0].url.indexOf('feed/') > -1 ? blogs[0].url.indexOf('feed/') : blogs[0].url.indexOf('rss/');
 			res.render('picker', {
 				url: blogs[0].url,
-				urlNoRss: blogs[0].url.substring(0, blogs[0].url.indexOf('feed/')),
+				urlNoRss: blogs[0].url.substring(0, index),
 				id: blogs[0]._id
 			});
+			console.log(blogs[0].url)
 		});
 	});
 
@@ -103,6 +105,34 @@ var startExpress = function() {
 		db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
 			console.log(error,result)
 			res.send(error,result)
+		})
+	});
+
+	app.post('/blogs/:id/delete/', function (req, res) {
+		console.log(req, req.body, req.params)
+		db.blogs.remove({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
+			res.send(false,true)
+		})
+	});
+
+	app.post('/blogs/:id/verify/', function (req, res) {
+		db.blogs.update({_id:new mongo.ObjectID(req.params.id)}, {$set: {tested:true}}, function(error, result) {
+			res.send(false,true)
+		})
+	});
+
+	app.post('/blogs/:id/tumblr/', function (req, res) {
+		// var newUrl = req.params.url.split('/feed')[0] + '/rss/'; , {$set: {url:newUrl}},
+		db.blogs.findOne({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
+			if(result.url.indexOf('/feed') > -1) {
+				var newUrl = result.url.split('/feed')[0] + '/rss/';
+						console.log(newUrl)
+
+				db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$set: {url:newUrl}}, function() {
+					res.send(false,true)
+				});
+			}
+			
 		})
 	});
 	

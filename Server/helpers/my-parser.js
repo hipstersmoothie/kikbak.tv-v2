@@ -35,9 +35,13 @@ function getCurrentBlogs() {
 
     _.forEach(newBlogs, function(newBlog) {
       if(!_.includes(blogDomains, newBlog.Url)) {
-        console.log(newBlog);
+        var goodUrl = newBlog.Url.trim()
+        if(goodUrl[goodUrl.length - 1] === '/')
+          goodUrl += 'feed/';
+        else
+          goodUrl += '/feed/';
         db.blogs.insert({
-          url: newBlog.Url,
+          url: goodUrl,
           tags: newBlog.Genre ? [newBlog.Genre] : [],
           location: newBlog.Location,
           tested: false
