@@ -3,6 +3,7 @@ var express = require('express'),
     db = require("./helpers/db"),
 	_ = require('lodash'),
 	path = require('path');
+var mongo = require('mongodb');
 
 var startExpress = function() {
 	var app = express();
@@ -81,6 +82,28 @@ var startExpress = function() {
 			if(result)
 				res.send("Video Flagged");
 		});
+	});
+
+	app.set('views', __dirname );
+	app.set('view engine', 'jade');
+	app.use(express.bodyParser());
+	app.use(express.static(path.join(__dirname, '')));
+	app.get('/classify', function (req, res) {
+		db.blogs.find({ $where: "!this.tested" }, function(err, blogs) {
+			res.render('picker', {
+				url: blogs[0].url,
+				urlNoRss: blogs[0].url.substring(0, blogs[0].url.indexOf('feed/')),
+				id: blogs[0]._id
+			});
+		});
+	});
+
+	app.post('/blogs/tag/:id/:tag/', function (req, res) {
+		console.log(req, req.body, req.params)
+		db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
+			console.log(error,result)
+			res.send(error,result)
+		})
 	});
 	
 	return app;

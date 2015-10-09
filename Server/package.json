@@ -8,6 +8,8 @@
     "node": "0.12.x"
   },
   "dependencies": {
+    "async": "^1.4.2",
+    "body-parser": "^1.14.1",
     "cheerio": "latest",
     "express": "3.3.4",
     "feedparser": "^1.1.1",
@@ -15,14 +17,15 @@
     "gulp": "^3.8.11",
     "gulp-develop-server": "^0.4.2",
     "gulp-watch": "^4.2.4",
+    "jade": "^1.11.0",
     "lodash": "^3.8.0",
+    "mongodb": "^2.0.45",
     "mongojs": "0.18.2",
     "node-schedule": "^0.2.7",
     "parse-rss": "*",
     "request": "^2.55.0",
     "request-enhanced": "^0.1.1",
     "youtube-node": "^1.2.0",
-    "youtube-thumbnail": "^1.2.0",
-    "async": "^1.4.2"
+    "youtube-thumbnail": "^1.2.0"
   }
 }

@@ -1,59 +1,63 @@
-(function() {
-  module.exports = function(url, callback) {
-    var FeedParser, domain, options, request, rss,
-      _ = require('lodash');
-    FeedParser = require('feedparser');
-    request = require('request');
-    options = {
-      normalize: false,
-      addmeta: true,
-      feedurl: url
-    };
-    rss = [];
-    domain = require('domain').create();
-    domain.on('error', function(e) {
-      return callback(e, null);
+var newBlogs = require('./../newBlogs.json'),
+    _ = require('lodash'),
+    db = require("./db");
+
+function getCurrentBlogs() {
+  console.log('Finding blogs...');
+  var newBlogNameArray = newBlogsNames();
+  db.blogs.find({ }, function(err, blogs) {
+    // _.forEach(blogs, function(blog) {
+    //   var parts = blog.url.split('//')
+    //   var domain = parts[1] ? parts[1] : parts[0];
+    //   domain = domain.trim();
+
+    //   domain = domain.split('/')[0];
+
+    //   if(_.includes(newBlogNameArray, domain)) {
+    //     var blogIndex = newBlogNameArray.indexOf(domain);
+    //     var newBlog = newBlogs[blogIndex];
+    //     var genre = newBlog.Genre === 'All' ? 'Multi' : newBlog.Genre; 
+
+    //     // db.blogs.update({url:blog.url},
+    //     //   {
+    //     //     $addToSet: {tags: genre},
+    //     //   }
+    //     // );
+    //   }
+    // });
+    var blogDomains = _.map(blogs, function(blog) {
+      var parts = blog.url.split('//')
+      var domain = parts[1] ? parts[1] : parts[0];
+      domain = domain.trim();
+      domain = domain.split('/')[0];
+      return domain;
     });
-    return domain.run(function() {
 
-      /* Module Initialize */
-      var feedParser, req;
-      req = request(url);
-      feedParser = new FeedParser([options]);
-
-      /* REQUEST */
-      req.on('error', function(err) {
-        return callback(err, null);
-      });
-      req.on('response', function(res) {
-        var stream;
-        stream = this;
-        if (res.statusCode !== 200) {
-          return this.emit('error', new Error('Bad status code'));
-        }
-                console.log(_.keys(res));
-
-        return stream.pipe(feedParser);
-      });
-
-      /* FEEDPARSER */
-      feedParser.on('error', function(err) {
-        return callback(err, null);
-      });
-      feedParser.on('readable', function() {
-        var item, stream;
-        stream = this;
-        if (item = stream.read()) {
-          return rss.push(item);
-        }
-      });
-      return feedParser.on('end', function() {
-        if (rss.length === 0) {
-          return callback('no articles');
-        }
-        return callback(null, rss);
-      });
+    _.forEach(newBlogs, function(newBlog) {
+      if(!_.includes(blogDomains, newBlog.Url)) {
+        console.log(newBlog);
+        db.blogs.insert({
+          url: newBlog.Url,
+          tags: newBlog.Genre ? [newBlog.Genre] : [],
+          location: newBlog.Location,
+          tested: false
+        })
+      }
     });
-  };
+  });
+}
 
-}).call(this);
+function newBlogsNames() {
+  return _.map(newBlogs, function(blog) {
+    var parts = blog.Url.split('//')
+    var domain = parts[1] ? parts[1] : parts[0];
+    domain = domain.trim();
+    if (domain[domain.length - 1] === '/') 
+      domain = domain.substring(0, domain.length - 1);
+
+    return domain;
+  });
+}
+// newBlogsPrint()
+
+getCurrentBlogs();

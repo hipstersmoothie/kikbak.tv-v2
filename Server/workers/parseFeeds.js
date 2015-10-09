@@ -17,7 +17,7 @@ youTube.setKey(youtubeKey);
 
 var refreshBlogsFeeds = function() {
 	console.log('Finding new videos...');
-	db.blogs.find({ }, function(err, blogs) {
+	db.blogs.find({ tested : true}, function(err, blogs) {
 		_.forEach(blogs, parseFeed);
 	});
 }
