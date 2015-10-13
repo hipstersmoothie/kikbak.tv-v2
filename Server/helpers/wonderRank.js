@@ -86,13 +86,41 @@ var dampen = function(length, date) {
 	return length;
 }
 
-var boidOut = function(array) {
-	if(array.length == 1 && array[0].url == "http://boi-1da.net/feed/")
-		return 0;
-	var urls = _.pluck(array, 'url');
-	if(urls.indexOf("http://boi-1da.net/feed/") > -1 && urls.indexOf("http://nahright.com/news/category/video/feed/") > -1)
-		return array.length - 1;
-	return array.length
+// var boidOut = function(array) {
+// 	if(array.length == 1 && array[0].url == "http://boi-1da.net/feed/")
+// 		return 0;
+// 	var urls = _.pluck(array, 'url');
+// 	if(urls.indexOf("http://boi-1da.net/feed/") > -1 && urls.indexOf("http://nahright.com/news/category/video/feed/") > -1)
+// 		return array.length - 1;
+// 	return array.length
+// }
+
+var mult = function(metric, total) {
+	var ratio = metric/total;
+	if (metric < 3000 || ratio == 1)
+		return 2;
+	if (ratio > 0.4)
+		return 3;
+	else if (ratio > 0.3)
+		return 2;
+	else if (ratio > 0.2)
+		return 1.5;
+	else
+		return 1;
+}
+
+var multTwitter = function(metric, total) {
+	var ratio = metric/total;
+	if (metric < 100 || ratio == 1)
+		return 2;
+	if (ratio > 0.3)
+		return 3;
+	else if (ratio > 0.2)
+		return 2;
+	else if (ratio > 0.1)
+		return 1.5;
+	else
+		return 1;
 }
 
 var sort = function(videos) {
@@ -101,14 +129,33 @@ var sort = function(videos) {
 		videos.sort(function(a, b) {
 			var date1 = (Date.now() - Date.parse(a.youTubePostDate))/day;
 			var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
+
 			var adg1 = multiplier(date1);
 			var adg2 = multiplier(date2);
 			// var ratio1 = shareRatio(a);
 			// var ratio2 = shareRatio(b);
 			var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
 			var viewMultiplier2 = viewMultiplier(b.avgViewPerHalfHour);
-			a.wonderRank = (boidOut(a.foundOn) * adg1 * viewMultiplier1 * ifMusicVideo(a));
-			b.wonderRank = (boidOut(b.foundOn) * adg2 * viewMultiplier2 * ifMusicVideo(b));
+
+			if(a.shareCounts) {
+				var facebook1 = mult(a.avgFaceBookShares, a.shareCounts.Facebook.total_count);
+				var twitter1 = multTwitter(a.avgTweets, a.shareCounts.Twitter);
+			} else {
+				var facebook1 = 2;
+				var twitter1 = 2;
+			}
+
+			if(b.shareCounts) {
+				var facebook2 = mult(b.avgFaceBookShares, b.shareCounts.Facebook.total_count);
+				var twitter2 = multTwitter(b.avgTweets, b.shareCounts.Twitter);
+			} else {
+				var facebook2 = 2;
+				var twitter2 = 2;
+			}
+
+
+			a.wonderRank = (a.foundOn.length * adg1 * viewMultiplier1 * ifMusicVideo(a) * facebook1 * twitter1);
+			b.wonderRank = (b.foundOn.length * adg2 * viewMultiplier2 * ifMusicVideo(b) * facebook2 * twitter2);
 
 			if(a.wonderRank - b.wonderRank == 0){
 				if(a.youTubePostDate - b.youTubePostDate > 0) 
