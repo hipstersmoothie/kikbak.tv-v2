@@ -182,19 +182,14 @@ Template.registerHelper('playerMinimized', function() {
 
 Template.registerHelper('and', function () {
   var args = Array.prototype.slice.call(arguments, 0, -1);  // exclude key=value args
-  var parameters = arguments[arguments.length - 1];  // key: value arguments
-
   return _.every(args, function (arg) {
     return !!arg;
   });
 });
 
-Template.registerHelper('or', function () {
-  var args = Array.prototype.slice.call(arguments, 0, -1);  // exclude key=value args
-  var parameters = arguments[arguments.length - 1];  // key: value arguments
-  var values = _.map(args, function (arg) {
-    return !!arg;
-  });
+Template.registerHelper('or', function (...rest) {
+  var args = Array.prototype.slice.call(rest, 0, -1);  // exclude key=value args
+  var values = args.map(arg => !!arg);
   return _.contains(values, true);
 });
 
@@ -366,7 +361,7 @@ Template.gridThumbs.rendered = () => {
 }
 
 Template.layout.helpers({
-	platformClasses: function () {
+	platformClasses() {
 	    var classes = [];
 
 	    if (Meteor.isCordova) {
@@ -620,7 +615,7 @@ function flagVideo(message, tag) {
 
 // ============== Grid Thumbs ============== //
 Template.gridThumbs.helpers({
-	alwaysShowTitles: function() {
+	alwaysShowTitles() {
 		return Session.get('alwaysShowTitles');
 	},
 	turnDevice() {

@@ -1,3 +1,4 @@
+// Various sorts. This may be a point where we can use some AI
 var _ = require('lodash'); 
 var multiplier = function(days) {
 	if (days <= 1)
@@ -85,15 +86,6 @@ var dampen = function(length, date) {
 		return 0.25 * length
 	return length;
 }
-
-// var boidOut = function(array) {
-// 	if(array.length == 1 && array[0].url == "http://boi-1da.net/feed/")
-// 		return 0;
-// 	var urls = _.pluck(array, 'url');
-// 	if(urls.indexOf("http://boi-1da.net/feed/") > -1 && urls.indexOf("http://nahright.com/news/category/video/feed/") > -1)
-// 		return array.length - 1;
-// 	return array.length
-// }
 
 var mult = function(metric, total) {
 	var ratio = metric/total;

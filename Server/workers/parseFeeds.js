@@ -1,3 +1,4 @@
+// Goes through all of the blogs
 var http = require('http'),
 	db = require("./../helpers/db"),
 	_ = require('lodash'),
@@ -124,7 +125,6 @@ var newVid = function(vidId, url, blog, $, link) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
 
-
 			var bigThumb;
 			var smallThumb;
 			if(result['items'][0]['snippet']['thumbnails'].maxres) {
@@ -140,7 +140,6 @@ var newVid = function(vidId, url, blog, $, link) {
 			} else {
 				smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
 			}
-
 
 			var blogs = blog.tags ? blog.tags : [];
 			var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)

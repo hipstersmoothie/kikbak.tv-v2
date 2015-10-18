@@ -1,3 +1,4 @@
+// Updates data for existing videos, or removes if too old.
 var	db = require("./../helpers/db"),
 	_ = require('lodash'),
 	request = require('request-enhanced'),

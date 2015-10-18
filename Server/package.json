@@ -20,7 +20,7 @@
     "jade": "^1.11.0",
     "lodash": "^3.8.0",
     "mongodb": "^2.0.45",
-    "mongojs": "0.18.2",
+    "mongojs": "*",
     "node-schedule": "^0.2.7",
     "parse-rss": "*",
     "request": "^2.55.0",

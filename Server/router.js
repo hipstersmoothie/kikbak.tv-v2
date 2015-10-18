@@ -4,11 +4,12 @@ var express = require('express'),
 	_ = require('lodash'),
 	path = require('path');
 var mongo = require('mongodb');
+var blockRegex = require('./helpers/blockRegex');
 
 var startExpress = function() {
 	var app = express();
-	var blockedTitles = /Zepp Namba|Soundtrack Review|The Breakfast Club|Lollapalooza|Over\/Under|Album Review|Sound Advice|Birthday bash 20|covers|covering|:60 with|perform|Guitars and Bass Play|Behind the Scenes|Summer Jam|MTV News|Converse Rubber Tracks|2014|2015|Boiler Room|Trailer|BBC|Red Bull Session|Lip Sync Battle|\/15|.15|SKEE TV|Official Movie|GGN |^(?=.*Drake)(?=.*Tour).*$|Live @|Live in|Live at|\[live\]|\(live\)|Interview/i;
-	var blockedPublished = /Comedy Central|Consequence of Sound|asQme|Bootleg Kev|TheBreakfastClub|Art ist D|3FM|John Clay|LadyGagaNewz|Power 106|ClevverTV|Play Too Much|Stoney Roads|NME|CBS News|triple j|timwestwoodtv|colt45maltliquor|Jimmy Kimmel Live|BigBoyTV|deathrockstar|Al Lindstrom|SwaysUniverse|HOT 97|djvlad|Hawk Media Vision|BBC|Chart Attack|Concert Daily|LiveMusiChannel|MONTREALITY|TODAY|The Tonight Show Starring Jimmy Fallon|The Late Late Show with James Corden|The A.V. Club|GQ Magazine|I.T. Channel/;
+	var blockedTitles = blockRegex.titles;
+	var blockedPublished = blockRegex.publishers;
 
 	app.set('port', process.env.PORT || 5000); 
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -76,65 +77,73 @@ var startExpress = function() {
 		});
 	});
 
-	app.put('/flag/:videoId', function (req, res) {
-		var tag = req.query.tag;
-		db.videos.update({videoId : req.params.videoId}, {$addToSet: {tags: {$each: ["NotAVid", tag]}}}, function(err, result) {
-			if(result)
-				res.send("Video Flagged");
-		});
-	});
-
-	app.set('views', __dirname );
-	app.set('view engine', 'jade');
-	app.use(express.bodyParser());
-	app.use(express.static(path.join(__dirname, '')));
-	app.get('/classify', function (req, res) {
-		db.blogs.find({ $where: "!this.tested" }, function(err, blogs) {
-			var index = blogs[0].url.indexOf('feed/') > -1 ? blogs[0].url.indexOf('feed/') : blogs[0].url.indexOf('rss/');
-			res.render('picker', {
-				url: blogs[0].url,
-				urlNoRss: blogs[0].url.substring(0, index),
-				id: blogs[0]._id
+	//These routes are for local dev only
+	if (process && process.env && process.env.NODE_ENV !== 'development') {
+		app.put('/flag/:videoId', function (req, res) {
+			var tag = req.query.tag;
+			db.videos.update({videoId : req.params.videoId}, {$addToSet: {tags: {$each: ["NotAVid", tag]}}}, function(err, result) {
+				if(result)
+					res.send("Video Flagged");
 			});
-			console.log(blogs[0].url)
 		});
-	});
 
-	app.post('/blogs/tag/:id/:tag/', function (req, res) {
-		console.log(req, req.body, req.params)
-		db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
-			console.log(error,result)
-			res.send(error,result)
-		})
-	});
+		app.set('views', __dirname );
+		app.set('view engine', 'jade');
+		app.use(express.bodyParser());
+		app.use(express.static(path.join(__dirname, '')));
+		app.get('/classify', function (req, res) {
+			db.blogs.find({
+					$and: [
+						{ $where: "!this.tested" },
+						{ tags : { $in: ["Indie"] } }
+					]
+				}, function(err, blogs) {
+					var index = blogs[0].url.indexOf('feed/') > -1 ? blogs[0].url.indexOf('feed/') : blogs[0].url.indexOf('rss/');
+					res.render('picker', {
+						url: blogs[0].url,
+						urlNoRss: blogs[0].url.substring(0, index),
+						id: blogs[0]._id
+					});
+					console.log(blogs[0].url)
+			});
+		});
 
-	app.post('/blogs/:id/delete/', function (req, res) {
-		console.log(req, req.body, req.params)
-		db.blogs.remove({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
-			res.send(false,true)
-		})
-	});
+		app.post('/blogs/tag/:id/:tag/', function (req, res) {
+			console.log(req, req.body, req.params)
+			db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
+				console.log(error,result)
+				res.send(error,result)
+			})
+		});
 
-	app.post('/blogs/:id/verify/', function (req, res) {
-		db.blogs.update({_id:new mongo.ObjectID(req.params.id)}, {$set: {tested:true}}, function(error, result) {
-			res.send(false,true)
-		})
-	});
+		app.post('/blogs/:id/delete/', function (req, res) {
+			console.log(req, req.body, req.params)
+			db.blogs.remove({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
+				res.send(false,true)
+			})
+		});
 
-	app.post('/blogs/:id/tumblr/', function (req, res) {
-		// var newUrl = req.params.url.split('/feed')[0] + '/rss/'; , {$set: {url:newUrl}},
-		db.blogs.findOne({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
-			if(result.url.indexOf('/feed') > -1) {
-				var newUrl = result.url.split('/feed')[0] + '/rss/';
-						console.log(newUrl)
+		app.post('/blogs/:id/verify/', function (req, res) {
+			db.blogs.update({_id:new mongo.ObjectID(req.params.id)}, {$set: {tested:true}}, function(error, result) {
+				res.send(false,true)
+			})
+		});
 
-				db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$set: {url:newUrl}}, function() {
-					res.send(false,true)
-				});
-			}
-			
-		})
-	});
+		app.post('/blogs/:id/tumblr/', function (req, res) {
+			// var newUrl = req.params.url.split('/feed')[0] + '/rss/'; , {$set: {url:newUrl}},
+			db.blogs.findOne({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
+				if(result.url.indexOf('/feed') > -1) {
+					var newUrl = result.url.split('/feed')[0] + '/rss/';
+							console.log(newUrl)
+
+					db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$set: {url:newUrl}}, function() {
+						res.send(false,true)
+					});
+				}
+				
+			})
+		});
+	}
 	
 	return app;
 }
