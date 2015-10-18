@@ -78,7 +78,7 @@ var startExpress = function() {
 	});
 
 	//These routes are for local dev only
-	if (process && process.env && process.env.NODE_ENV !== 'development') {
+	if (process && process.env && process.env.NODE_ENV === 'development') {
 		app.put('/flag/:videoId', function (req, res) {
 			var tag = req.query.tag;
 			db.videos.update({videoId : req.params.videoId}, {$addToSet: {tags: {$each: ["NotAVid", tag]}}}, function(err, result) {

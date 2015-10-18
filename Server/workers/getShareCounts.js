@@ -1,3 +1,4 @@
+// Updates facebook and twitter shares
 var	request = require('request-enhanced'),
 	db = require("./../helpers/db"),
 	_ = require('lodash');
