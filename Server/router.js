@@ -52,6 +52,38 @@ var startExpress = function() {
 		getEm(req, res, wonderRank.defaultSort)
 	});
 
+	function getGenre(req, res, genre) {
+		db.videos.find({
+			$and: [
+				{ title: { $not: blockedTitles } }, //live
+				{ publishedBy: { $not: blockedPublished } }, //interviews
+				{ tags : 
+					{$in: [genre]}
+				},
+				{ tags : 
+					{$nin : ["Live", "Interview", "Trailer", "NotAVid"]}
+				}
+			]
+		}, function(err, videos) {
+			if(videos) {
+				wonderRank.defaultSort(videos);
+				res.send(videos.splice(0,100));
+			}
+		});
+	}
+
+	app.get('/hiphop', function (req, res) {
+		getGenre(req, res, "Hip Hop")
+	});
+
+	app.get('/indie', function (req, res) {
+		getGenre(req, res, "Indie")
+	});
+
+	app.get('/electronic', function (req, res) {
+		getGenre(req, res, "Electronic")
+	});
+	
 	app.get('/allstars', function (req, res) {
 		db.videos.find({
 			title: { $not: /(?=2015)(?=Boiler Room)/ }
@@ -109,15 +141,12 @@ var startExpress = function() {
 		});
 
 		app.post('/blogs/tag/:id/:tag/', function (req, res) {
-			console.log(req, req.body, req.params)
 			db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
-				console.log(error,result)
 				res.send(error,result)
 			})
 		});
 
 		app.post('/blogs/:id/delete/', function (req, res) {
-			console.log(req, req.body, req.params)
 			db.blogs.remove({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
 				res.send(false,true)
 			})

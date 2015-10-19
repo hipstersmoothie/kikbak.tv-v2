@@ -3,6 +3,9 @@ TopVideos = new Mongo.Collection('videos');
 LiveVideos = new Mongo.Collection('live');
 EmergingVideos = new Mongo.Collection('emerging');
 AllStarVideos = new Mongo.Collection('allStar');
+HipHopVideos = new Mongo.Collection('hiphop');
+IndieVideos = new Mongo.Collection('indie');
+ElectronicVideos = new Mongo.Collection('electronic');
 
 Meteor.startup(function () {
   Future = Npm.require('fibers/future');
@@ -31,6 +34,18 @@ var updates = [
   {
     url: '/videos',
     collection: TopVideos
+  },
+  {
+    url: '/hiphop',
+    collection: HipHopVideos
+  },
+  {
+    url: '/indie',
+    collection: IndieVideos
+  },
+  {
+    url: '/electronic',
+    collection: ElectronicVideos
   },
   {
     url: '/live',
@@ -64,10 +79,10 @@ var updateThis = function(url, collection) {
       var video = collection.findOne({rank:node.rank})
       if(video && video.videoId != node.videoId) {
         delete node._id;
-        collection.update({rank:node.rank}, node, {upsert:true});
+        collection.upsert({rank:node.rank}, node, {upsert:true});
       } else {
         delete node._id;
-        collection.update({rank:node.rank}, node, {upsert:true});
+        collection.upsert({rank:node.rank}, node, {upsert:true});
       }
     })    
   })
@@ -82,6 +97,12 @@ Meteor.publish('videos', function(type) {
     return EmergingVideos.find({}, {sort:{rank:1}});
   } else if (type == 'allStar') {
     return AllStarVideos.find({}, {sort:{rank:1}});
+  } else if (type == 'hiphop') {
+    return HipHopVideos.find({}, {sort:{rank:1}});
+  } else if (type == 'indie') {
+    return IndieVideos.find({}, {sort:{rank:1}});
+  } else if (type == 'electronic') {
+    return ElectronicVideos.find({}, {sort:{rank:1}});
   }
   return [];
 });
