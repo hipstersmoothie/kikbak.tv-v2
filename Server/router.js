@@ -56,7 +56,7 @@ var startExpress = function() {
 		getEm(req, res, wonderRank.hipsterSort);
 	});
 
-	function getGenre(req, res, genre) {
+	function getGenre(req, res, genre, exclude) {
 		db.videos.find({
 			$and: [
 				{ title: { $not: blockedTitles } }, //live
@@ -65,7 +65,7 @@ var startExpress = function() {
 					{$in: genre}
 				},
 				{ tags : 
-					{$nin : ["Live", "Interview", "Trailer", "NotAVid"]}
+					{$nin : exclude}
 				}
 			]
 		}, function(err, videos) {
@@ -77,19 +77,19 @@ var startExpress = function() {
 	}
 
 	app.get('/hiphop', function (req, res) {
-		getGenre(req, res, ["Hip Hop"])
+		getGenre(req, res, ["Hip Hop"], ["Live", "Interview", "Trailer", "NotAVid"])
 	});
 
 	app.get('/indie', function (req, res) {
-		getGenre(req, res, ["Indie"])
+		getGenre(req, res, ["Indie"], ["Metal", "Pop", "Live", "Interview", "Trailer", "NotAVid"])
 	});
 
 	app.get('/electronic', function (req, res) {
-		getGenre(req, res, ["Electronic"])
+		getGenre(req, res, ["Electronic"], ["Live", "Interview", "Trailer", "NotAVid"])
 	});
 
 	app.get('/rock', function (req, res) {
-		getGenre(req, res, ["Rock", "Metal"])
+		getGenre(req, res, ["Rock", "Metal"], ["Live", "Interview", "Trailer", "NotAVid"])
 	});
 	
 	app.get('/allstars', function (req, res) {
