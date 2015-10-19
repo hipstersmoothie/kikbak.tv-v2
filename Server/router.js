@@ -56,10 +56,6 @@ var startExpress = function() {
 		getEm(req, res, wonderRank.hipsterSort);
 	});
 
-	app.get('/allstars', function (req, res) {
-		getEm(req, res, wonderRank.topSort)
-	});
-
 	function getGenre(req, res, genre) {
 		db.videos.find({
 			$and: [
@@ -90,6 +86,23 @@ var startExpress = function() {
 
 	app.get('/electronic', function (req, res) {
 		getGenre(req, res, "Electronic")
+	});
+	
+	app.get('/allstars', function (req, res) {
+		db.videos.find({
+			$and: [
+				{ title: { $not: /(?=2015)(?=Boiler Room)/ } },
+				{ tags : 
+					{$nin : ["Interview", "Trailer", "NotAVid"]}
+				}
+			]
+		}, 
+		function(err, videos) {
+			if(videos) {
+				wonderRank.topSort(videos);
+				res.send(videos.splice(0,100));
+			}
+		});
 	});
 
 	app.get('/live', function (req, res) {
