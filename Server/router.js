@@ -62,7 +62,7 @@ var startExpress = function() {
 				{ title: { $not: blockedTitles } }, //live
 				{ publishedBy: { $not: blockedPublished } }, //interviews
 				{ tags : 
-					{$in: [genre]}
+					{$in: genre}
 				},
 				{ tags : 
 					{$nin : ["Live", "Interview", "Trailer", "NotAVid"]}
@@ -77,15 +77,19 @@ var startExpress = function() {
 	}
 
 	app.get('/hiphop', function (req, res) {
-		getGenre(req, res, "Hip Hop")
+		getGenre(req, res, ["Hip Hop"])
 	});
 
 	app.get('/indie', function (req, res) {
-		getGenre(req, res, "Indie")
+		getGenre(req, res, ["Indie"])
 	});
 
 	app.get('/electronic', function (req, res) {
-		getGenre(req, res, "Electronic")
+		getGenre(req, res, ["Electronic"])
+	});
+
+	app.get('/rock', function (req, res) {
+		getGenre(req, res, ["Rock", "Metal"])
 	});
 	
 	app.get('/allstars', function (req, res) {

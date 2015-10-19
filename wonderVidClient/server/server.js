@@ -6,6 +6,7 @@ AllStarVideos = new Mongo.Collection('allStar');
 HipHopVideos = new Mongo.Collection('hiphop');
 IndieVideos = new Mongo.Collection('indie');
 ElectronicVideos = new Mongo.Collection('electronic');
+RockVideos = new Mongo.Collection('rock');
 
 Meteor.startup(function () {
   Future = Npm.require('fibers/future');
@@ -46,6 +47,10 @@ var updates = [
   {
     url: '/electronic',
     collection: ElectronicVideos
+  },
+  {
+    url: '/rock',
+    collection: RockVideos
   },
   {
     url: '/live',
@@ -103,6 +108,8 @@ Meteor.publish('videos', function(type) {
     return IndieVideos.find({}, {sort:{rank:1}});
   } else if (type == 'electronic') {
     return ElectronicVideos.find({}, {sort:{rank:1}});
+  } else if (type == 'rock') {
+    return RockVideos.find({}, {sort:{rank:1}});
   }
   return [];
 });

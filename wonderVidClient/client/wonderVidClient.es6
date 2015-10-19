@@ -252,6 +252,7 @@ Template.header.helpers({
 				{type:"Hip Hop", className: "hipHopVideos"},
 				{type:"Indie", className: "indieVideos"},
 				{type:"Electronic", className: "electronicVideos"},
+				{type:"Rock/Metal", className: "rockVideos"},
 				{type:"Live", className: "liveVideos"}];
 	},
 	selectedGenre() {
@@ -307,6 +308,9 @@ Template.header.events({
 	},
 	'click .electronicVideos': () => {
 		Router.go('/electronic');
+	},
+	'click .rockVideos': () => {
+		Router.go('/rock');
 	},
 	'click .liveVideos': () => {
 		Router.go('/live');

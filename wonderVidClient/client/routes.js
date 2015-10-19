@@ -12,6 +12,7 @@ AllStarVideos = new Mongo.Collection('allStar');
 HipHopVideos = new Mongo.Collection('hiphop');
 IndieVideos = new Mongo.Collection('indie');
 ElectronicVideos = new Mongo.Collection('electronic');
+RockVideos = new Mongo.Collection('rock');
 
 Router.route('/about', {
   layoutTemplate: 'layout',
@@ -100,6 +101,17 @@ Router.route('/electronic', {
   },
   data: function() {
     return updateGrid('Electronic', ElectronicVideos, this);
+  }
+}); 
+
+Router.route('/rock', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    return subs.subscribe('videos', 'rock');
+  },
+  data: function() {
+    return updateGrid('Rock/Metal', RockVideos, this);
   }
 }); 
 
