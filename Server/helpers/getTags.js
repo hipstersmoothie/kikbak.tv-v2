@@ -1,6 +1,6 @@
 // Simple implementation to find the genre of a video. This should be replaced by alchemy.io
 var _ = require('lodash');
-var blockRegex = require('./helpers/blockRegex');
+var blockRegex = require('./blockRegex');
 var blockedTitles = blockRegex.titles;
 var blockedPublished = blockRegex.publishers;
 var checkLive = function(text, youTubeDescription, uploader, title) {
