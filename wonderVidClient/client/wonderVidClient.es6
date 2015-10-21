@@ -673,7 +673,11 @@ function hitSquare(thisVid, index) {
 		video.playVideo();
 		expandPlayerAnimation();
 	} else if (Session.equals('playerMinimized', true)){
-		video.playVideoAt(index);
+		if(nextList) { 
+			video.loadPlaylist(nextList.videoIds, index);
+			nextList = null;
+		} else
+			video.playVideoAt(index);
 	} else if (tlDropdown == null || Session.equals('playerPushedTop', true)){		
 		createDropDownAnimation();
 		if(nextList) {
@@ -718,7 +722,7 @@ function updateList(event) {
 firstPlay = true, nextList = null;
 renderVids = function renderVids(index) {
 	Session.set("stateImage",pauseButton);	
-	videoTmp = new YT.Player("player", {
+	video = new YT.Player("player", {
 		events: {
 			onReady(event) {
 				if(index != null)
@@ -738,6 +742,7 @@ renderVids = function renderVids(index) {
 				} else if (event.data == YT.PlayerState.PAUSED) {
 					Session.set("stateImage", playButton);
 				} else if (event.data == YT.PlayerState.ENDED) {
+					console.log(nextList)
 					if(nextList)
 						updateList(event.target);
 					else {
@@ -752,7 +757,6 @@ renderVids = function renderVids(index) {
 			}
 		} 
 	});
-	video = videoTmp;
 	video.route = Router.current().route.getName();
 
 	// YT.load();   	
