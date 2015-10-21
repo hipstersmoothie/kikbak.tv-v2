@@ -2,9 +2,9 @@
 var _ = require('lodash'); 
 var multiplier = function(days) {
 	if (days <= 1)
-		return 200;
+		return 400;
 	else if (days <= 2)
-		return 80;
+		return 200;
 	else if (days <= 3)
 		return 40;
 	else if (days <= 4)
@@ -129,25 +129,25 @@ var sort = function(videos) {
 			var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
 			var viewMultiplier2 = viewMultiplier(b.avgViewPerHalfHour);
 
-			if(a.shareCounts) {
-				var facebook1 = mult(a.avgFaceBookShares, a.shareCounts.Facebook.total_count);
-				var twitter1 = multTwitter(a.avgTweets, a.shareCounts.Twitter);
-			} else {
-				var facebook1 = 2;
-				var twitter1 = 2;
-			}
+			// if(a.shareCounts) {
+			// 	var facebook1 = mult(a.avgFaceBookShares, a.shareCounts.Facebook.total_count);
+			// 	var twitter1 = multTwitter(a.avgTweets, a.shareCounts.Twitter);
+			// } else {
+			// 	var facebook1 = 3;
+			// 	var twitter1 = 3;
+			// }
 
-			if(b.shareCounts) {
-				var facebook2 = mult(b.avgFaceBookShares, b.shareCounts.Facebook.total_count);
-				var twitter2 = multTwitter(b.avgTweets, b.shareCounts.Twitter);
-			} else {
-				var facebook2 = 2;
-				var twitter2 = 2;
-			}
+			// if(b.shareCounts) {
+			// 	var facebook2 = mult(b.avgFaceBookShares, b.shareCounts.Facebook.total_count);
+			// 	var twitter2 = multTwitter(b.avgTweets, b.shareCounts.Twitter);
+			// } else {
+			// 	var facebook2 = 3;
+			// 	var twitter2 = 3;
+			// }
 
 
-			a.wonderRank = (a.foundOn.length * adg1 * viewMultiplier1 * ifMusicVideo(a) * facebook1 * twitter1);
-			b.wonderRank = (b.foundOn.length * adg2 * viewMultiplier2 * ifMusicVideo(b) * facebook2 * twitter2);
+			a.wonderRank = (a.foundOn.length * adg1 * viewMultiplier1 * ifMusicVideo(a) );
+			b.wonderRank = (b.foundOn.length * adg2 * viewMultiplier2 * ifMusicVideo(b) );
 
 			if(a.wonderRank - b.wonderRank == 0){
 				if(a.youTubePostDate - b.youTubePostDate > 0) 
