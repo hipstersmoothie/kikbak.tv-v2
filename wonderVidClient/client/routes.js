@@ -9,6 +9,10 @@ TopVideos = new Mongo.Collection('videos');
 LiveVideos = new Mongo.Collection('live');
 EmergingVideos = new Mongo.Collection('emerging');
 AllStarVideos = new Mongo.Collection('allStar');
+HipHopVideos = new Mongo.Collection('hiphop');
+IndieVideos = new Mongo.Collection('indie');
+ElectronicVideos = new Mongo.Collection('electronic');
+RockVideos = new Mongo.Collection('rock');
 
 Router.route('/about', {
   layoutTemplate: 'layout',
@@ -66,6 +70,50 @@ Router.route('/emerging', {
     return updateGrid('Emerging', EmergingVideos, this);
   }
 });  
+
+Router.route('/hiphop', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    return subs.subscribe('videos', 'hiphop');
+  },
+  data: function() {
+    return updateGrid('Hip Hop', HipHopVideos, this);
+  }
+});  
+
+Router.route('/indie', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    return subs.subscribe('videos', 'indie');
+  },
+  data: function() {
+    return updateGrid('Indie', IndieVideos, this);
+  }
+}); 
+
+Router.route('/electronic', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    return subs.subscribe('videos', 'electronic');
+  },
+  data: function() {
+    return updateGrid('Electronic', ElectronicVideos, this);
+  }
+}); 
+
+Router.route('/rock', {
+  layoutTemplate: 'layout',
+  template: 'gridThumbs',
+  waitOn: function() {
+    return subs.subscribe('videos', 'rock');
+  },
+  data: function() {
+    return updateGrid('Rock/Metal', RockVideos, this);
+  }
+}); 
 
 LikedVideos = new Mongo.Collection(null);
 Router.route('/likes', {

@@ -52,9 +52,54 @@ var startExpress = function() {
 		getEm(req, res, wonderRank.defaultSort)
 	});
 
+	app.get('/emerging', function (req, res) {
+		getEm(req, res, wonderRank.hipsterSort);
+	});
+
+	function getGenre(req, res, genre, exclude) {
+		db.videos.find({
+			$and: [
+				{ title: { $not: blockedTitles } }, //live
+				{ publishedBy: { $not: blockedPublished } }, //interviews
+				{ tags : 
+					{$in: genre}
+				},
+				{ tags : 
+					{$nin : exclude}
+				}
+			]
+		}, function(err, videos) {
+			if(videos) {
+				wonderRank.defaultSort(videos);
+				res.send(videos.splice(0,100));
+			}
+		});
+	}
+
+	app.get('/hiphop', function (req, res) {
+		getGenre(req, res, ["Hip Hop"], ["Live", "Interview", "Trailer", "NotAVid"])
+	});
+
+	app.get('/indie', function (req, res) {
+		getGenre(req, res, ["Indie"], ["Metal", "Pop", "Live", "Interview", "Trailer", "NotAVid"])
+	});
+
+	app.get('/electronic', function (req, res) {
+		getGenre(req, res, ["Electronic"], ["Live", "Interview", "Trailer", "NotAVid"])
+	});
+
+	app.get('/rock', function (req, res) {
+		getGenre(req, res, ["Rock", "Metal"], ["Live", "Interview", "Trailer", "NotAVid"])
+	});
+	
 	app.get('/allstars', function (req, res) {
 		db.videos.find({
-			title: { $not: /(?=2015)(?=Boiler Room)/ }
+			$and: [
+				{ title: { $not: /(?=2015)(?=Boiler Room)/ } },
+				{ tags : 
+					{$nin : ["Interview", "Trailer", "NotAVid"]}
+				}
+			]
 		}, 
 		function(err, videos) {
 			if(videos) {
@@ -62,10 +107,6 @@ var startExpress = function() {
 				res.send(videos.splice(0,100));
 			}
 		});
-	});
-
-	app.get('/emerging', function (req, res) {
-		getEm(req, res, wonderRank.hipsterSort);
 	});
 
 	app.get('/live', function (req, res) {
@@ -109,15 +150,12 @@ var startExpress = function() {
 		});
 
 		app.post('/blogs/tag/:id/:tag/', function (req, res) {
-			console.log(req, req.body, req.params)
 			db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
-				console.log(error,result)
 				res.send(error,result)
 			})
 		});
 
 		app.post('/blogs/:id/delete/', function (req, res) {
-			console.log(req, req.body, req.params)
 			db.blogs.remove({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
 				res.send(false,true)
 			})

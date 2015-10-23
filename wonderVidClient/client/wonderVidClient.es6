@@ -247,9 +247,13 @@ Template.about.events({
 Template.header.helpers({
 	genres() { 
 		return [{type:"Top Videos", className: "topVideos"}, 
-						{type:"Emerging", className: "emergingVideos"},
-						{type:"All Star", className: "allStarVideos"},
-						{type:"Live", className: "liveVideos"}];
+				{type:"Emerging", className: "emergingVideos"},
+				{type:"All Star", className: "allStarVideos"},
+				{type:"Hip Hop", className: "hipHopVideos"},
+				{type:"Indie", className: "indieVideos"},
+				{type:"Electronic", className: "electronicVideos"},
+				{type:"Rock/Metal", className: "rockVideos"},
+				{type:"Live", className: "liveVideos"}];
 	},
 	selectedGenre() {
 		return Session.get('selectedGenre');
@@ -298,6 +302,15 @@ Template.header.events({
 	},
 	'click .hipHopVideos': () => {
 		Router.go('/hipHop');
+	},
+	'click .indieVideos': () => {
+		Router.go('/indie');
+	},
+	'click .electronicVideos': () => {
+		Router.go('/electronic');
+	},
+	'click .rockVideos': () => {
+		Router.go('/rock');
 	},
 	'click .liveVideos': () => {
 		Router.go('/live');
@@ -758,6 +771,5 @@ renderVids = function renderVids(index) {
 		} 
 	});
 	video.route = Router.current().route.getName();
-
 	// YT.load();   	
 };
