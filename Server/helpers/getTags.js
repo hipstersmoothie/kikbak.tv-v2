@@ -11,15 +11,6 @@ var checkLive = function(text, youTubeDescription, uploader, title) {
 		tags = ['Live'];
 	if(youTubeDescription.indexOf('GGN') > -1) 
 		tags = ['Live'];
-	if ((youTubeDescription.indexOf('2015') > -1 || 
-		youTubeDescription.indexOf('/15') > -1 || 
-		youTubeDescription.indexOf('.15') > -1)
-	 && (youTubeDescription.toLowerCase().indexOf('music video') == -1 && 
-	 	 youTubeDescription.toLowerCase().indexOf('official video') == -1 && 
-	 	 title.toLowerCase().indexOf('official video') == -1 && 
-	 	 title.toLowerCase().indexOf('music video') == -1 && 
-	 	 uploader.toLowerCase().indexOf('vevo') == -1))
-		tags = ['Live'];
 	return tags;
 }
 
