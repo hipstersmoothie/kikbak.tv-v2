@@ -54,7 +54,8 @@ var updateStats = function(video, index) {
 				avgFavoritePerHalfHour : video.avgFavoritePerHalfHour ? (video.avgFavoritePerHalfHour + newFavorites)/2 : newFavorites,
 				avgCommentPerHalfHour : video.avgCommentPerHalfHour ? (video.avgCommentPerHalfHour + newComments)/2 : newComments
 			}});
-		}
+		} else if (result && result['items'] && result['items'].length === 0)
+			db.videos.update({videoId : video.videoId}, {$addToSet: {tags: "NotAVid"}});
 		done++;
 		if(vidlength == done) 
 			process.exit();
@@ -62,5 +63,3 @@ var updateStats = function(video, index) {
 }
 
 updateStatsForAllVids();
-
-
