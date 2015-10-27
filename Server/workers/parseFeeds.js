@@ -270,4 +270,18 @@ function findStills () {
 	});
 }
 
-refreshBlogsFeeds();
+var AlchemyAPI = require('./../javascripts/alchemyapi');
+var alchemyapi = new AlchemyAPI();
+
+function analyzePost(url, callback) {
+	alchemyapi.combined('url', url, {
+		extract: ['taxonomy', 'keyword']
+	}, function(response) {
+		callback(response);
+	});
+}
+
+analyzePost('http://pigeonsandplanes.com/2015/10/watch-purity-ring-perform-begin-again-kimmel/', function(response) {
+	console.log(response)
+})
+// refreshBlogsFeeds();
