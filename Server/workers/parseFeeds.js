@@ -235,6 +235,8 @@ function compareStills(video, cback) {
 				  if (err) return handle(err);
 				  _.forEach(images, fs.unlink)
 				  cback(isEqual)
+				  if(isEqual)
+				  	console.log('still video', 'https://www.youtube.com/watch?v=', video.videoId)
 				});
 			  }
 			});
