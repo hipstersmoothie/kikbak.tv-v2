@@ -210,7 +210,8 @@ var download = function(uri, filename, callback){
 function compareStills(video, cback) {
 	var still1 = 'http://img.youtube.com/vi/' + video.videoId + '/1.jpg';
 	var still2 = 'http://img.youtube.com/vi/' + video.videoId + '/2.jpg';
-	var stills = [still1, still2];
+	var still3 = 'http://img.youtube.com/vi/' + video.videoId + '/3.jpg';
+	var stills = [still1, still2, still3];
 	var images = [];
 
 	async.each(stills, function(still, callback, index) {
@@ -232,11 +233,19 @@ function compareStills(video, cback) {
 			  	cback(false)
 			  } else {
 			  	gm.compare(images[0], images[1], 0.002, function (err, isEqual, equality, raw, path1, path2) {
-				  if (err) return handle(err);
-				  _.forEach(images, fs.unlink)
-				  cback(isEqual)
-				  if(isEqual)
-				  	console.log('still video', 'https://www.youtube.com/watch?v=', video.videoId)
+				  if (err) return handle(err);				 
+				  if(isEqual) {
+				  	gm.compare(images[1], images[2], 0.002, function (err, isEqual, equality, raw, path1, path2) {
+					  if (err) return handle(err);
+					  _.forEach(images, fs.unlink)
+					  cback(isEqual)
+					  if(isEqual)
+					  	console.log('still video', 'https://www.youtube.com/watch?v=', video.videoId)
+					});
+				  } else {
+				  	_.forEach(images, fs.unlink)
+				  	cback(isEqual)
+				  }
 				});
 			  }
 			});
