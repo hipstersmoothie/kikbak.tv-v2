@@ -114,6 +114,7 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 }
 
 var newVid = function(vidId, url, blog, $, link) {
+	//checkstills
 	request.get({
 		url: 'https://www.googleapis.com/youtube/v3/videos?part=statistics%2Csnippet&id=' + vidId  + '&key=' + youtubeKey,
 		maxAttempts:3,
@@ -125,55 +126,64 @@ var newVid = function(vidId, url, blog, $, link) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
 
-			var bigThumb;
-			var smallThumb;
-			if(result['items'][0]['snippet']['thumbnails'].maxres) {
-				bigThumb = result['items'][0]['snippet']['thumbnails'].maxres.url;
-			} else if (result['items'][0]['snippet']['thumbnails'].standard) {
-				bigThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
-			} else {
-				bigThumb = result['items'][0]['snippet']['thumbnails'].high.url;
-			}
-
-			if(result['items'][0]['snippet']['thumbnails'].standard) {
-				smallThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
-			} else {
-				smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
-			}
-
-			var blogs = blog.tags ? blog.tags : [];
-			var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
-			console.log('adding', result['items'][0]['snippet']['title'], vidId); 
-			db.videos.update({ videoId : vidId }, {
-				$setOnInsert: {
-					youTubePostDate : result['items'][0]['snippet']['publishedAt'],
-					videoId : vidId,
-					foundOn : [blog],
-					origPosts : [link],
-					dateFound : _.now(),
-					thumbnail : youtubeThumbnail(url),
-					thumbHQ: bigThumb,
-					thumbSmall: smallThumb,
-					title : result['items'][0]['snippet']['title'],
-					description : result['items'][0]['snippet']['description'],
-					publishedBy : result['items'][0]['snippet']['channelTitle'],
-					oldStats : result['items'][0]['statistics'],
-					avgViewPerHalfHour : 0,
-					avgLikePerHalfHour : 0,
-					avgDislikePerHalfHour : 0,
-					avgFavoritePerHalfHour : 0,
-					avgCommentPerHalfHour : 0
-				},
-				$addToSet: {
-					tags : {
-						$each: tags
-					}
+			compareStills({
+				videoId: vidId
+			}, function(isSame) {
+				var bigThumb;
+				var smallThumb;
+				if(result['items'][0]['snippet']['thumbnails'].maxres) {
+					bigThumb = result['items'][0]['snippet']['thumbnails'].maxres.url;
+				} else if (result['items'][0]['snippet']['thumbnails'].standard) {
+					bigThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
+				} else {
+					bigThumb = result['items'][0]['snippet']['thumbnails'].high.url;
 				}
-			}, { upsert : true });
+
+				if(result['items'][0]['snippet']['thumbnails'].standard) {
+					smallThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
+				} else {
+					smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
+				}
+
+				var blogs = blog.tags ? blog.tags : [];
+				var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
+				if(isSame) {
+					console.log("found still")
+					tags = tags.push('NotAVid')
+				}
+				
+				console.log('adding', result['items'][0]['snippet']['title'], vidId); 
+				db.videos.update({ videoId : vidId }, {
+					$setOnInsert: {
+						youTubePostDate : result['items'][0]['snippet']['publishedAt'],
+						videoId : vidId,
+						foundOn : [blog],
+						origPosts : [link],
+						dateFound : _.now(),
+						thumbnail : youtubeThumbnail(url),
+						thumbHQ: bigThumb,
+						thumbSmall: smallThumb,
+						title : result['items'][0]['snippet']['title'],
+						description : result['items'][0]['snippet']['description'],
+						publishedBy : result['items'][0]['snippet']['channelTitle'],
+						oldStats : result['items'][0]['statistics'],
+						avgViewPerHalfHour : 0,
+						avgLikePerHalfHour : 0,
+						avgDislikePerHalfHour : 0,
+						avgFavoritePerHalfHour : 0,
+						avgCommentPerHalfHour : 0
+					},
+					$addToSet: {
+						tags : {
+							$each: tags
+						}
+					}
+				}, { upsert : true });
+				posts++;
+			}); 
 		} else if (error) {
 			// console.log(error);
-		}
-		posts++;
+		}			
 	});
 }
 
@@ -189,6 +199,7 @@ setInterval(function() {
 
 var async = require('async');
 var fs = require('fs');
+var gm = require('gm');
 
 var download = function(uri, filename, callback){
 	requestOrig(uri).pipe(fs.createWriteStream(filename)).on('close', callback).on('error', function  (error) {
@@ -196,12 +207,10 @@ var download = function(uri, filename, callback){
 	});
 };
 
-function compareStills(video) {
-	// console.log(video)
+function compareStills(video, cback) {
 	var still1 = 'http://img.youtube.com/vi/' + video.videoId + '/1.jpg';
 	var still2 = 'http://img.youtube.com/vi/' + video.videoId + '/2.jpg';
-	var still3 = 'http://img.youtube.com/vi/' + video.videoId + '/3.jpg';
-	var stills = [still1, still2, still3];
+	var stills = [still1, still2];
 	var images = [];
 
 	async.each(stills, function(still, callback, index) {
@@ -211,25 +220,23 @@ function compareStills(video) {
 		  callback();
 		});
 	}, function(err){
-		console.log(images)
-	    // if any of the file processing produced an error, err would equal that error
 	    if( err ) {
-	      // One of the iterations produced an error.
-	      // All processing will now stop.
 	      console.log('A file failed to process');
+	      _.forEach(images, fs.unlink)
+	      cback(false)
 	    } else {		
-
-	    console.log(resemble)	 
-			var diff = resemble(images[0]).compareTo(images[1]).ignoreNothing().onComplete(function(data){
-			    console.log(data);
-			    
-			    // {
-			    //   misMatchPercentage : 100, // %
-			    //   isSameDimensions: true, // or false
-			    //   dimensionDifference: { width: 0, height: -1 }, // defined if dimensions are not the same
-			    //   getImageDataUrl: function(){}
-			    // }
-			    
+	    	gm.compare(images[0], './workers/noPicture.jpg', 0.02, function (err, isEqual, equality, raw, path1, path2) {
+			  if (err) return cback(err);
+			  if(isEqual) {
+			  	_.forEach(images, fs.unlink)
+			  	cback(false)
+			  } else {
+			  	gm.compare(images[0], images[1], 0.002, function (err, isEqual, equality, raw, path1, path2) {
+				  if (err) return handle(err);
+				  _.forEach(images, fs.unlink)
+				  cback(isEqual)
+				});
+			  }
 			});
 		}
 	});
@@ -237,10 +244,18 @@ function compareStills(video) {
 
 function findStills () {
 	db.videos.find({ }, function(err, videos) {
-		compareStills({
-			videoId: 'oU1roh5edj4'
-		})
-		// _.forEach(videos, compareStills);
+		var i = 0;
+		setInterval(function() {
+			(function(video) {
+				compareStills(video, function(isSame) {
+					if(isSame === true)
+						db.videos.update({ videoId : video.videoId }, {$addToSet: {
+							tags : "NotAVid"
+						}});
+				});
+			})(videos[i]);
+			i++;
+		}, 200)
 	});
 }
 
