@@ -3,8 +3,7 @@ var http = require('http'),
 	db = require("./../helpers/db"),
 	_ = require('lodash'),
 	parser = require('parse-rss'),
-	request = require('request-enhanced'),
-	requestOrig = require('request'),
+	request = require('request'),
 	cheerio = require('cheerio'),
 	getYouTubeID = require('get-youtube-id'),
 	youtubeThumbnail = require('youtube-thumbnail'),
@@ -36,15 +35,13 @@ var parseFeed = function(url) {
 }
 
 var getHtml = function(post, blog) {
-	request.get({
-		url: post.link,
-		maxAttempts:3,
-		maxConcurrent: 50
+	request({
+		url: post.link
 	}, function(error, response){
 		// First we'll check to make sure no errors occurred when making the request
 		if(!error){
 			// Next, we'll utilize the cheerio library on the returned html which will essentially give us jQuery functionalit
-			var $ = cheerio.load(response);
+			var $ = cheerio.load(response.body);
 			handlePost($, blog, post.link);
 		} else {
 			// console.log("getHtml", blog, post.link, error);
@@ -54,7 +51,6 @@ var getHtml = function(post, blog) {
 
 var handlePost = function($, blog, link) {
 	var iframes = $('iframe');
-
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
 			addToDb(iframe.attribs.src, blog, $, link);
@@ -115,12 +111,10 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 
 var newVid = function(vidId, url, blog, $, link) {
 	//checkstills
-	request.get({
-		url: 'https://www.googleapis.com/youtube/v3/videos?part=statistics%2Csnippet&id=' + vidId  + '&key=' + youtubeKey,
-		maxAttempts:3,
-		maxConcurrent: 50
+	request({
+		url: 'https://www.googleapis.com/youtube/v3/videos?part=statistics%2Csnippet&id=' + vidId  + '&key=' + youtubeKey
 	}, function(error, result) {
-		result = JSON.parse(result);
+		result = JSON.parse(result.body);
 		if(result && result['items'] && result['items'].length > 0 
 			&& /official audio|\(audio\)|\[audio\]|audio only/i.exec(result['items'][0]['snippet']['title']) == null) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
