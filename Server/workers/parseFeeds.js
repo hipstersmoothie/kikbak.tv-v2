@@ -318,39 +318,42 @@ var buckets = [
 // analyzePost('http://pigeonsandplanes.com/2015/10/watch-purity-ring-perform-begin-again-kimmel/', function(response) {
 // 	console.log(response)
 // })
-db.buckets.find({tag: "Live"}, function(err, frame) {
-	console.log(err, frame)
-	if(err)
-		return console.log(err)
+function gatherInfo(genre) {
+	db.buckets.find({tag: genre}, function(err, frame) {
+		console.log(err, frame)
+		if(err)
+			return console.log(err)
 
-	var searchedPosts = frame.searchedPosts;
-	db.videos.find({tags:"Live"}, function(err, videos) {
-		if(!err) {
-			_.forEach(videos, function(video) { // all videos
-				_.forEach(video.origPosts, function(url) { // go through post found 
-					if(!_.includes(searchedPosts, url)) { // exclude already visited posts
-						searchedPosts = _.union(searchedPosts, url);
-						analyzePost(url, function(data) {
-							console.log(data)
-							var keywords = data.keywords ? _.pluck(data.keywords, 'text') : [];
-							var taxonomy = data.taxonomy ? _.pluck(data.taxonomy, 'label') : [];	
-							
-							db.buckets.update({tag: "Live"}, {
-								$addToSet: {
-									'taxonomy' : { $each : taxonomy },
-									'keywords' : { $each : keywords },
-									'searchedPosts' : url
-								}
-							})
-						});
-					}
+		var searchedPosts = frame.searchedPosts;
+		db.videos.find({tags:genre}, function(err, videos) {
+			if(!err) {
+				_.forEach(videos, function(video) { // all videos
+					_.forEach(video.origPosts, function(url) { // go through post found 
+						if(!_.includes(searchedPosts, url)) { // exclude already visited posts
+							searchedPosts = _.union(searchedPosts, url);
+							analyzePost(url, function(data) {
+								console.log(data)
+								var keywords = data.keywords ? _.pluck(data.keywords, 'text') : [];
+								var taxonomy = data.taxonomy ? _.pluck(data.taxonomy, 'label') : [];	
+								
+								db.buckets.update({tag: genre}, {
+									$addToSet: {
+										'taxonomy' : { $each : taxonomy },
+										'keywords' : { $each : keywords },
+										'searchedPosts' : url
+									}
+								})
+							});
+						}
+					});
 				});
-			});
-		} else {
-			console.log(err)
-		}
+			} else {
+				console.log(err)
+			}
+		});
 	});
-});
+}
 
+gatherInfo("Live");
 
 // refreshBlogsFeeds();
