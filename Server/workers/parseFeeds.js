@@ -126,63 +126,72 @@ var newVid = function(vidId, url, blog, $, link) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
 
-			compareStills({
-				videoId: vidId
-			}, function(isSame) {
-				var bigThumb;
-				var smallThumb;
-				if(result['items'][0]['snippet']['thumbnails'].maxres) {
-					bigThumb = result['items'][0]['snippet']['thumbnails'].maxres.url;
-				} else if (result['items'][0]['snippet']['thumbnails'].standard) {
-					bigThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
-				} else {
-					bigThumb = result['items'][0]['snippet']['thumbnails'].high.url;
-				}
+			analyzePost(link, function(data) {
+				var keywords, taxonomy;
+				if (data.keywords)
+					keywords = data.keywords;
+				if (data.taxonomy)
+					taxonomy = data.taxonomy;
 
-				if(result['items'][0]['snippet']['thumbnails'].standard) {
-					smallThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
-				} else {
-					smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
-				}
-
-				var blogs = blog.tags ? blog.tags : [];
-				var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
-				if(isSame) {
-					console.log("found still")
-					tags = tags.push('NotAVid')
-				}
-				
-				console.log('adding', result['items'][0]['snippet']['title'], vidId); 
-				db.videos.update({ videoId : vidId }, {
-					$setOnInsert: {
-						youTubePostDate : result['items'][0]['snippet']['publishedAt'],
-						videoId : vidId,
-						foundOn : [blog],
-						origPosts : [link],
-						dateFound : _.now(),
-						thumbnail : youtubeThumbnail(url),
-						thumbHQ: bigThumb,
-						thumbSmall: smallThumb,
-						title : result['items'][0]['snippet']['title'],
-						description : result['items'][0]['snippet']['description'],
-						publishedBy : result['items'][0]['snippet']['channelTitle'],
-						oldStats : result['items'][0]['statistics'],
-						avgViewPerHalfHour : 0,
-						avgLikePerHalfHour : 0,
-						avgDislikePerHalfHour : 0,
-						avgFavoritePerHalfHour : 0,
-						avgCommentPerHalfHour : 0
-					},
-					$addToSet: {
-						tags : {
-							$each: tags
-						}
+				compareStills({
+					videoId: vidId
+				}, function(isSame) {
+					var bigThumb;
+					var smallThumb;
+					if(result['items'][0]['snippet']['thumbnails'].maxres) {
+						bigThumb = result['items'][0]['snippet']['thumbnails'].maxres.url;
+					} else if (result['items'][0]['snippet']['thumbnails'].standard) {
+						bigThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
+					} else {
+						bigThumb = result['items'][0]['snippet']['thumbnails'].high.url;
 					}
-				}, { upsert : true });
-				posts++;
-			}); 
+
+					if(result['items'][0]['snippet']['thumbnails'].standard) {
+						smallThumb = result['items'][0]['snippet']['thumbnails'].standard.url;
+					} else {
+						smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
+					}
+
+					var blogs = blog.tags ? blog.tags : [];
+					var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
 					if(isSame)
 						tags.push('NotAVid')
+					
+					console.log('adding', result['items'][0]['snippet']['title'], vidId); 
+					db.videos.update({ videoId : vidId }, {
+						$setOnInsert: {
+							youTubePostDate : result['items'][0]['snippet']['publishedAt'],
+							videoId : vidId,
+							foundOn : [blog],
+							origPosts : [link],
+							dateFound : _.now(),
+							thumbnail : youtubeThumbnail(url),
+							thumbHQ: bigThumb,
+							thumbSmall: smallThumb,
+							title : result['items'][0]['snippet']['title'],
+							description : result['items'][0]['snippet']['description'],
+							publishedBy : result['items'][0]['snippet']['channelTitle'],
+							oldStats : result['items'][0]['statistics'],
+							avgViewPerHalfHour : 0,
+							avgLikePerHalfHour : 0,
+							avgDislikePerHalfHour : 0,
+							avgFavoritePerHalfHour : 0,
+							avgCommentPerHalfHour : 0,
+							taxonomy: taxonomy,
+							keywords: keywords
+						},
+						$addToSet: {
+							tags : {
+								$each: tags
+							}
+						}
+					}, { upsert : true }, function(err, res) {
+						console.log(err, res)
+					});
+					posts++;
+				}); 
+			})
+			
 		} else if (error) {
 			// console.log(error);
 		}			
@@ -242,7 +251,7 @@ function compareStills(video, cback) {
 					  _.forEach(images, fs.unlink)
 					  cback(isEqual)
 					  if(isEqual)
-					  	console.log('still video', 'https://www.youtube.com/watch?v=', video.videoId)
+					  	console.log('still video', 'https://www.youtube.com/watch?v=' + video.videoId)
 					});
 				  } else {
 				  	_.forEach(images, fs.unlink)
@@ -277,13 +286,71 @@ var alchemyapi = new AlchemyAPI();
 
 function analyzePost(url, callback) {
 	alchemyapi.combined('url', url, {
-		extract: ['taxonomy', 'keyword']
+		extract: ['keyword', 'taxonomy']
 	}, function(response) {
+		console.log("extracted: ", response)
 		callback(response);
 	});
 }
 
-analyzePost('http://pigeonsandplanes.com/2015/10/watch-purity-ring-perform-begin-again-kimmel/', function(response) {
-	console.log(response)
-})
+var buckets = [
+	{
+		tag: 'Live',
+		keywords: [
+			"performance"
+		],
+		taxonomy: [
+			"/art and entertainment/movies and tv/talk shows"
+		]
+	},
+	{
+		tag: 'Interview',
+		keywords: [],
+		taxonomy: []
+	},
+	{
+		tag: 'Trailer',
+		keywords: [],
+		taxonomy: []
+	}
+]
+
+// analyzePost('http://pigeonsandplanes.com/2015/10/watch-purity-ring-perform-begin-again-kimmel/', function(response) {
+// 	console.log(response)
+// })
+db.buckets.find({tag: "Live"}, function(err, frame) {
+	console.log(err, frame)
+	if(err)
+		return console.log(err)
+
+	var searchedPosts = frame.searchedPosts;
+	db.videos.find({tags:"Live"}, function(err, videos) {
+		if(!err) {
+			_.forEach(videos, function(video) { // all videos
+				_.forEach(video.origPosts, function(url) { // go through post found 
+					if(!_.includes(searchedPosts, url)) { // exclude already visited posts
+						searchedPosts = _.union(searchedPosts, url);
+						analyzePost(url, function(data) {
+							console.log(data)
+							var keywords = data.keywords ? _.pluck(data.keywords, 'text') : [];
+							var taxonomy = data.taxonomy ? _.pluck(data.taxonomy, 'label') : [];	
+							
+							db.buckets.update({tag: "Live"}, {
+								$addToSet: {
+									'taxonomy' : { $each : taxonomy },
+									'keywords' : { $each : keywords },
+									'searchedPosts' : url
+								}
+							})
+						});
+					}
+				});
+			});
+		} else {
+			console.log(err)
+		}
+	});
+});
+
+
 // refreshBlogsFeeds();
