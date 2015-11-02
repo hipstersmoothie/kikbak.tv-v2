@@ -181,6 +181,8 @@ var newVid = function(vidId, url, blog, $, link) {
 				}, { upsert : true });
 				posts++;
 			}); 
+					if(isSame)
+						tags.push('NotAVid')
 		} else if (error) {
 			// console.log(error);
 		}			
