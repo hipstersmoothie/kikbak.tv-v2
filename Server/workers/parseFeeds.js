@@ -286,7 +286,7 @@ var alchemyapi = new AlchemyAPI();
 
 function analyzePost(url, callback) {
 	alchemyapi.combined('url', url, {
-		extract: ['keyword', 'taxonomy']
+		extract: ['keyword', 'taxonomy', 'entities']
 	}, function(response) {
 		console.log("extracted: ", response)
 		callback(response);
@@ -301,17 +301,22 @@ var buckets = [
 		],
 		taxonomy: [
 			"/art and entertainment/movies and tv/talk shows"
+		],
+		entities: [
+			"Aubrey O’Day"
 		]
 	},
 	{
 		tag: 'Interview',
 		keywords: [],
-		taxonomy: []
+		taxonomy: [],
+		entities: []
 	},
 	{
 		tag: 'Trailer',
 		keywords: [],
-		taxonomy: []
+		taxonomy: [],
+		entities: []
 	}
 ]
 
@@ -335,11 +340,13 @@ function gatherInfo(genre) {
 								console.log(data)
 								var keywords = data.keywords ? _.pluck(data.keywords, 'text') : [];
 								var taxonomy = data.taxonomy ? _.pluck(data.taxonomy, 'label') : [];	
-								
+								var entities = data.entities ? _.pluck(data.entities, 'text') : [];	
+				
 								db.buckets.update({tag: genre}, {
 									$addToSet: {
 										'taxonomy' : { $each : taxonomy },
 										'keywords' : { $each : keywords },
+										'entities' : { $each : entities },
 										'searchedPosts' : url
 									}
 								})
