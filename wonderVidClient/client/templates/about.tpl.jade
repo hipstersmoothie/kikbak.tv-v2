@@ -30,28 +30,42 @@ link(href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet
 			p We search hundreds of blogs every hour looking for the most popular, most played, and most shared music videos. Then combine them into a top 100 that updates hourly. If you have missed quality MTV as much as we have, then throw #[a(href="http://www.kikbak.tv/") kikbak.tv] on the next time you're having a party or a kickback or whenever you're just chilling.   
 
 	.features
-		.feature.smartrankings
-			object.featurephoto
-				embed(src="/images/chart.svg" style="")
-			.description
-				h2.text-center Smart Rankings
-				p kikbak.tv ranks recent Music Videos by combining the Facebook shares, Tweets, blog posts, and average plays of the video.
-		.feature.natlanglearn
-			.description
-				h2.text-center  Learing and Catagorizing
-				p Using #[a(href="http://www.alchemyapi.com/") Alchemy API] for natural language analysis, we scan every blog post to properly distinguish between music videos, interview, live videos, and genres.  
-		.feature.blogs
-			.description
-				h2.text-center Hundreds of Blogs
-				p kickbak.tv reads in hundreds of different music blogs across the world to get a real sense of what videos are actually trending.
-		.feature.mobile
-			img.featurephoto(src="/images/mobile-views.png")
-			.description
-				h2.text-center  Mobile Apps
-				p kikbak.tv is now on the #[a(href="#") Apple Store] and #[a(href="https://play.google.com/store/apps/details?id=tv.kikbak.kikbak") Play Store]
-				a(href="https://play.google.com/store/apps/details?id=tv.kikbak.kikbak")
-					img(alt="Get it on Google Play" src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png")
-
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.smartrankings
+				object.featurephoto
+					embed(src="/images/chart.svg" style="")
+				.description
+					h2.text-center Smart Rankings
+					p kikbak.tv ranks recent Music Videos by combining the Facebook shares, Tweets, blog posts, and average plays of the video.
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.natlanglearn
+				.description
+					h2.text-center  Learing and Categorizing
+					p Using #[a(href="http://www.alchemyapi.com/") Alchemy API] for natural language analysis, we scan every blog post to properly distinguish between music videos, interview, live videos, and genres.  
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.blogs
+				img.featurephoto(src="/images/blogs.png")
+				.description
+					h2.text-center Hundreds of Blogs
+					p kickbak.tv reads in hundreds of different music blogs across the world to get a real sense of what videos are actually trending.
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.mobile
+				.description
+					h2.text-center  Mobile Apps
+					p kikbak.tv is now on the #[a(href="#") Apple Store] and #[a(href="https://play.google.com/store/apps/details?id=tv.kikbak.kikbak") Play Store]
+					a(href="https://play.google.com/store/apps/details?id=tv.kikbak.kikbak")
+						img(alt="Get it on Google Play" src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png")
+				img.featurephoto(src="/images/mobile-views.png")
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
 	h1.builtonheader Built Using
 	.builton
 		.cred.meteor

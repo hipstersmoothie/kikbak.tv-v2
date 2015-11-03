@@ -219,11 +219,60 @@ body {
 		display: inline-block;
 		list-style: none;
 		margin: 0;
-		padding: 0;
+		padding-top: 2em;
+		padding-bottom: 2em;
 		color: #DDDDDD;
 		margin-top: 20px;
 		width: 100%;
 
+		.division:nth-of-type(1) {
+		    background-color: #434343;
+		}
+
+		.division:nth-of-type(2) {
+		    background-color: #333333;
+		}
+
+		.division:nth-of-type(3) {
+		    background-color: #232323;
+		}
+
+		.division:nth-of-type(4) {
+		    background-color: #131313;
+		}
+		.division {
+			margin-bottom: -100px;
+		    height: 500px;
+		}
+
+		#bigHalfCircle {
+    		margin-bottom: -5px;
+
+			&:nth-of-type(1) path {
+			    fill: #434343;
+			    stroke: #434343;
+			}
+
+			&:nth-of-type(2) path {
+			    fill: #333333;
+			    stroke: #333333;
+			}
+
+			&:nth-of-type(3) path {
+			    fill: #232323;
+			    stroke: #232323;
+			}
+
+			&:nth-of-type(4) path {
+			    fill: #131313;
+			    stroke: #131313;
+			}
+
+			&:nth-of-type(5) path {
+			    fill: black;
+			    stroke: black;
+			}
+		}
 
 		.feature {
 		    display: flex;
@@ -257,12 +306,14 @@ body {
 	}
 
 	.builtonheader {
-		padding-top: 20px;
+
+    	margin-top: -28px;
+    	padding-top: 100px;
 	}
 
 	.builtonheader,
 	.builton {
-		background-color: rgba(1,1,1,0.5);
+		background-color: black;
 	}
 
 	.builton {
