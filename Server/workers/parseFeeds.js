@@ -199,14 +199,14 @@ var newVid = function(vidId, url, blog, $, link) {
 }
 
 var lastPosts;
-setInterval(function() {
-	if (lastPosts == posts) {
-		console.log('searched', posts, 'posts');
-		process.exit();
-	} else {
-		lastPosts = posts
-	}
-}, 120000)
+// setInterval(function() {
+// 	if (lastPosts == posts) {
+// 		console.log('searched', posts, 'posts');
+// 		process.exit();
+// 	} else {
+// 		lastPosts = posts
+// 	}
+// }, 120000)
 
 var async = require('async');
 var fs = require('fs');
@@ -286,55 +286,32 @@ var alchemyapi = new AlchemyAPI();
 
 function analyzePost(url, callback) {
 	alchemyapi.combined('url', url, {
-		extract: ['keyword', 'taxonomy', 'entities']
+		extract: ['keyword', 'taxonomy', 'entity']
 	}, function(response) {
 		console.log("extracted: ", response)
 		callback(response);
 	});
 }
 
-var buckets = [
-	{
-		tag: 'Live',
-		keywords: [
-			"performance"
-		],
-		taxonomy: [
-			"/art and entertainment/movies and tv/talk shows"
-		],
-		entities: [
-			"Aubrey O’Day"
-		]
-	},
-	{
-		tag: 'Interview',
-		keywords: [],
-		taxonomy: [],
-		entities: []
-	},
-	{
-		tag: 'Trailer',
-		keywords: [],
-		taxonomy: [],
-		entities: []
-	}
-]
-
 // analyzePost('http://pigeonsandplanes.com/2015/10/watch-purity-ring-perform-begin-again-kimmel/', function(response) {
 // 	console.log(response)
 // })
 function gatherInfo(genre) {
 	db.buckets.find({tag: genre}, function(err, frame) {
-		console.log(err, frame)
 		if(err)
 			return console.log(err)
 
-		var searchedPosts = frame.searchedPosts;
+		var searchedPosts = frame[0].searchedPosts;
 		db.videos.find({tags:genre}, function(err, videos) {
 			if(!err) {
-				_.forEach(videos, function(video) { // all videos
+				var i = 0;
+				var inter = setInterval(function() {
+					if(i === videos.length)
+						return clearInterval(inter);
+					var video = videos[i++];
 					_.forEach(video.origPosts, function(url) { // go through post found 
 						if(!_.includes(searchedPosts, url)) { // exclude already visited posts
+							console.log(video.title, i)
 							searchedPosts = _.union(searchedPosts, url);
 							analyzePost(url, function(data) {
 								console.log(data)
@@ -343,17 +320,19 @@ function gatherInfo(genre) {
 								var entities = data.entities ? _.pluck(data.entities, 'text') : [];	
 				
 								db.buckets.update({tag: genre}, {
-									$addToSet: {
+									$push: {
 										'taxonomy' : { $each : taxonomy },
 										'keywords' : { $each : keywords },
-										'entities' : { $each : entities },
+										'entities' : { $each : entities }
+									},
+									$addToSet: {
 										'searchedPosts' : url
 									}
 								})
 							});
-						}
+						} 
 					});
-				});
+				}, 500);
 			} else {
 				console.log(err)
 			}
