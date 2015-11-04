@@ -153,20 +153,55 @@ body {
 }
 
 .bottom {
-	height: 20em;
-	width: 100%;
-	color: white;
-	background: -webkit-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* Chrome 10+, Saf5.1+ */
-	background:    -moz-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* FF3.6+ */
-	background:     -ms-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* IE10 */
-	background:      -o-linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* Opera 11.10+ */
-	background:         linear-gradient(90deg, #5D4157 10%, #A8CABA 90%); /* W3C */
-	
-	button {
-		width: 150px;
-		height: 60px;
-		border-radius: 10px;
-		border-color: transparent;
+	position: relative;
+    height: 16em;
+    width: 100%;
+    color: #AAA;
+    background: #DDD;
+    z-index: -1;
+
+    .kikbak {	
+	    position: absolute;
+	    top: 100px;
+	    font-size: 2em;
+	    left: 200px;
+	    color: #AAA;
+    }
+
+    .subkikbak {	
+	    font-weight: 600;
+	    position: absolute;
+	    top: 140px;
+	    left: 200px;
+    }
+
+    .copyright {
+	    bottom: 0;
+	    position: absolute;
+	    left: 200px;
+    }
+
+    .fa {
+	    color: #aaa;
+	    font-size: 30px;
+	    /* padding: 10px; */
+	    position: absolute;
+	}
+
+	.fa-twitter {
+	    top: 110px;
+	    left: 500px;
+	}
+
+	.fa-instagram {
+	    top: 110px;
+	    left: 550px;
+	}
+
+	a {	
+	    position: absolute;
+	    top: 100px;
+	    left: 600px;
 	}
 }
 
@@ -181,14 +216,14 @@ body {
 	box-shadow: 0 6px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 }
 
-.middle {
-  // background: #C04848;
-
-    height: 493px;
+.about {
+	// background: #C04848;
+	margin: 0 auto;
+    height: 585px;
 	.gradient1;
-  // background-image: url("/images/congruent_outline.png");
-  padding-top: 20px;
-  color: #DDDDDD;
+	// background-image: url("/images/congruent_outline.png");
+  	padding-top: 20px;
+  	color: #DDDDDD;
 	h1 {
 		color: #C04848;
    		font-size: 28px;
@@ -198,9 +233,6 @@ body {
 
 	}
 
-
-
-	
 	.summary:hover h2::before {
     	max-width: 382px;
 	}
@@ -293,7 +325,7 @@ body {
 	}
 
 	.summary {
-    	margin: 200px auto 0 auto;
+    	margin: 200px auto 100px auto;
 		width: 40%;
 		text-align: justify;
 	}
@@ -353,8 +385,8 @@ body {
 			}
 
 			&:nth-of-type(5) path {
-			    fill: black;
-			    stroke: black;
+			    fill: #333;
+			    stroke: #333;
 			}
 		}
 
@@ -383,22 +415,17 @@ body {
 				    text-align: justify;
 				}
 			}			
-	
-
-
 		}
-
 	}
 
 	.builtonheader {
-
     	margin-top: -28px;
     	padding-top: 100px;
 	}
 
-	.builtonheader,
 	.builton {
-		background-color: black;
+		// background-color: black;
+		.gradient2;
 	}
 
 	.builton {
@@ -409,6 +436,7 @@ body {
 		    display: inline;
 		    height: 114px;
 		    margin: 10px 50px;
+		    padding-top: 10px;
 			img {
 				width: 200px;
 			}
@@ -449,7 +477,7 @@ body {
 	}
 }
 
-.top, .bottom, .middle {
+.top, .bottom, .about {
 	font-family: 'Lato', sans-serif;
 	font-weight: 400;
 }
@@ -601,10 +629,6 @@ body {
 	z-index: -1;
     position: fixed;
     left: 0;
-}
-
-.about {
-	margin: 40px auto 0px auto;
 }
 
 .scroll-container {
