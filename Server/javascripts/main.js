@@ -1,5 +1,4 @@
 $(document).ready(function() {
-  console.log('ready')
   $('.deleteButton').click(function(event) {
     $target = $(event.target)
 
@@ -48,6 +47,18 @@ $(document).ready(function() {
         "type": "POST",
         "contentType": "application/json",
         "data": data,
+        "success": function() {
+          location.reload()
+        }
+    });
+  });
+
+  $('.changeUrl').click(function(event) {
+    $target = $(event.target)
+    $.ajax({
+        "url": "/blogs/" + $('p')[0].id + '/update_url/' + encodeURIComponent($('.newUrl').val()),
+        "type": 'POST', 
+        "contentType": 'application/json', 
         "success": function() {
           location.reload()
         }
