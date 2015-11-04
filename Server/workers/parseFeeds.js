@@ -340,6 +340,50 @@ function gatherInfo(genre) {
 	});
 }
 
-gatherInfo("Live");
-
+// gatherInfo("Live");
+countAlchemy("Live");
 // refreshBlogsFeeds();
+function countAlchemy(genre) {
+	db.buckets.find({tag: genre}, function(err, frame) {
+
+		console.log("========== " + genre + " ========");
+		setPrint(frame[0].taxonomy, "toxonomy");
+		console.log("==============================");
+		setPrint(frame[0].keywords, "keywords");
+		console.log("==============================");
+		var subtractedKeywords = _.difference(frame[0].entities, frame[0].keywords);
+		setPrint(subtractedKeywords, "Keywords without entities");
+		// setPrint(frame[0].entities, "entities");
+
+	});
+}
+
+function bySortedValue(obj, callback, context) {
+    var tuples = [];
+
+    for (var key in obj) tuples.push([key, obj[key]]);
+
+    tuples.sort(function(a, b) { return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0 });
+
+    var length = 0;
+    while (length++ != 10) callback.call(context, tuples[length][0], tuples[length][1]);
+}
+
+
+function setPrint(sets, name) {
+	var dictionary = {};
+	var nodupes = _.uniq(sets, false);
+	console.log("Total " + name + ": " + sets.length);
+	console.log("Total unique " + name + ": " + nodupes.length);	
+	_.forEach(sets, function(index) {
+		if(dictionary[index] === undefined) dictionary[index] = 0;
+		dictionary[index]++;
+	});
+	console.log("Top 10 most common " + name);
+	bySortedValue(dictionary, function(key, value) {
+		console.log(key, value);
+	});
+}	
+
+
+
