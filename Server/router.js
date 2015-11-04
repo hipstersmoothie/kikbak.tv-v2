@@ -134,18 +134,26 @@ var startExpress = function() {
 		app.use(express.static(path.join(__dirname, '')));
 		app.get('/classify', function (req, res) {
 			db.blogs.find({
-					$and: [
-						{ $where: "!this.tested" },
-						{ tags : { $in: ["Indie"] } }
-					]
-				}, function(err, blogs) {
-					var index = blogs[0].url.indexOf('feed/') > -1 ? blogs[0].url.indexOf('feed/') : blogs[0].url.indexOf('rss/');
+				$and: [
+					{ $where: "!this.tested" },
+					{ tags : { $in: ["Indie"] } }
+				]
+			}, function(err, blogs) {
+				console.log(blogs[0])
+				var index = blogs[0].url.indexOf('feed/') > -1 ? blogs[0].url.indexOf('feed/') : blogs[0].url.indexOf('rss/');
+				
+				db.blogs.find({
+					url: blogs[0].url
+				}, function(err, videosDups) {
+					console.log(videosDups)
 					res.render('picker', {
+						dups: videosDups,
 						url: blogs[0].url,
 						urlNoRss: blogs[0].url.substring(0, index),
 						id: blogs[0]._id
-					});
+					}); 
 					console.log(blogs[0].url)
+				});	
 			});
 		});
 
@@ -180,6 +188,14 @@ var startExpress = function() {
 				}
 				
 			})
+		});
+
+		app.use(express.json());       // to support JSON-encoded bodies
+		app.use(express.urlencoded()); // to support URL-encoded bodies
+		app.post('/blogs/:id/update_url/:newUrl', function (req, res) {
+			db.blogs.update({_id:new mongo.ObjectID(req.params.id)}, {$set: {url:req.params.newUrl}}, function(error, result) {
+				res.send(false,true)
+			});
 		});
 	}
 	
