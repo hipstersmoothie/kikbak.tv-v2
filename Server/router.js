@@ -240,6 +240,10 @@ var startExpress = function() {
 		    for (var key in obj) tuples.push([key, obj[key]]);
 
 		    tuples.sort(function(a, b) { return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0 });
+			tuples = _.filter(tuples, function(tuple) {
+				if(tuple[1] > 1)
+					return tuple;
+			});	
 			callback(tuples);
 		}	
 
