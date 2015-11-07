@@ -126,16 +126,8 @@ var newVid = function(vidId, url, blog, $, link) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
 
-			analyzePost(link, function(data) {
-				var keywords, taxonomy;
-				if (data.keywords)
-					keywords = data.keywords;
-				if (data.taxonomy)
-					taxonomy = data.taxonomy;
-
-				compareStills({
-					videoId: vidId
-				}, function(isSame) {
+			analyzePost(link, function(tagFound) {
+				compareStills({ videoId: vidId }, function(isSame) {
 					var bigThumb;
 					var smallThumb;
 					if(result['items'][0]['snippet']['thumbnails'].maxres) {
@@ -156,6 +148,8 @@ var newVid = function(vidId, url, blog, $, link) {
 					var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
 					if(isSame)
 						tags.push('NotAVid')
+					if(tagFound)
+						tags.push(tagFound)
 					
 					console.log('adding', result['items'][0]['snippet']['title'], vidId); 
 					db.videos.update({ videoId : vidId }, {
@@ -289,13 +283,45 @@ function analyzePost(url, callback) {
 		extract: ['keyword', 'taxonomy', 'entity']
 	}, function(response) {
 		console.log("extracted: ", response)
-		callback(response);
+		var keywords = data.keywords ? data.keywords : [];
+		var taxonomy = data.taxonomy ? data.taxonomy : [];	
+		var entities = data.entities ? data.entities : [];
+
+		db.buckets.find({}, function(buckets) {
+			var bestBucket;
+
+			_.forEach(buckets, function(bucket) {
+				var keywordConfidence = compareKeywords(bucket.solidKeywords, keywords),
+					taxonomyConfidence = compareTaxonomy(bucket.solidTaxonomy, taxonomy),
+					entityConfidence = compareEntity(bucket.solidEntities, entities),
+					overall = keywordConfidence * taxonomyConfidence * entityConfidence;
+
+				if(overall >= 0.8) {
+					bestBucket = bucket;
+					return false;
+				}
+			});
+
+			if(bestBucket.tag)
+				callback(bestBucket.tag);
+			else
+				callback();
+		});
 	});
 }
 
-// analyzePost('http://pigeonsandplanes.com/2015/10/watch-purity-ring-perform-begin-again-kimmel/', function(response) {
-// 	console.log(response)
-// })
+function compareKeywords(base, found) {
+	return 1;
+}
+
+function compareTaxonomy(base, found) {
+	return 1;
+}
+
+function compareEntity(base, found) {
+	return 1;
+}
+
 function gatherInfo(genre) {
 	db.buckets.find({tag: genre}, function(err, frame) {
 		if(err)
@@ -340,12 +366,11 @@ function gatherInfo(genre) {
 	});
 }
 
-// gatherInfo("Live");
 countAlchemy("Live");
 // refreshBlogsFeeds();
+
 function countAlchemy(genre) {
 	db.buckets.find({tag: genre}, function(err, frame) {
-
 		console.log("========== " + genre + " ========");
 		setPrint(frame[0].taxonomy, "toxonomy");
 		console.log("==============================");
@@ -354,7 +379,6 @@ function countAlchemy(genre) {
 		var subtractedKeywords = _.difference(frame[0].entities, frame[0].keywords);
 		setPrint(subtractedKeywords, "Keywords without entities");
 		// setPrint(frame[0].entities, "entities");
-
 	});
 }
 
@@ -368,7 +392,6 @@ function bySortedValue(obj, callback, context) {
     var length = 0;
     while (length++ != 10) callback.call(context, tuples[length][0], tuples[length][1]);
 }
-
 
 function setPrint(sets, name) {
 	var dictionary = {};

@@ -143,7 +143,7 @@ var startExpress = function() {
 				var index = blogs[0].url.indexOf('feed/') > -1 ? blogs[0].url.indexOf('feed/') : blogs[0].url.indexOf('rss/');
 				
 				db.blogs.find({
-					url: blogs[0].url
+					url: new RegExp(extractDomain(blogs[0].url))
 				}, function(err, videosDups) {
 					console.log(videosDups)
 					res.render('picker', {
@@ -156,6 +156,22 @@ var startExpress = function() {
 				});	
 			});
 		});
+
+		function extractDomain(url) {
+		    var domain;
+		    //find & remove protocol (http, ftp, etc.) and get domain
+		    if (url.indexOf("://") > -1) {
+		        domain = url.split('/')[2];
+		    }
+		    else {
+		        domain = url.split('/')[0];
+		    }
+
+		    //find & remove port number
+		    domain = domain.split(':')[0];
+
+		    return domain;
+		}
 
 		app.post('/blogs/tag/:id/:tag/', function (req, res) {
 			db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
@@ -180,8 +196,6 @@ var startExpress = function() {
 			db.blogs.findOne({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
 				if(result.url.indexOf('/feed') > -1) {
 					var newUrl = result.url.split('/feed')[0] + '/rss/';
-							console.log(newUrl)
-
 					db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$set: {url:newUrl}}, function() {
 						res.send(false,true)
 					});
@@ -196,6 +210,48 @@ var startExpress = function() {
 			db.blogs.update({_id:new mongo.ObjectID(req.params.id)}, {$set: {url:req.params.newUrl}}, function(error, result) {
 				res.send(false,true)
 			});
+		});
+
+		app.get('/bucket/:tag', function (req, res) {
+			db.buckets.findOne({ tag: req.params.tag }, function(err, bucket) {	
+				var dictionary = {};
+				var subtractedKeywords = _.difference(bucket.keywords, bucket.entities);
+				subtractedKeywords = _.difference(subtractedKeywords, bucket.approvedKeywords);
+				var nodupes = _.uniq(subtractedKeywords, false);
+		
+				_.forEach(subtractedKeywords, function(index) {
+					if(dictionary[index] === undefined) dictionary[index] = 0;
+					dictionary[index]++;
+				});
+
+				bySortedValue(dictionary, function(tuples) {
+					res.render('bucket', {
+						bucket: req.params.tag,
+						keywords: tuples,
+						approvedKeywords: bucket.approvedKeywords
+					}); 
+				});			
+			});
+		});
+
+		function bySortedValue(obj, callback, context) {
+		    var tuples = [];
+
+		    for (var key in obj) tuples.push([key, obj[key]]);
+
+		    tuples.sort(function(a, b) { return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0 });
+			callback(tuples);
+		}	
+
+		app.post('/buckets/:tag/moveKeywords/:keywords', function (req, res) {
+			var moveKeywords = req.params.keywords.split(',');
+			console.log(req.params)
+			db.buckets.update({ tag : req.params.tag }, {
+				$addToSet : { approvedKeywords: {$each : moveKeywords} }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
 		});
 	}
 	
