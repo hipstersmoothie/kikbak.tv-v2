@@ -32,15 +32,11 @@
 }
 
 .gradient3 {
-	background: rgb(103,27,56); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(103,27,56,1) 0%, rgba(63,17,31,1) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(103,27,56,1)), color-stop(100%,rgba(63,17,31,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(103,27,56,1) 0%,rgba(63,17,31,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(103,27,56,1) 0%,rgba(63,17,31,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(103,27,56,1) 0%,rgba(63,17,31,1) 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgba(103,27,56,1) 0%,rgba(63,17,31,1) 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#671b38', endColorstr='#3f111f',GradientType=0 ); /* IE6-9 */
-
+	background: rgb(93,14,68); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(93,14,68,1) 0%, rgba(66,10,48,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(93,14,68,1) 0%,rgba(66,10,48,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(93,14,68,1) 0%,rgba(66,10,48,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5d0e44', endColorstr='#420a30',GradientType=0 ); /* IE6-9 */
 }
 
 .gradient4 {
@@ -52,7 +48,14 @@
 	background: -ms-linear-gradient(top,  rgba(72,0,72,1) 0%,rgba(41,0,43,1) 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  rgba(72,0,72,1) 0%,rgba(41,0,43,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#480048', endColorstr='#29002b',GradientType=0 ); /* IE6-9 */
+}
 
+.gradient5 {
+	background: rgb(30,87,153); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(30,87,153,1) 0%, rgba(28,28,28,1) 0%, rgba(28,28,28,1) 42%, rgba(51,51,51,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  rgba(30,87,153,1) 0%,rgba(28,28,28,1) 0%,rgba(28,28,28,1) 42%,rgba(51,51,51,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  rgba(30,87,153,1) 0%,rgba(28,28,28,1) 0%,rgba(28,28,28,1) 42%,rgba(51,51,51,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#333333',GradientType=0 ); /* IE6-9 */
 }
 
 
@@ -152,59 +155,6 @@ body {
   background-origin: content-box;
 }
 
-.bottom {
-	position: relative;
-    height: 16em;
-    width: 100%;
-    color: #AAA;
-    background: #DDD;
-    z-index: -1;
-
-    .kikbak {	
-	    position: absolute;
-	    top: 100px;
-	    font-size: 2em;
-	    left: 200px;
-	    color: #AAA;
-    }
-
-    .subkikbak {	
-	    font-weight: 600;
-	    position: absolute;
-	    top: 140px;
-	    left: 200px;
-    }
-
-    .copyright {
-	    bottom: 0;
-	    position: absolute;
-	    left: 200px;
-    }
-
-    .fa {
-	    color: #aaa;
-	    font-size: 30px;
-	    /* padding: 10px; */
-	    position: absolute;
-	}
-
-	.fa-twitter {
-	    top: 110px;
-	    left: 500px;
-	}
-
-	.fa-instagram {
-	    top: 110px;
-	    left: 550px;
-	}
-
-	a {	
-	    position: absolute;
-	    top: 100px;
-	    left: 600px;
-	}
-}
-
 .card {
 	padding: 1em 0 0 1em;
 	-moz-border-radius: 4px;
@@ -232,19 +182,18 @@ body {
 
 
 	}
+	// .summary:hover h2::before {
+ //    	max-width: 382px;
+	// }
 
-	.summary:hover h2::before {
-    	max-width: 382px;
-	}
+	// h2.builtonheader:hover::before,
+	// .builton:hover ~ h2::before{
+ //    	max-width: 130px;
+	// }
 
-	h2.builtonheader:hover::before,
-	.builton:hover ~ h2::before{
-    	max-width: 130px;
-	}
-
-	.feature:hover h2::before {
-    	max-width: 262px;
-	}
+	// .feature:hover h2::before {
+ //    	max-width: 262px;
+	// }
 
 	h2 {
 		color: #C04848;
@@ -272,14 +221,14 @@ body {
 	}
 
 	.dev {
-	    background: #DDDDDD;
+	    background: #1c1c1c;
 	    width: 300px;
 	    padding: 20px;
 	    display: inline-block;
 	    text-align: center;
 	    position: absolute;
 	    margin-top: -50px;
-  		color: #454545;
+  		color: #DDDDDD;
   		transform: skewX(-20deg);
 
 		&.developer1 {
@@ -294,7 +243,7 @@ body {
 
 		.devname {	
 		    font-family: 'Indie Flower', cursive;
-		    color: #333333;
+		    color: #BBBBBB;
 		    margin-bottom: 0;
 		    font-size: 28px;
 		}
@@ -305,7 +254,7 @@ body {
 
 		.fa{
 		    margin: 10px 10px;
-		    color: #454545;
+		    color: #DDDDDD;
 		    font-size: 24px;
 		    transition: all 0.3s;
 		    &.fa-github:hover {
@@ -341,6 +290,9 @@ body {
 		margin-top: 20px;
 		width: 100%;
 
+
+
+
 		.division:nth-of-type(1) {
 		    .gradient2;
 		}
@@ -370,8 +322,8 @@ body {
 			}
 
 			&:nth-of-type(2) path {
-			    fill: #671B38;
-			    stroke: #671B38;
+			    fill: #5d0e44;
+			    stroke: #5d0e44;
 			}
 
 			&:nth-of-type(3) path {
@@ -398,17 +350,17 @@ body {
 		    padding: 1em;
 		    justify-content: center;
 
-		
+		    &.smartrankings {
+    			padding-top: 50px;
+		    }
 
 			.featurephoto {
 			    width: 300px;
 			}
 
-
-
 			.description {    
     			padding-left: 30px;
-	    
+	    		width: 350px;
 				p {
 					padding: 5px 25px;
 					font-size: 14px;
@@ -420,7 +372,7 @@ body {
 
 	.builtonheader {
     	margin-top: -28px;
-    	padding-top: 100px;
+    	padding-top: 50px;
 	}
 
 	.builton {
@@ -442,6 +394,73 @@ body {
 			}
 		}
 	}
+
+
+	.bottom {
+		position: relative;
+	    height: 20em;
+	    width: 100%;
+	    color: #999;
+	    .gradient5;
+	    z-index: -1;
+
+	    .kikbak {	
+		    position: absolute;
+		    bottom: 40px;
+		    font-size: 2em;
+		    left: 200px;
+	    }
+
+	    .subkikbak {	
+		    font-weight: 600;
+		    position: absolute;
+		    bottom: 20px;
+		    left: 200px;
+	    }
+
+	    .copyright {
+		    bottom: 0;
+		    position: absolute;
+		    left: 200px;
+	    }
+
+	    .fa {
+		    color: #999;
+		    font-size: 30px;
+		    /* padding: 10px; */
+		    position: absolute;
+		    margin: 10px;		    
+		    transition: all 0.3s;
+		}
+
+		.fa-twitter {
+		    bottom: 0;
+		    left: 1000px;
+
+		    &:hover {
+		    	color: #4099FF;
+		    }
+		}
+
+		.fa-instagram {
+		    bottom: 0;
+		    left: 1050px;
+
+
+		    &:hover {
+		    	color: #517fa4;
+		    }
+		}
+
+		a {	
+		    position: absolute;
+		    bottom: 0;
+		    left: 1100px;
+		    margin: 10px;
+		}
+	}
+
+
 }
 
 .blackFuzz{
