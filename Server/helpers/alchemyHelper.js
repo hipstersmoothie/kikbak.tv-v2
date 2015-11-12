@@ -277,7 +277,9 @@ function countAlchemy(genre) {
 		console.log("==============================");
 		setPrint(frame[0].keywords, "keywords");
 		console.log("==============================");
-		var subtractedKeywords = _.difference(frame[0].entities, frame[0].keywords);
+		setPrint(frame[0].entities, "entities");
+		console.log("==============================");
+		var subtractedKeywords = _.difference(frame[0].keywords, frame[0].entities);
 		setPrint(subtractedKeywords, "Keywords without entities");
 		// setPrint(frame[0].entities, "entities");
 	});
@@ -291,7 +293,7 @@ function bySortedValue(obj, callback, context) {
     tuples.sort(function(a, b) { return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0 });
 
     var length = 0;
-    while (length++ != 10) callback.call(context, tuples[length][0], tuples[length][1]);
+    while (length++ != 100) callback.call(context, tuples[length][0], tuples[length][1]);
 }
 
 function setPrint(sets, name) {
@@ -307,6 +309,7 @@ function setPrint(sets, name) {
 	bySortedValue(dictionary, function(key, value) {
 		console.log(key, value);
 	});
+	return dictionary;
 }	
 
 module.exports = analyzePost;
