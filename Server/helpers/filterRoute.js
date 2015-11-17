@@ -16,17 +16,22 @@ function analyzePosts(sort, callback) {
 	}, function(err, videos) {
 		if(videos) {
 			sort(videos);
-			videos = videos.splice(0,100);
-			_.forEach(videos, function(video) {
+			var i = 0;
+			videos = videos.splice(0,300);
+			var inter = setInterval(function() {
+				if(i === videos.length)
+					return clearInterval(inter);
+
+				var video = videos[i++]
 				analyzePost(video.origPosts[0], function(tag) {
 					if (tag) {
 						console.log('tagged https://www.youtube.com/watch?v=' + video.videoId + ' ' + tag);
 						db.videos.update({videoId: video.videoId}, {$addToSet:{tags:tag}})
 					}
 				})
-			});
+			},500)
 		}
 	});
 }
 
-analyzePosts(wonderRank.hipsterSort)
+analyzePosts(wonderRank.defaultSort)

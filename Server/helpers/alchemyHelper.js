@@ -172,12 +172,114 @@ function analyzePost(url, callback) {
 					bestOverall = overall
 				}
 			});
-			if(bestBucket)
+			if(bestBucket) {
+        addData(data, bestBucket);
 				callback(bestBucket.tag);
-			else
+      } else
 				callback();
 		});
 	});
+}
+
+function addData(data, bucket) {
+  _.forEach(data.taxonomy, function(taxonomy) {
+    db.buckets.find({ 
+      tag: bucket.tag, 
+      "taxonomy.text": taxonomy.label
+    }, function(err, res) {
+      if(res.length === 0) {
+        db.buckets.update({ tag: bucket.tag }, { 
+          $addToSet : {
+            taxonomy: {
+              text: taxonomy.label,
+              count: 1,
+              score: parseFloat(taxonomy.score) 
+            }
+          }
+        }, function(err, res) {
+          console.log(err, res)
+        });
+      } else {
+        db.buckets.update({ 
+          tag: bucket.tag, 
+          "taxonomy.text": taxonomy.label
+        }, { 
+          $inc: { 
+            "taxonomy.$.count" : 1,
+            "taxonomy.$.score" : parseFloat(taxonomy.score) 
+          }
+        }, function(err, res) {
+          console.log(err, res)
+        });
+      }
+    });
+  });
+
+  _.forEach(data.keywords, function(keyword) {
+    db.buckets.find({ 
+      tag: bucket.tag, 
+      "keywords.text": keyword.text
+    }, function(err, res) {
+      if(res.length === 0) {
+        db.buckets.update({ tag: bucket.tag }, { 
+          $addToSet : {
+            keywords: {
+              text: keyword.text,
+              count: 1,
+              score: parseFloat(keyword.relevance) 
+            }
+          }
+        }, function(err, res) {
+          console.log(err, res)
+        });
+      } else {
+        db.buckets.update({ 
+          tag: bucket.tag, 
+          "keywords.text": keyword.text
+        }, { 
+          $inc: { 
+            "keywords.$.count" : 1,
+            "keywords.$.score" : parseFloat(keyword.relevance) 
+          }
+        }, function(err, res) {
+          console.log(err, res)
+        });
+      }
+    });
+  });
+
+  _.forEach(data.entities, function(entity) {
+    db.buckets.find({ 
+      tag: bucket.tag, 
+      "entity.text": entity.text
+    }, function(err, res) {
+      if(res.length === 0) {
+        db.buckets.update({ tag: bucket.tag }, { 
+          $addToSet : {
+            entities: {
+              text: entity.text,
+              count: 1,
+              score: parseFloat(entity.relevance) 
+            }
+          }
+        }, function(err, res) {
+          console.log(err, res)
+        });
+      } else {
+        db.buckets.update({ 
+          tag: bucket.tag, 
+          "entity.text": entity.text
+        }, { 
+          $inc: { 
+            "entity.$.count" : 1,
+            "entity.$.score" : parseFloat(entity.relevance),
+          }
+        }, function(err, res) {
+          console.log(err, res)
+        });
+      }
+    });
+  });
 }
 
 function compareKeywords(base, magicWords, found) {
@@ -198,7 +300,7 @@ function compareKeywords(base, magicWords, found) {
 		}
 
 		if(keyword.text.toLowerCase().indexOf('music video') > -1)
-			confidence -= parseFloat(keyword.relevance)
+			confidence -= 5 //magic number, dont want music videos to be tagged
 	});
 
 	return confidence;
@@ -208,8 +310,12 @@ function compareTaxonomy(base, found) {
 	var confidence = 0;
 
 	_.forEach(found, function(taxonomy) {
-		if(_.includes(base, taxonomy.label))
-			confidence += parseFloat(taxonomy.score)
+		if(_.includes(base, taxonomy.label)) {
+			if (taxonomy.confident && taxonomy.confident == 'no')
+				confidence += (parseFloat(taxonomy.score) * parseFloat(taxonomy.score))
+			else
+				confidence += parseFloat(taxonomy.score)
+		}
 	});
 
 	return confidence;
@@ -219,8 +325,9 @@ function compareEntity(base, found) {
 	var confidence = 0;
 
 	_.forEach(found, function(entity) {
-		if(_.includes(base, entity.text))
+		if(_.includes(base, entity.text)) {
 			confidence += parseFloat(entity.relevance)
+		}
 	});
 
 	return confidence;
@@ -275,14 +382,41 @@ function countAlchemy(genre) {
 		console.log("========== " + genre + " ========");
 		setPrint(frame[0].taxonomy, "toxonomy");
 		console.log("==============================");
-		setPrint(frame[0].keywords, "keywords");
-		console.log("==============================");
 		setPrint(frame[0].entities, "entities");
 		console.log("==============================");
-		var subtractedKeywords = _.difference(frame[0].keywords, frame[0].entities);
-		setPrint(subtractedKeywords, "Keywords without entities");
-		// setPrint(frame[0].entities, "entities");
+    setPrint(frame[0].keywords, "keywords");
+		// var subtractedKeywords = _.filter(frame[0].keywords, function(keyword) {
+  //     var found = false;
+
+  //     _.forEach(frame[0].entities, function(val,entity) {
+  //       if(keyword.indexOf(entity) > -1) {
+  //         found = true;
+  //         return false;
+  //       }
+  //     });
+
+  //     return !found;
+  //   });
+		// var x = setPrint(counts(subtractedKeywords), "Keywords without entities");
+  //   _.forEach(x, function(val, key) {
+  //     if(key.indexOf('.') > -1 || key[0] === '$') {
+  //       console.log(key)
+  //       delete x[key]
+  //     }
+  //   }) 
+  //   db.buckets.update({tag:genre}, {$set : {keywords: x}}, function(err, res) {
+  //     console.log(err, res)
+  //   })
 	});
+}
+
+function toArray(data) {
+  return _.map(data, function(val, key) {
+    return {
+      text: key,
+      count: val.count
+    };
+  });
 }
 
 function bySortedValue(obj, callback, context) {
@@ -290,30 +424,48 @@ function bySortedValue(obj, callback, context) {
 
     for (var key in obj) tuples.push([key, obj[key]]);
 
-    tuples.sort(function(a, b) { return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0 });
+    tuples.sort(function(a, b) { 
+      return a[1].count < b[1].count ? 1 : a[1].count > b[1].count ? -1 : 0 
+    });
 
     var length = 0;
     while (length++ != 100) callback.call(context, tuples[length][0], tuples[length][1]);
 }
 
 function setPrint(sets, name) {
-	var dictionary = {};
-	var nodupes = _.uniq(sets, false);
-	console.log("Total " + name + ": " + sets.length);
-	console.log("Total unique " + name + ": " + nodupes.length);	
-	_.forEach(sets, function(index) {
-		if(dictionary[index] === undefined) dictionary[index] = 0;
-		dictionary[index]++;
-	});
+	console.log("Total " + name + ": " + _.keys(sets).length);
+	console.log("Total unique " + name + ": " + _.keys(sets).length);	
 	console.log("Top 10 most common " + name);
-	bySortedValue(dictionary, function(key, value) {
-		console.log(key, value);
-	});
-	return dictionary;
+	// bySortedValue(sets, function(key, value) {
+	// 	console.log(key, value);
+	// });
+  console.log(sets.sort(function(a, b) {
+    return a.count - b.count;
+  }).reverse().slice(0, 100))
 }	
+
+function counts(sets) {
+  var dictionary = {};
+  var nodupes = _.uniq(sets, false);
+  _.forEach(sets, function(index) {
+    if(dictionary[index] === undefined) dictionary[index] = { count : 0 };
+    dictionary[index].count++;
+  });
+  return dictionary;
+}
+
+function objectize(sets) {
+  var dictionary = _.object(_.map(sets, function(val, key) {
+    return [key, {
+      count: val
+    }]
+  }));
+  return dictionary;
+}
 
 module.exports = analyzePost;
 
-analyzePost('http://circuitsweet.co.uk/2015/11/millie-manders-releases-teddy-music-video/', function(tag) {
+analyzePost('http://www.stereogum.com/1843598/watch-pearl-jam-debut-comfortably-numb-cover-in-the-rain-in-brazil/video/', function(tag) {
 	console.log(tag)
 })
+// countAlchemy("Live")
