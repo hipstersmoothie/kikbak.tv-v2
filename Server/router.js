@@ -3,7 +3,9 @@ var express = require('express'),
     db = require("./helpers/db"),
 	_ = require('lodash'),
 	path = require('path');
+	$ = require('jquery');
 var mongo = require('mongodb');
+var util = require('util');
 var blockRegex = require('./helpers/blockRegex');
 
 var startExpress = function() {
@@ -214,37 +216,38 @@ var startExpress = function() {
 
 		app.get('/bucket/:tag', function (req, res) {
 			db.buckets.findOne({ tag: req.params.tag }, function(err, bucket) {	
-				var dictionary = {};
-				var subtractedKeywords = _.difference(bucket.keywords, bucket.entities);
-				subtractedKeywords = _.difference(subtractedKeywords, bucket.approvedKeywords);
-				var nodupes = _.uniq(subtractedKeywords, false);
-		
-				_.forEach(subtractedKeywords, function(index) {
-					if(dictionary[index] === undefined) dictionary[index] = 0;
-					dictionary[index]++;
-				});
+				var dictionaryK = {};
+				console.log("uhhhh");
+				var subtractedKeywords = differenceByText(bucket.keywords, _.pluck(bucket.keywords, "text"), _.pluck(bucket.entities, "text"));
+				subtractedKeywords = differenceByText(subtractedKeywords, _.pluck(subtractedKeywords, "text"), bucket.approvedKeywords);
+				var subtractedTaxonomy = differenceByText(bucket.taxonomy, _.pluck(bucket.taxonomy, "text"), bucket.solidTaxonomy);
+				var subtractedEntities = differenceByText(bucket.entities, _.pluck(bucket.entities, "text"), bucket.solidEntities);
 
-				bySortedValue(dictionary, function(tuples) {
-					res.render('bucket', {
-						bucket: req.params.tag,
-						keywords: tuples,
-						approvedKeywords: bucket.approvedKeywords
-					}); 
-				});			
+				res.render('bucket', {
+					bucket: req.params.tag,
+					keywords: bySortedCount(subtractedKeywords),
+					approvedKeywords: bucket.approvedKeywords,
+					taxonomy: bySortedCount(subtractedTaxonomy),
+					solidTaxonomy: bucket.solidTaxonomy,
+					entities: bySortedCount(subtractedEntities),
+					solidEntities: bucket.solidEntities
+				}); 			
 			});
 		});
 
-		function bySortedValue(obj, callback, context) {
-		    var tuples = [];
+		function differenceByText(original, firstPlucked, secondPlucked){
 
-		    for (var key in obj) tuples.push([key, obj[key]]);
+			var diff = _.difference(firstPlucked, secondPlucked);
+			var result = _.filter(original, function(obj) { return diff.indexOf(obj.text) >= 0; });
+			return result;
+		}
 
-		    tuples.sort(function(a, b) { return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0 });
-			tuples = _.filter(tuples, function(tuple) {
-				if(tuple[1] > 1)
-					return tuple;
-			});	
-			callback(tuples);
+		function bySortedCount(obj) {
+			var tuples = obj.slice(0);
+			tuples.sort(function(a,b) {
+			    return b.count - a.count;
+			});
+			return tuples
 		}	
 
 		app.post('/buckets/:tag/moveKeywords/:keywords', function (req, res) {
@@ -254,6 +257,58 @@ var startExpress = function() {
 				$addToSet : { approvedKeywords: {$each : moveKeywords} }
 			}, function(err, result) {
 				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/deleteApprovedKeywords/:keywords', function (req, res) {
+			var deleteKeywords = req.params.keywords;
+			db.buckets.update({ tag : req.params.tag }, {
+				$pull : { approvedKeywords: deleteKeywords }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/moveTaxonomy/:taxonomy', function (req, res) {
+			var moveTaxonomy = req.params.taxonomy.split(',');
+			console.log(req.params)
+			db.buckets.update({ tag : req.params.tag }, {
+				$addToSet : { solidTaxonomy: {$each : moveTaxonomy} }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/deleteSolidTaxonomy/:taxonomy', function (req, res) {
+			var deleteTaxonomy = req.params.taxonomy;
+			db.buckets.update({ tag : req.params.tag }, {
+				$pull : { solidTaxonomy: deleteTaxonomy }
+			}, function(err, result) {
+				console.log("Error", err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/moveEntities/:entities', function (req, res) {
+			var moveEntities = req.params.entities.split(',');
+			console.log(req.params)
+			db.buckets.update({ tag : req.params.tag }, {
+				$addToSet : { solidEntities: {$each : moveEntities} }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/deleteSolidEntities/:entities', function (req, res) {
+			var deleteEntities = req.params.entities;
+			db.buckets.update({ tag : req.params.tag }, {
+				$pull : { solidEntities: deleteEntities }
+			}, function(err, result) {
+				console.log("Error", err, result)
 				res.send(false,true)
 			})
 		});
