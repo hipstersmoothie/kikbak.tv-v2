@@ -161,7 +161,7 @@ function analyzePost(url, callback) {
 			_.forEach(buckets, function(bucket) {
 				var keywordConfidence = compareKeywords(bucket.approvedKeywords, bucket.magicWords, keywords),
 					taxonomyConfidence = compareTaxonomy(bucket.solidTaxonomy, taxonomy),
-					entityConfidence = compareEntity(bucket.solidEntities, entities);
+					entityConfidence = compareEntity(bucket.solidEntities, bucket.entitiyTypes, entities);
 
 				var	overall = keywordConfidence + (taxonomyConfidence * 1.5) + entityConfidence;
 
@@ -321,11 +321,11 @@ function compareTaxonomy(base, found) {
 	return confidence;
 }
 
-function compareEntity(base, found) {
+function compareEntity(base, entitiyTypes, found) {
 	var confidence = 0;
 
 	_.forEach(found, function(entity) {
-		if(_.includes(base, entity.text)) {
+    if(_.includes(base, entity.text) && _.includes(entitiyTypes, entity.type)) {
 			confidence += parseFloat(entity.relevance)
 		}
 	});
