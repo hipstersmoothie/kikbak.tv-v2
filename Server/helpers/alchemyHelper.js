@@ -420,28 +420,6 @@ function countAlchemy(genre) {
 		setPrint(frame[0].entities, "entities");
 		console.log("==============================");
     setPrint(frame[0].keywords, "keywords");
-		// var subtractedKeywords = _.filter(frame[0].keywords, function(keyword) {
-  //     var found = false;
-
-  //     _.forEach(frame[0].entities, function(val,entity) {
-  //       if(keyword.indexOf(entity) > -1) {
-  //         found = true;
-  //         return false;
-  //       }
-  //     });
-
-  //     return !found;
-  //   });
-		// var x = setPrint(counts(subtractedKeywords), "Keywords without entities");
-  //   _.forEach(x, function(val, key) {
-  //     if(key.indexOf('.') > -1 || key[0] === '$') {
-  //       console.log(key)
-  //       delete x[key]
-  //     }
-  //   }) 
-  //   db.buckets.update({tag:genre}, {$set : {keywords: x}}, function(err, res) {
-  //     console.log(err, res)
-  //   })
 	});
 }
 
@@ -504,3 +482,25 @@ module.exports = analyzePost;
 // 	console.log(tag)
 // })
 // countAlchemy("Live")
+  // var subtractedKeywords = _.filter(frame[0].keywords, function(keyword) {
+//     var found = false;
+
+//     _.forEach(frame[0].entities, function(val,entity) {
+//       if(keyword.indexOf(entity) > -1) {
+//         found = true;
+//         return false;
+//       }
+//     });
+
+//     return !found;
+//   });
+  // var x = setPrint(counts(subtractedKeywords), "Keywords without entities");
+//   _.forEach(x, function(val, key) {
+//     if(key.indexOf('.') > -1 || key[0] === '$') {
+//       console.log(key)
+//       delete x[key]
+//     }
+//   }) 
+//   db.buckets.update({tag:genre}, {$set : {keywords: x}}, function(err, res) {
+//     console.log(err, res)
+//   })
