@@ -127,8 +127,25 @@ var newVid = function(vidId, url, blog, $, link) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS)
 				return;
 
-			analyzePost(link, function(tagFound) {
-				compareStills({ videoId: vidId }, function(isSame) {
+			compareStills({ videoId: vidId }, function(isSame) {
+				var blogs = blog.tags ? blog.tags : [];
+				var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
+				console.log('adding', result['items'][0]['snippet']['title'], vidId); 
+
+				if(isSame) {
+					tags.push('NotAVid')
+					db.videos.update({ videoId : vidId }, {
+						$setOnInsert: {
+							videoId : vidId,
+							foundOn : [blog],
+							origPosts : [link],
+							dateFound : _.now()
+						},
+						$addToSet: { tags : { $each: tags } }
+					}, { upsert : true }, function(err, res) {
+						console.log(err, res)
+					});
+				} else {
 					var bigThumb;
 					var smallThumb;
 					if(result['items'][0]['snippet']['thumbnails'].maxres) {
@@ -145,48 +162,45 @@ var newVid = function(vidId, url, blog, $, link) {
 						smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
 					}
 
-					var blogs = blog.tags ? blog.tags : [];
-					var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
-					if(isSame)
-						tags.push('NotAVid')
-					if(tagFound)
-						tags.push(tagFound)
-					
-					console.log('adding', result['items'][0]['snippet']['title'], vidId); 
-					db.videos.update({ videoId : vidId }, {
-						$setOnInsert: {
-							youTubePostDate : result['items'][0]['snippet']['publishedAt'],
-							videoId : vidId,
-							foundOn : [blog],
-							origPosts : [link],
-							dateFound : _.now(),
-							thumbnail : youtubeThumbnail(url),
-							thumbHQ: bigThumb,
-							thumbSmall: smallThumb,
-							title : result['items'][0]['snippet']['title'],
-							description : result['items'][0]['snippet']['description'],
-							publishedBy : result['items'][0]['snippet']['channelTitle'],
-							oldStats : result['items'][0]['statistics'],
-							avgViewPerHalfHour : 0,
-							avgLikePerHalfHour : 0,
-							avgDislikePerHalfHour : 0,
-							avgFavoritePerHalfHour : 0,
-							avgCommentPerHalfHour : 0,
-							taxonomy: taxonomy,
-							keywords: keywords
-						},
-						$addToSet: {
-							tags : {
-								$each: tags
+					analyzePost(link, function(tagFound) {
+						if(tagFound)
+							tags.push(tagFound)
+						console.log('analyzed', link, tagFound);
+						db.videos.update({ videoId : vidId }, {
+							$setOnInsert: {
+								youTubePostDate : result['items'][0]['snippet']['publishedAt'],
+								videoId : vidId,
+								foundOn : [blog],
+								origPosts : [link],
+								dateFound : _.now(),
+								thumbnail : youtubeThumbnail(url),
+								thumbHQ: bigThumb,
+								thumbSmall: smallThumb,
+								title : result['items'][0]['snippet']['title'],
+								description : result['items'][0]['snippet']['description'],
+								publishedBy : result['items'][0]['snippet']['channelTitle'],
+								oldStats : result['items'][0]['statistics'],
+								avgViewPerHalfHour : 0,
+								avgLikePerHalfHour : 0,
+								avgDislikePerHalfHour : 0,
+								avgFavoritePerHalfHour : 0,
+								avgCommentPerHalfHour : 0,
+								taxonomy: taxonomy,
+								keywords: keywords
+							},
+							$addToSet: {
+								tags : {
+									$each: tags
+								}
 							}
-						}
-					}, { upsert : true }, function(err, res) {
-						console.log(err, res)
+						}, { upsert : true }, function(err, res) {
+							console.log(err, res)
+						});
+						process.exit()
 					});
-					posts++;
-				}); 
-			})
-			
+				}
+				posts++;
+			}); 
 		} else if (error) {
 			// console.log(error);
 		}			

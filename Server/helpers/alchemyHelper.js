@@ -323,13 +323,11 @@ function compareKeywords(base, magicWords, found) {
 
 	_.forEach(found, function(keyword) {
 		if(_.includes(base, keyword.text)) {
-			// console.log(keyword.text)
 			confidence += parseFloat(keyword.relevance)
 		} else {
 			var text = keyword.text;
 			_.forEach(magicWords, function(magicWord) {
 				if(text.toLowerCase().indexOf(magicWord) > -1) {
-					console.log(text, magicWord)
 					confidence += parseFloat(keyword.relevance)
 				}
 			});
@@ -502,7 +500,7 @@ function objectize(sets) {
 
 module.exports = analyzePost;
 
-analyzePost('http://www.theprp.com/2015/11/19/news/bring-me-the-horizon-post-official-true-friends-live-video/', function(tag) {
-	console.log(tag)
-})
+// analyzePost('http://www.theprp.com/2015/11/19/news/bring-me-the-horizon-post-official-true-friends-live-video/', function(tag) {
+// 	console.log(tag)
+// })
 // countAlchemy("Live")
