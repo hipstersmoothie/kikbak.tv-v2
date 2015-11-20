@@ -251,7 +251,7 @@ function addData(data, bucket) {
   _.forEach(data.entities, function(entity) {
     db.buckets.find({ 
       tag: bucket.tag, 
-      "entity.text": entity.text
+      "entities.text": entity.text
     }, function(err, res) {
       if(res.length === 0) {
         db.buckets.update({ tag: bucket.tag }, { 
@@ -259,20 +259,49 @@ function addData(data, bucket) {
             entities: {
               text: entity.text,
               count: 1,
-              score: parseFloat(entity.relevance) 
+              score: parseFloat(entity.relevance),
+              timesFound: [ Date.now() ]
             }
           }
         }, function(err, res) {
           console.log(err, res)
         });
       } else {
+        //could have problems if multiple hit too fast
+        res = res[0];
+        var entitiyRecord = _.find(res.entities, function(entitiyRec) {
+          return entitiyRec.text === entity.text;
+        });
+        if(!entitiyRecord.timesFound)
+          entitiyRecord.timesFound = [];
+        if(entitiyRecord.timesFound.length > 10)
+          entitiyRecord.timesFound.shift();
+        entitiyRecord.timesFound.push(Date.now());
+
+        var newEntity = null;
+        if(entitiyRecord.timesFound.length >= 7) {
+          var timeDelta = compareTimes(entitiyRecord.timesFound.slice(3));
+          var typeGood = _.find(entity.disambiguated && entity.disambiguated.subType, function(type) { 
+            return _.includes(bucket.entitiyTypes, type) 
+          });
+          if(timeDelta < 600000 && typeGood) { // 10 minutes and type is accepted
+            newEntity = entitiyRecord.text;
+          }
+        } 
+
         db.buckets.update({ 
           tag: bucket.tag, 
-          "entity.text": entity.text
+          "entities.text": entity.text
         }, { 
           $inc: { 
-            "entity.$.count" : 1,
-            "entity.$.score" : parseFloat(entity.relevance),
+            "entities.$.count" : 1,
+            "entities.$.score" : parseFloat(entity.relevance),
+          },
+          $set: {
+            "entities.$.timesFound" : entitiyRecord.timesFound
+          },
+          $addToSet: {
+            solidEntities: newEntity
           }
         }, function(err, res) {
           console.log(err, res)
@@ -280,6 +309,13 @@ function addData(data, bucket) {
       }
     });
   });
+}
+
+function compareTimes(times) {
+  return _.reduceRight(times, function(accummulatedTime, time, index) {
+      var more = index > 0 ? time - times[index - 1] : 0;
+      return accummulatedTime + more;
+    }, 0);   
 }
 
 function compareKeywords(base, magicWords, found) {
@@ -325,7 +361,7 @@ function compareEntity(base, entitiyTypes, found) {
 	var confidence = 0;
 
 	_.forEach(found, function(entity) {
-    if(_.includes(base, entity.text) && _.includes(entitiyTypes, entity.type)) {
+    if(_.includes(base, entity.text)) {
 			confidence += parseFloat(entity.relevance)
 		}
 	});
@@ -333,6 +369,7 @@ function compareEntity(base, entitiyTypes, found) {
 	return confidence;
 }
 
+// Needs Rework
 function gatherInfo(genre) {
 	db.buckets.find({tag: genre}, function(err, frame) {
 		if(err)
@@ -465,7 +502,7 @@ function objectize(sets) {
 
 module.exports = analyzePost;
 
-analyzePost('http://www.stereogum.com/1843598/watch-pearl-jam-debut-comfortably-numb-cover-in-the-rain-in-brazil/video/', function(tag) {
+analyzePost('http://www.theprp.com/2015/11/19/news/bring-me-the-horizon-post-official-true-friends-live-video/', function(tag) {
 	console.log(tag)
 })
 // countAlchemy("Live")
