@@ -2,11 +2,11 @@ var express = require('express'),
     wonderRank = require('./helpers/wonderRank'),
     db = require("./helpers/db"),
 	_ = require('lodash'),
-	path = require('path');
-	$ = require('jquery');
-var mongo = require('mongodb');
-var util = require('util');
-var blockRegex = require('./helpers/blockRegex');
+	path = require('path'),
+	$ = require('jquery'),
+	mongo = require('mongodb'),
+	util = require('util'),
+	blockRegex = require('./helpers/blockRegex');
 
 var startExpress = function() {
 	var app = express();

@@ -1,6 +1,9 @@
-var async = require('async');
-var fs = require('fs');
-var gm = require('gm');
+var async = require('async'),
+	fs = require('fs'),
+	gm = require('gm'),
+	requestOrig = require('request'),
+	_ = require('lodash'),
+	db = require("./../helpers/db");
 
 var download = function(uri, filename, callback){
 	requestOrig(uri).pipe(fs.createWriteStream(filename)).on('close', callback).on('error', function  (error) {
