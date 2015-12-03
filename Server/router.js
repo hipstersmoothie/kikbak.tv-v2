@@ -2,9 +2,10 @@ var express = require('express'),
     wonderRank = require('./helpers/wonderRank'),
     db = require("./helpers/db"),
 	_ = require('lodash'),
-	path = require('path');
-var mongo = require('mongodb');
-var blockRegex = require('./helpers/blockRegex');
+	path = require('path'),
+	mongo = require('mongodb'),
+	util = require('util'),
+	blockRegex = require('./helpers/blockRegex');
 
 var startExpress = function() {
 	var app = express();
@@ -143,7 +144,7 @@ var startExpress = function() {
 				var index = blogs[0].url.indexOf('feed/') > -1 ? blogs[0].url.indexOf('feed/') : blogs[0].url.indexOf('rss/');
 				
 				db.blogs.find({
-					url: blogs[0].url
+					url: new RegExp(extractDomain(blogs[0].url))
 				}, function(err, videosDups) {
 					console.log(videosDups)
 					res.render('picker', {
@@ -156,6 +157,22 @@ var startExpress = function() {
 				});	
 			});
 		});
+
+		function extractDomain(url) {
+		    var domain;
+		    //find & remove protocol (http, ftp, etc.) and get domain
+		    if (url.indexOf("://") > -1) {
+		        domain = url.split('/')[2];
+		    }
+		    else {
+		        domain = url.split('/')[0];
+		    }
+
+		    //find & remove port number
+		    domain = domain.split(':')[0];
+
+		    return domain;
+		}
 
 		app.post('/blogs/tag/:id/:tag/', function (req, res) {
 			db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$addToSet:{tags:req.params.tag}}, function(error, result) {
@@ -180,8 +197,6 @@ var startExpress = function() {
 			db.blogs.findOne({_id:new mongo.ObjectID(req.params.id)}, function(error, result) {
 				if(result.url.indexOf('/feed') > -1) {
 					var newUrl = result.url.split('/feed')[0] + '/rss/';
-							console.log(newUrl)
-
 					db.blogs.update({_id:new mongo.ObjectID(req.params.id)},{$set: {url:newUrl}}, function() {
 						res.send(false,true)
 					});
@@ -196,6 +211,105 @@ var startExpress = function() {
 			db.blogs.update({_id:new mongo.ObjectID(req.params.id)}, {$set: {url:req.params.newUrl}}, function(error, result) {
 				res.send(false,true)
 			});
+		});
+
+		app.get('/bucket/:tag', function (req, res) {
+			db.buckets.findOne({ tag: req.params.tag }, function(err, bucket) {	
+				var dictionaryK = {};
+				console.log("uhhhh");
+				var subtractedKeywords = differenceByText(bucket.keywords, _.pluck(bucket.keywords, "text"), _.pluck(bucket.entities, "text"));
+				subtractedKeywords = differenceByText(subtractedKeywords, _.pluck(subtractedKeywords, "text"), bucket.approvedKeywords);
+				var subtractedTaxonomy = differenceByText(bucket.taxonomy, _.pluck(bucket.taxonomy, "text"), bucket.solidTaxonomy);
+				var subtractedEntities = differenceByText(bucket.entities, _.pluck(bucket.entities, "text"), bucket.solidEntities);
+
+				res.render('bucket', {
+					bucket: req.params.tag,
+					keywords: bySortedCount(subtractedKeywords),
+					approvedKeywords: bucket.approvedKeywords,
+					taxonomy: bySortedCount(subtractedTaxonomy),
+					solidTaxonomy: bucket.solidTaxonomy,
+					entities: bySortedCount(subtractedEntities),
+					solidEntities: bucket.solidEntities
+				}); 			
+			});
+		});
+
+		function differenceByText(original, firstPlucked, secondPlucked){
+
+			var diff = _.difference(firstPlucked, secondPlucked);
+			var result = _.filter(original, function(obj) { return diff.indexOf(obj.text) >= 0; });
+			return result;
+		}
+
+		function bySortedCount(obj) {
+			var tuples = obj.slice(0);
+			tuples.sort(function(a,b) {
+			    return b.count - a.count;
+			});
+			return tuples
+		}	
+
+		app.post('/buckets/:tag/moveKeywords/:keywords', function (req, res) {
+			var moveKeywords = req.params.keywords.split(',');
+			console.log(req.params)
+			db.buckets.update({ tag : req.params.tag }, {
+				$addToSet : { approvedKeywords: {$each : moveKeywords} }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/deleteApprovedKeywords/:keywords', function (req, res) {
+			var deleteKeywords = req.params.keywords;
+			db.buckets.update({ tag : req.params.tag }, {
+				$pull : { approvedKeywords: deleteKeywords }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/moveTaxonomy/:taxonomy', function (req, res) {
+			var moveTaxonomy = req.params.taxonomy.split(',');
+			console.log(req.params)
+			db.buckets.update({ tag : req.params.tag }, {
+				$addToSet : { solidTaxonomy: {$each : moveTaxonomy} }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/deleteSolidTaxonomy/:taxonomy', function (req, res) {
+			var deleteTaxonomy = req.params.taxonomy;
+			db.buckets.update({ tag : req.params.tag }, {
+				$pull : { solidTaxonomy: deleteTaxonomy }
+			}, function(err, result) {
+				console.log("Error", err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/moveEntities/:entities', function (req, res) {
+			var moveEntities = req.params.entities.split(',');
+			console.log(req.params)
+			db.buckets.update({ tag : req.params.tag }, {
+				$addToSet : { solidEntities: {$each : moveEntities} }
+			}, function(err, result) {
+				console.log(err, result)
+				res.send(false,true)
+			})
+		});
+
+		app.post('/buckets/:tag/deleteSolidEntities/:entities', function (req, res) {
+			var deleteEntities = req.params.entities;
+			db.buckets.update({ tag : req.params.tag }, {
+				$pull : { solidEntities: deleteEntities }
+			}, function(err, result) {
+				console.log("Error", err, result)
+				res.send(false,true)
+			})
 		});
 	}
 	
