@@ -3,7 +3,6 @@ var express = require('express'),
     db = require("./helpers/db"),
 	_ = require('lodash'),
 	path = require('path'),
-	$ = require('jquery'),
 	mongo = require('mongodb'),
 	util = require('util'),
 	blockRegex = require('./helpers/blockRegex');

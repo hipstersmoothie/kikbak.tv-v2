@@ -17,19 +17,21 @@ function analyzePosts(sort, callback) {
 		if(videos) {
 			sort(videos);
 			var i = 0;
-			videos = videos.splice(0,300);
+			videos = videos.splice(0,100);
 			var inter = setInterval(function() {
 				if(i === videos.length)
 					return clearInterval(inter);
 
 				var video = videos[i++]
-				analyzePost(video.origPosts[0], function(tag) {
-					if (tag) {
-						console.log('tagged https://www.youtube.com/watch?v=' + video.videoId + ' ' + tag);
-						db.videos.update({videoId: video.videoId}, {$addToSet:{tags:tag}})
+				if (!_.includes(video.tags, "Music Video")) {
+					analyzePost(video.origPosts[0], function(tag, data) {
+						if(tag) { 
+							console.log('tagged https://www.youtube.com/watch?v=' + video.videoId + ' ' + tag, data);
+							// db.videos.update({videoId: video.videoId}, {$addToSet:{tags:tag}})
+						}
+					})
 					}
-				})
-			},500)
+			}, 500)
 		}
 	});
 }
