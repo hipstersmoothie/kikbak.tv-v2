@@ -237,9 +237,10 @@ function compareKeywords(base, magicWords, found) {
 
 		if(keyword.text.toLowerCase().indexOf('music video') > -1)
 			hasMusicVideo = true;
+    if(text.toLowerCase() === 'video')
+      confidence -= 1;
 	});
-
-  if(hasMusicVideo && !hasMusicVideo)
+  if(hasMusicVideo && !hasMagicWord)
     confidence -= 5 //magic number, dont want music videos to be tagged
   
 	return confidence;
@@ -377,9 +378,9 @@ function objectize(sets) {
 
 module.exports = analyzePost;
 
-// analyzePost("http://thethinair.net/2015/11/watch-girls-names-reticence/", function(tag) {
-// 	console.log(tag)
-// })
+analyzePost("http://hiphopsince1987.com/2015/videos/zay-bella-push-it-video/", function(tag) {
+	console.log(tag)
+})
 // // gatherInfo("Interview")
 // countAlchemy("Live")
   // var subtractedKeywords = _.filter(frame[0].keywords, function(keyword) {

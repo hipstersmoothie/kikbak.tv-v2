@@ -36,4 +36,4 @@ function analyzePosts(sort, callback) {
 	});
 }
 
-analyzePosts(wonderRank.defaultSort)
+analyzePosts(wonderRank.hipsterSort)
