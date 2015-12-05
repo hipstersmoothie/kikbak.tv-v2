@@ -145,14 +145,14 @@ body {
 }
 
 .top {
-  height: 30em;
-  background-color: white;
-  background-image: url('/images/abouthero.png');
-  color: white;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 80%;
-  background-origin: content-box;
+    height: 30em;
+    background-color: white;
+    background-image: url('/images/abouthero.png');
+    color: white;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-x: 50%;
+    background-origin: content-box;
 }
 
 .card {
@@ -169,7 +169,6 @@ body {
 .about {
 	// background: #C04848;
 	margin: 0 auto;
-    height: 585px;
 	.gradient1;
 	// background-image: url("/images/congruent_outline.png");
   	padding-top: 20px;
@@ -222,7 +221,7 @@ body {
 
 	.dev {
 	    background: #1c1c1c;
-	    width: 300px;
+	    width: 30%;
 	    padding: 20px;
 	    display: inline-block;
 	    text-align: center;
@@ -344,7 +343,6 @@ body {
 
 		.feature {
 		    display: flex;
-		    width: 50%;
 		    margin: 0 auto;
 		    align-items: center;
 		    padding: 1em;
@@ -2044,6 +2042,51 @@ a {
 		.number {
 			font-size: 72px;
 			margin-top: 0;
+		}
+	}
+}
+
+
+@media screen and (max-width: 760px) {
+	.about {
+		.features {
+			.feature {
+	   			display: block;
+	   			.featurephoto {
+				    margin: 0 auto;
+				    display: block;
+	   			}
+	   			.description {
+				    padding-left: 0; 
+				    width: 100%; 
+	   			}
+	   			&.smartrankings {
+	   				.featurephoto embed {
+    					margin-left: -29px;
+				    }
+	   			}
+			}
+			.division {
+			    margin-bottom: -100px;
+			    height: 100%; 
+			    padding-bottom: 100px;
+			}
+		}
+		.summary {
+		    width: 60%;
+		    min-width: 250px;
+		}
+	}
+
+}
+
+@media screen and (max-width: 760px) {
+	.about .builton .cred {
+		img {
+		    margin-bottom: 30px;
+		}
+		&:first-of-type img {
+		    margin-bottom: -5px;
 		}
 	}
 }
