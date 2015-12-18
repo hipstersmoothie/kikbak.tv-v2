@@ -30,7 +30,7 @@ Meteor.startup(function () {
   var minutes = 30, the_interval = minutes * 60 * 1000;
   Meteor.setInterval(_.bind(updateAll, null, updates), the_interval);
 });
-
+ 
 var updates = [
   {
     url: '/videos',

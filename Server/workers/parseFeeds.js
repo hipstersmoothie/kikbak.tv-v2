@@ -164,9 +164,11 @@ var newVid = function(vidId, url, blog, $, link) {
 					}
 
 					analyzePost(link, function(tagFound) {
-						if(tagFound && !_.includes(tags, "Music Video"))
+						if(tagFound && !_.includes(tags, "Music Video")) {
 							tags.push(tagFound)
-						console.log('analyzed', link, tagFound);
+							console.log('analyzed', link, tagFound);
+						}
+						
 						db.videos.update({ videoId : vidId }, {
 							$setOnInsert: {
 								youTubePostDate : result['items'][0]['snippet']['publishedAt'],

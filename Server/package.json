@@ -5,7 +5,7 @@
   "author": "Andrew",
   "main": "server.js",
   "engines": {
-    "node": "0.12.x"
+    "node": "4.2.3"
   },
   "dependencies": {
     "async": "^1.4.2",
@@ -19,8 +19,9 @@
     "gulp-develop-server": "^0.4.2",
     "gulp-watch": "^4.2.4",
     "jade": "^1.11.0",
+    "kerberos": "0.0.17",
     "lodash": "^3.8.0",
-    "mongodb": "^2.0.45",
+    "mongodb": "^2.0.52",
     "mongojs": "*",
     "node-schedule": "^0.2.7",
     "parse-rss": "*",
@@ -29,4 +30,4 @@
     "youtube-node": "^1.2.0",
     "youtube-thumbnail": "^1.2.0"
   }
-}
+} 

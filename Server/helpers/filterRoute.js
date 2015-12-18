@@ -27,7 +27,7 @@ function analyzePosts(sort, callback) {
 					analyzePost(video.origPosts[0], function(tag, data) {
 						if(tag) { 
 							console.log('tagged https://www.youtube.com/watch?v=' + video.videoId + ' ' + tag, data);
-							// db.videos.update({videoId: video.videoId}, {$addToSet:{tags:tag}})
+							db.videos.update({videoId: video.videoId}, {$addToSet:{tags:tag}})
 						}
 					})
 					}
@@ -36,4 +36,4 @@ function analyzePosts(sort, callback) {
 	});
 }
 
-analyzePosts(wonderRank.hipsterSort)
+analyzePosts(wonderRank.defaultSort)
