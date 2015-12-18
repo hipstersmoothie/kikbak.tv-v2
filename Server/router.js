@@ -16,7 +16,7 @@ var startExpress = function() {
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.get('/', function (req, res) {
 	  res.send('<html><body><h1>API is up.</h1></body></html>');
-	});
+	}); 
 
 	app.get('/videosList', function (req, res) {
 		db.videos.find({tags : {$nin : ["Live", "Interview"]}}, function(err, videos) {

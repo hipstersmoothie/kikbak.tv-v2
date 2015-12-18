@@ -33,12 +33,15 @@ var updateStats = function(video, index) {
 		result = JSON.parse(result);
 		if(result && result['items'] && result['items'][0]) {
 			if ((Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day > OLDVIDEOMAXDAYS) {
-				db.videos.remove({ videoId : vidId });
+				db.videos.remove({ videoId : vidId }, function(err, res) {
+					if(err)
+						console.log(err)
+				});
 				console.log('removed', vidId, (Date.now() - Date.parse(result['items'][0]['snippet']['publishedAt']))/day);
 				return;
 			}
 
-			var oldStats = video.oldStats;
+			var oldStats = video.oldStats ? video.oldStats : result['items'][0]['statistics'];
 			var newStats = result['items'][0]['statistics'];
 			var newViews = (parseInt(newStats.viewCount) - parseInt(oldStats.viewCount));
 			var newLikes = (parseInt(newStats.likeCount) - parseInt(oldStats.likeCount));
@@ -54,8 +57,9 @@ var updateStats = function(video, index) {
 				avgFavoritePerHalfHour : video.avgFavoritePerHalfHour ? (video.avgFavoritePerHalfHour + newFavorites)/2 : newFavorites,
 				avgCommentPerHalfHour : video.avgCommentPerHalfHour ? (video.avgCommentPerHalfHour + newComments)/2 : newComments
 			}});
-		} else if (result && result['items'] && result['items'].length === 0)
+		} else if (result && result['items'] && result['items'].length === 0) {
 			db.videos.update({videoId : video.videoId}, {$addToSet: {tags: "NotAVid"}});
+		}
 		done++;
 		if(vidlength == done) 
 			process.exit();
