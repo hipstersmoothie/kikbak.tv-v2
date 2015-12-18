@@ -60,39 +60,39 @@ function addData(data, bucket) {
           return taxonomyRec.text === taxonomy.label;
         });
 
-        if(taxonomyRecord && taxonomyRecord.score > 10) {
-          db.buckets.find({
-            tag: {$ne: bucket.tag}, 
-            taxonomy:{
-              $elemMatch:{
-                text: taxonomy.label,
-                score: { $gt: taxonomyRecord.score }
-              }
-            }
-          }, function(err, res) {
-            if(res.length === 0) { //not found in other sets
-              db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidTaxonomy: taxonomy.label}}
-            } else {
-              var otherRecords = _.map(res, function(result) {
-                return _.find(result.taxonomy, function(tax) {
-                  return tax.text == taxonomy.label;
-                });
-              });
-              var bigger = _.find(otherRecords, function(record) {
-                return record.score > taxonomyRecord.score;
-              })
-              if(!bigger) {
-                //add to bucket
-                db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidTaxonomy: taxonomy.label}}
-                //remove from other buckets
-                db.buckets.update({
-                  tag: {$ne: bucket.tag}, 
-                  $pull: { taxonomy: { $elemMatch: { text: taxonomy.label } } }
-                });
-              }
-            }
-          })
-        }
+        // if(taxonomyRecord && taxonomyRecord.score > 10) {
+        //   db.buckets.find({
+        //     tag: {$ne: bucket.tag}, 
+        //     taxonomy:{
+        //       $elemMatch:{
+        //         text: taxonomy.label,
+        //         score: { $gt: taxonomyRecord.score }
+        //       }
+        //     }
+        //   }, function(err, res) {
+        //     if(res.length === 0) { //not found in other sets
+        //       db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidTaxonomy: taxonomy.label}}
+        //     } else {
+        //       var otherRecords = _.map(res, function(result) {
+        //         return _.find(result.taxonomy, function(tax) {
+        //           return tax.text == taxonomy.label;
+        //         });
+        //       });
+        //       var bigger = _.find(otherRecords, function(record) {
+        //         return record.score > taxonomyRecord.score;
+        //       })
+        //       if(!bigger) {
+        //         //add to bucket
+        //         db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidTaxonomy: taxonomy.label}}
+        //         //remove from other buckets
+        //         db.buckets.update({
+        //           tag: {$ne: bucket.tag}, 
+        //           $pull: { taxonomy: { $elemMatch: { text: taxonomy.label } } }
+        //         });
+        //       }
+        //     }
+        //   })
+        // }
 
         db.buckets.update({ 
           tag: bucket.tag, 
@@ -132,39 +132,39 @@ function addData(data, bucket) {
           return keywordRec.text === keyword.text;
         });
 
-        if(keywordRecord && keywordRecord.score > 10) {
-          db.buckets.find({
-            tag: {$ne: bucket.tag}, 
-            keywords:{
-              $elemMatch:{
-                text: keyword.text,
-                score: { $gt: keywordRecord.score }
-              }
-            }
-          }, function(err, res) {
-            if(res.length === 0) { //not found in other sets
-              db.buckets.update({ tag: bucket.tag }, {$addToSet: {approvedKeywords: keyword.text}}
-            } else {
-              var otherRecords = _.map(res, function(result) {
-                return _.find(result.keywords, function(word) {
-                  return word.text == keyword.text;
-                });
-              });
-              var bigger = _.find(otherRecords, function(record) {
-                return record.score > keywordRecord.score;
-              })
-              if(!bigger) {
-                //add to bucket
-                db.buckets.update({ tag: bucket.tag }, {$addToSet: {approvedKeywords: keyword.text}}
-                //remove from other buckets
-                db.buckets.update({
-                  tag: {$ne: bucket.tag}, 
-                  $pull: { keywords: { $elemMatch: { text: keyword.text } } }
-                });
-              }
-            }
-          })
-        }
+        // if(keywordRecord && keywordRecord.score > 10) {
+        //   db.buckets.find({
+        //     tag: {$ne: bucket.tag}, 
+        //     keywords:{
+        //       $elemMatch:{
+        //         text: keyword.text,
+        //         score: { $gt: keywordRecord.score }
+        //       }
+        //     }
+        //   }, function(err, res) {
+        //     if(res.length === 0) { //not found in other sets
+        //       db.buckets.update({ tag: bucket.tag }, {$addToSet: {approvedKeywords: keyword.text}}
+        //     } else {
+        //       var otherRecords = _.map(res, function(result) {
+        //         return _.find(result.keywords, function(word) {
+        //           return word.text == keyword.text;
+        //         });
+        //       });
+        //       var bigger = _.find(otherRecords, function(record) {
+        //         return record.score > keywordRecord.score;
+        //       })
+        //       if(!bigger) {
+        //         //add to bucket
+        //         db.buckets.update({ tag: bucket.tag }, {$addToSet: {approvedKeywords: keyword.text}}
+        //         //remove from other buckets
+        //         db.buckets.update({
+        //           tag: {$ne: bucket.tag}, 
+        //           $pull: { keywords: { $elemMatch: { text: keyword.text } } }
+        //         });
+        //       }
+        //     }
+        //   })
+        // }
 
         db.buckets.update({ 
           tag: bucket.tag, 
@@ -212,50 +212,50 @@ function addData(data, bucket) {
           entitiyRecord.timesFound.shift();
         entitiyRecord.timesFound.push(Date.now());
 
-        var newEntity = null;
-        if(entitiyRecord.timesFound.length >= 7) {
-          var timeDelta = compareTimes(entitiyRecord.timesFound.slice(3));
-          var typeGood = _.find(entity.disambiguated && entity.disambiguated.subType, function(type) { 
-            return _.includes(bucket.entitiyTypes, type) 
-          });
-          if(timeDelta < 600000 && typeGood) { // 10 minutes and type is accepted
-            newEntity = entitiyRecord.text;
-          }
-        } 
+        // var newEntity = null;
+        // if(entitiyRecord.timesFound.length >= 7) {
+        //   var timeDelta = compareTimes(entitiyRecord.timesFound.slice(3));
+        //   var typeGood = _.find(entity.disambiguated && entity.disambiguated.subType, function(type) { 
+        //     return _.includes(bucket.entitiyTypes, type) 
+        //   });
+        //   if(timeDelta < 600000 && typeGood) { // 10 minutes and type is accepted
+        //     newEntity = entitiyRecord.text;
+        //   }
+        // } 
 
-        if(entitiyRecord && entitiyRecord.score > 10) {
-          db.buckets.find({
-            tag: {$ne: bucket.tag}, 
-            entities:{
-              $elemMatch:{
-                text: entity.text,
-                score: { $gt: entitiyRecord.score }
-              }
-            }
-          }, function(err, res) {
-            if(res.length === 0) { //not found in other sets
-              db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidEntities: entity.text}}
-            } else {
-              var otherRecords = _.map(res, function(result) {
-                return _.find(result.entities, function(ent) {
-                  return ent.text == entity.text;
-                });
-              });
-              var bigger = _.find(otherRecords, function(record) {
-                return record.score > entitiyRecord.score;
-              })
-              if(!bigger) {
-                //add to bucket
-                db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidEntities: entity.text}}
-                //remove from other buckets
-                db.buckets.update({
-                  tag: {$ne: bucket.tag}, 
-                  $pull: { entities: { $elemMatch: { text: entity.text } } }
-                });
-              }
-            }
-          })
-        }
+        // if(entitiyRecord && entitiyRecord.score > 10) {
+        //   db.buckets.find({
+        //     tag: {$ne: bucket.tag}, 
+        //     entities:{
+        //       $elemMatch:{
+        //         text: entity.text,
+        //         score: { $gt: entitiyRecord.score }
+        //       }
+        //     }
+        //   }, function(err, res) {
+        //     if(res.length === 0) { //not found in other sets
+        //       db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidEntities: entity.text}}
+        //     } else {
+        //       var otherRecords = _.map(res, function(result) {
+        //         return _.find(result.entities, function(ent) {
+        //           return ent.text == entity.text;
+        //         });
+        //       });
+        //       var bigger = _.find(otherRecords, function(record) {
+        //         return record.score > entitiyRecord.score;
+        //       })
+        //       if(!bigger) {
+        //         //add to bucket
+        //         db.buckets.update({ tag: bucket.tag }, {$addToSet: {solidEntities: entity.text}}
+        //         //remove from other buckets
+        //         db.buckets.update({
+        //           tag: {$ne: bucket.tag}, 
+        //           $pull: { entities: { $elemMatch: { text: entity.text } } }
+        //         });
+        //       }
+        //     }
+        //   })
+        // }
 
         db.buckets.update({ 
           tag: bucket.tag, 
@@ -268,9 +268,9 @@ function addData(data, bucket) {
           $set: {
             "entities.$.timesFound" : entitiyRecord.timesFound
           },
-          $addToSet: {
-            solidEntities: newEntity
-          }
+          // $addToSet: {
+          //   solidEntities: newEntity
+          // }
         }, function(err, res) {
           // console.log(err, res)
         });
@@ -450,9 +450,9 @@ function objectize(sets) {
 
 module.exports = analyzePost;
 
-analyzePost("http://hiphopsince1987.com/2015/videos/zay-bella-push-it-video/", function(tag) {
-	console.log(tag)
-})
+// analyzePost("http://hiphopsince1987.com/2015/videos/zay-bella-push-it-video/", function(tag) {
+// 	console.log(tag)
+// })
 // // gatherInfo("Interview")
 // countAlchemy("Live")
   // var subtractedKeywords = _.filter(frame[0].keywords, function(keyword) {
