@@ -43,7 +43,7 @@ var startExpress = function() {
 			]
 		}, function(err, videos) {
 			if(videos) {
-				sort(videos);
+				videos = sort(videos);
 				res.send(videos.splice(0,100));
 			}
 		});

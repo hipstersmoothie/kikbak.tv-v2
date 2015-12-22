@@ -1,5 +1,11 @@
 // Various sorts. This may be a point where we can use some AI
-var _ = require('lodash'); 
+var _ = require('lodash'),
+ 	second = 1000, 
+	minute = second * 60, 
+	hour = minute * 60, 
+	day = hour * 24, 
+	week = day * 7;
+
 var multiplier = function(days) {
 	if (days <= 1)
 		return 200;
@@ -115,40 +121,25 @@ var multTwitter = function(metric, total) {
 		return 1;
 }
 
-var sort = function(videos) {
-	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
-	if(videos)
-		videos.sort(function(a, b) {
-			var date1 = (Date.now() - Date.parse(a.youTubePostDate))/day;
-			var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
+function rank(videos) {
+	var ranked = _.map(videos, function(video) {
+		var date = (Date.now() - Date.parse(video.youTubePostDate))/day,
+			adg = multiplier(date),
+			viewMult = viewMultiplier(video.avgViewPerHalfHour);
 
-			var adg1 = multiplier(date1);
-			var adg2 = multiplier(date2);
-			// var ratio1 = shareRatio(a);
-			// var ratio2 = shareRatio(b);
-			var viewMultiplier1 = viewMultiplier(a.avgViewPerHalfHour);
-			var viewMultiplier2 = viewMultiplier(b.avgViewPerHalfHour);
+		if(video.shareCounts) {
+			var facebook = mult(video.avgFaceBookShares, video.shareCounts.Facebook.total_count);
+			var twitter = multTwitter(video.avgTweets, video.shareCounts.Twitter);
+		} else {
+			var facebook = 2;
+			var twitter = 2;
+		}
+		video.wonderRank = (video.foundOn.length * adg * viewMult * ifMusicVideo(video) * facebook * twitter);
+		return video;
+	});
 
-			if(a.shareCounts) {
-				var facebook1 = mult(a.avgFaceBookShares, a.shareCounts.Facebook.total_count);
-				var twitter1 = multTwitter(a.avgTweets, a.shareCounts.Twitter);
-			} else {
-				var facebook1 = 2;
-				var twitter1 = 2;
-			}
-
-			if(b.shareCounts) {
-				var facebook2 = mult(b.avgFaceBookShares, b.shareCounts.Facebook.total_count);
-				var twitter2 = multTwitter(b.avgTweets, b.shareCounts.Twitter);
-			} else {
-				var facebook2 = 2;
-				var twitter2 = 2;
-			}
-
-
-			a.wonderRank = (a.foundOn.length * adg1 * viewMultiplier1 * ifMusicVideo(a) * facebook1 * twitter1);
-			b.wonderRank = (b.foundOn.length * adg2 * viewMultiplier2 * ifMusicVideo(b) * facebook2 * twitter2);
-
+	if(ranked) {
+		ranked.sort(function(a,b) {
 			if(a.wonderRank - b.wonderRank == 0){
 				if(a.youTubePostDate - b.youTubePostDate > 0) 
 					a.wonderRank += 5;
@@ -157,29 +148,27 @@ var sort = function(videos) {
 			}
 			return (a.wonderRank) - (b.wonderRank);
 		}).reverse();
+	}
+
+	return ranked;
 }
 
 var hipsterSort = function(videos) {
 	var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7;
-	videos.sort(function(a, b) {
+	var ranked = _.map(videos, function(a) {
 		var date1 = (Date.now() - Date.parse(a.youTubePostDate))/day;
-		var date2 = (Date.now() - Date.parse(b.youTubePostDate))/day;
 		var adg1 = multiplier(date1);
-		var adg2 = multiplier(date2);
-
 		var post1 = (Date.now() - a.dateFound)/day;
-		var post2 = (Date.now() - b.dateFound)/day;
 		var padg1 = hipMult(post1);
-		var padg2 = hipMult(post2);
-		
 		var hipsterViewMult1 = hipsterViewMult(parseInt(a.oldStats.viewCount));
-		var hipsterViewMult2 = hipsterViewMult(parseInt(b.oldStats.viewCount));
-
 		a.wonderRank = adg1 * padg1 * hipsterViewMult1 * ifMusicVideo(a);
-		b.wonderRank = adg2 * padg2 * hipsterViewMult2 * ifMusicVideo(b);
-
-		return a.wonderRank - b.wonderRank;
-	}).reverse();
+		return a;
+	});
+	if(ranked)
+		ranked.sort(function(a, b) {
+			return a.wonderRank - b.wonderRank;
+		}).reverse();
+	return ranked;
 }
 
 var topSort = function(videos) {
@@ -195,7 +184,7 @@ var topSort = function(videos) {
 }
 
 module.exports = {
-	defaultSort : sort,
+	defaultSort : rank,
 	hipsterSort : hipsterSort,
 	topSort: topSort
 }

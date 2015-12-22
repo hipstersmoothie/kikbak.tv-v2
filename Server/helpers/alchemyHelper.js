@@ -19,9 +19,7 @@ function analyzePost(url, callback) {
 					entityConfidence = compareEntity(bucket.solidEntities, bucket.entitiyTypes, entities);
 
 				var	overall = keywordConfidence + (taxonomyConfidence * 1.5) + entityConfidence;
-
 							// console.log(keywordConfidence, taxonomyConfidence, entityConfidence, overall)
-
 				if(overall >= 1.5 && overall > bestOverall) {
 					bestBucket = bucket;
 					bestOverall = overall

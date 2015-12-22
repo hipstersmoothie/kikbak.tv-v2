@@ -97,7 +97,7 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 	video = vidList[0];
 	var foundUrls = _.map(video.foundOn, function(url) { return url.url });
 	if (!_.includes(foundUrls,  blog.url)) {
-		console.log('updating', video.title, video.foundOn, blog);
+		console.log('updating', video.title, blog);
 		var blogs = blog.tags ? blog.tags : [];
 		var tags = _.union(getTags.getTag($('p'), $, "", "", ""), blogs);
 		db.videos.update({ videoId : vidId }, {
@@ -131,9 +131,8 @@ var newVid = function(vidId, url, blog, $, link) {
 			pictureUtility.compare({ videoId: vidId }, function(isSame) {
 				var blogs = blog.tags ? blog.tags : [];
 				var tags =  _.union(getTags.getTag($('p'), $, result['items'][0]['snippet']['description'], result['items'][0]['snippet']['title'], result['items'][0]['snippet']['channelTitle']), blogs)
-				console.log('adding', result['items'][0]['snippet']['title'], vidId); 
-
 				if(isSame) {
+					console.log('still video', 'https://www.youtube.com/watch?v=' + video.videoId, result['items'][0]['snippet']['title'])
 					tags.push('NotAVid')
 					db.videos.update({ videoId : vidId }, {
 						$setOnInsert: {
@@ -147,6 +146,8 @@ var newVid = function(vidId, url, blog, $, link) {
 						console.log(err, res)
 					});
 				} else {
+					console.log('adding', result['items'][0]['snippet']['title'], vidId); 
+
 					var bigThumb;
 					var smallThumb;
 					if(result['items'][0]['snippet']['thumbnails'].maxres) {
