@@ -229,15 +229,13 @@ body {
 	    margin-top: -50px;
   		color: #DDDDDD;
   		transform: skewX(-20deg);
-
+  		z-index: 2;
 		&.developer1 {
     		left: 15%;
-  			transform: skewX(-20deg);
 		}
 
 		&.developer2 {
     		right: 15%;
-  			transform: skewX(-20deg);
 		}
 
 		.devname {	
@@ -400,65 +398,60 @@ body {
 	    width: 100%;
 	    color: #999;
 	    .gradient5;
-	    z-index: -1;
-
-	    .kikbak {	
+	    z-index: 1;
+	    
+	    .copydiv {
+		    width: 100%;
 		    position: absolute;
-		    bottom: 40px;
-		    font-size: 2em;
-		    left: 200px;
-	    }
-
-	    .subkikbak {	
-		    font-weight: 600;
-		    position: absolute;
-		    bottom: 20px;
-		    left: 200px;
-	    }
-
-	    .copyright {
 		    bottom: 0;
-		    position: absolute;
-		    left: 200px;
-	    }
+		    height: 47%;
+		    margin-bottom: 20px;
+		    text-align: center;
 
-	    .fa {
-		    color: #999;
-		    font-size: 30px;
-		    /* padding: 10px; */
-		    position: absolute;
-		    margin: 10px;		    
-		    transition: all 0.3s;
-		}
-
-		.fa-twitter {
-		    bottom: 0;
-		    left: 1000px;
-
-		    &:hover {
-		    	color: #4099FF;
+		    .kikbak {	
+			    font-size: 2.6em;
+			    display: inline-block;
+			    margin-right: 30px;
+			    margin-top: 30px;
 		    }
-		}
 
-		.fa-instagram {
-		    bottom: 0;
-		    left: 1050px;
-
-
-		    &:hover {
-		    	color: #517fa4;
+		    .subkikbak {	
+			    font-weight: 600;
+			    margin-top: -15px;
 		    }
-		}
 
-		a {	
-		    position: absolute;
-		    bottom: 0;
-		    left: 1100px;
-		    margin: 10px;
-		}
+		    .copyright {
+		    }
+
+		    .fa {
+			    color: #999;
+			    font-size: 30px;
+			    display: inline-block;
+			    margin: 10px;		    
+			    transition: all 0.3s;
+			}
+
+			.fa-twitter {
+			    &:hover {
+			    	color: #4099FF;
+			    }
+			}
+
+			.fa-instagram {
+			    &:hover {
+			    	color: #517fa4;
+			    }
+			}
+
+			a {	
+			    margin: 10px;
+			    img {
+			    	margin-top: -25px;
+			    }
+			}
+	    }
+	    
 	}
-
-
 }
 
 .blackFuzz{
@@ -2076,7 +2069,23 @@ a {
 		    width: 60%;
 		    min-width: 250px;
 		}
+
+		.dev {
+			width: 100%;
+			transform: skewX(0deg);
+			&.developer1 {
+    			margin-top: 96px;
+    			left: 0;
+			}
+			&.developer2 {
+    			right: 0;
+			}
+		}
+		.bottom {
+			    margin-top: 130px;
+		}
 	}
+
 
 }
 
@@ -2087,6 +2096,18 @@ a {
 		}
 		&:first-of-type img {
 		    margin-bottom: -5px;
+		}
+	}
+}
+
+
+@media screen and (max-width: 430px) {
+	.about .bottom .copydiv {
+		.subkikbak {
+			margin-top: 0;
+		}
+		a img {
+			margin-top: -10px;
 		}
 	}
 }
