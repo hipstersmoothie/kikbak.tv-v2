@@ -197,11 +197,6 @@ function colorSwap(color) {
 	Session.set('color', color.hex);
 	Session.set('colorImage', color.tag);
 	Session.set('colorRgb', color.rgb);
-	setPseudoClass(".middle", "background", `-webkit-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
-	setPseudoClass(".middle", "background", `-moz-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
-	setPseudoClass(".middle", "background", `-webkit-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
-	setPseudoClass(".middle", "background", `-o-linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
-	setPseudoClass(".middle", "background", `linear-gradient(90deg, ${color.light} 10%, ${color.dark} 90%)`);
 
 	setPseudoClass("#login-buttons .login-buttons-with-only-one-button .login-button", "background", color.hex);
 	setPseudoClass("#login-buttons .login-button:hover, .accounts-dialog .login-button:hover", "color", color.hex);

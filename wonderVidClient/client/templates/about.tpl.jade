@@ -1,74 +1,99 @@
-.top
-.pane.topHeight
-	.description.text-center
-		h1.blackFuzz(style="color: #{color};") This is kikbak.tv
-		p.blackFuzz We take the hassle out of finding new music videos on the web.
+link(href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css')
+style.
+	.navbar-inverse {
+		background: transparent;
+	}
 
-.middle
-	h1.text-center How it Works
+.about
+	.summary
+		h2.summaryhead(data-hover="Think of it like HypeMachine + MTV!") Think of it like HypeMachine + MTV! 
+		.summarytext
+			p We search hundreds of blogs every hour looking for the most popular, most played, and most shared music videos. Then combine them into a top 100 that updates hourly. If you have missed quality MTV as much as we have, then throw #[a(href="http://www.kikbak.tv/") kikbak.tv] on the next time you're having a party or a kickback or whenever you're just chilling.   
+
 	.features
-		.feature.card
-			.icon(style="background-color: #{color};")
-				|1
-			.description
-				h2.text-center Smart Rankings
-				p kikbak.tv ranks recent Music Videos by combining the Facebook shares, Tweets, blog posts, and average plays of the video.
-		.feature.card
-			.icon(style="background-color: #{color};")
-				article.clock
-					.hours-container
-						.hours
-					.minutes-container
-						.minutes
-			.description
-				h2.text-center Hourly Results
-				p Our servers are constantly combing the internet for new music videos and share counts. This changes the top 100 hourly. 
-		.feature.card
-			.icon(style="background-color: #{color};")
-				.left-eye.eye
-				.right-eye.eye
-				.mouth
-			.description
-				h2.text-center Relax
-				p kikbak.tv takes out all the pain of finding new music. Just sit back, watch, and discover!
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.smartrankings
+				object.featurephoto
+					embed(src="/images/chart.svg" style="")
+				.description
+					h2.text-center(data-hover="Smart Rankings") Smart Rankings
+					p kikbak.tv ranks recent Music Videos by combining the Facebook shares, Tweets, blog posts, and average plays of the video. Then kikbak.tv constantly ranks every video in our database to create an updated top 100 billboard.
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.natlanglearn
+				.description
+					h2.text-center.white(data-hover="Learing and Categorizing") Learning and Categorizing
+					p Using #[a(href="http://www.alchemyapi.com/") Alchemy API] for natural language analysis, we scan every blog post to properly distinguish between music videos, interview, live videos, and genres. 
+				object.featurephoto
+					embed(src="/images/brain.svg" style="") 
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.blogs
+				img.featurephoto(src="/images/blogs.png")
+				.description
+					h2.text-center(data-hover="Hundreds of Blogs") Hundreds of Blogs
+					p kickbak.tv reads in hundreds of different music blogs across the world to get a real sense of what videos are actually trending.
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+		.division
+			.feature.mobile
+				.description
+					h2.text-center(data-hover="Mobile Apps")  Mobile Apps
+					p Want to explore music videos on the go? kikbak.tv is now on the #[a(href="#") Apple Store] and #[a(href="https://play.google.com/store/apps/details?id=tv.kikbak.kikbak") Play Store].
+				img.featurephoto(src="/images/mobile-views.png")
+		svg(id="bigHalfCircle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none")
+			path(d="M0 100 C40 0 60 0 100 100 Z")
+	.builton
+		h2.builtonheader(data-hover="Built Using") Built Using
+		.cred.meteor
+			img(src="/images/meteor-logo.png")
+		.cred.nodejs
+			img(src="/images/nodejs-logo.png")
+		.cred.alchemy
+			img(src="/images/alchemyapi-logo.png")
+		.cred.mongo
+			img(src="/images/mongodb-logo.png")
+		.cred.cordova
+			img(src="/images/cordova-logo.png")
+	
+	.top
+	.pane.topHeight
 
-.creators
-	h1.blackFuzz.text-center(style="color: #{color};") Meet the Creators
-	.creator.card.creatorLeft
-		.description
-			.picLeft.pic
-			h2.text-center(style="color: #{color};") Andrew Lisowski
-			h4.text-center Full-Stack
-			h3 Bio
-			p Andrew is a Computer Science senior at California Polytechnic University at San Luis Obispo with a passion for music tech.
-				|He has always been interested in music, playing piano in his youth, attending countless concerts and constantly seeking out new and interesting music.
-				|Through his work, ge aims to combine classic musical experiences with modern tech.
-			p Andrew is returning to Intuit this summer to be an intern at mint.com doing front-end development over the summer.
-				a.email.text-center(href="mailto:lisowski54@gmail.com") contact
-			h3 Previous Work
-			ul.previousWork  
-				li
-					a(href='http://hipstersmoothie.com' target = "_blank") hipstersmoothie.com
-				li
-					a(href="http://sctunes.meteor.com" target = "_blank") scTunes (animated)
-				li
-					a(href="http://sctunesFast.meteor.com" target = "_blank") scTunes (fast)
-				li
-					a(href="http://kikbak.meteor.com/" target = "_blank") kikbak.tv (same name different product)
-	.creator.card.creatorRight
-		.description
-			.picRight.pic
-			h2.text-center(style="color: #{color};") Emmett Harper
-			h4.text-center Front-End
-			h3 Bio
-			p Emmett is a graduating computer engineer at Cal Poly with an exceptionally rojo beard on his face. He loves desgin and web 
-				|work, and is currently working on an android app. Always interested in inqueries for cool ventures!
-				a.email.text-center(href="mailto:emmettharper@gmail.com") contact
-			h3 Previous Work
-			ul.previousWork 
-				li
-					a(href='http://anastocio.com' target = "_blank") anastocio.com
-.pane.bottom
-	.description.text-center
-		h1.explore Start Exploring!
-		button.goBack(style="background-color: #{color};") Back to kikbak.tv
+
+	.dev.developer1
+		p.devname Emmett Harper
+		p.description Front-End Developer
+		a.git(href="")
+			i.fa.fa-github
+		a.linkedin(href="")
+			i.fa.fa-linkedin
+		a.mail(href="")
+			i.fa.fa-envelope
+
+	.dev.developer2
+		p.devname Andrew Lisowski
+		p.description Full-Stack Developer
+		a.git(href="")
+			i.fa.fa-github
+		a.linkedin(href="")
+			i.fa.fa-linkedin
+		a.mail(href="")
+			i.fa.fa-envelope
+
+	.bottom
+		.copydiv
+			p.kikbak kikbak.tv
+			i.fa.fa-twitter
+			i.fa.fa-instagram
+			a(href="https://play.google.com/store/apps/details?id=tv.kikbak.kikbak")
+				img(alt="Get it on Google Play" src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png")
+			p.subkikbak trending music videos smartly delivered. 
+			p.copyright Copyright © 2015 Built With Trees LLC. All videos © their respective owners. 348 Hathaway San Luis Obispo, Cali. USA.
+			
+
+
+
