@@ -56,7 +56,6 @@ var getHtml = function(post, blog) {
 
 var handlePost = function($, blog, link) {
 	var iframes = $('iframe');
-
 	_.forEach(iframes, function(iframe) {
 		if(iframe.attribs.src && iframe.attribs.src.indexOf('youtu') > -1) {
 			addToDb(iframe.attribs.src, blog, $, link);
@@ -74,7 +73,10 @@ var tagVideo = function(vidId, html, $) {
 				tags = getTags.getTag(html, $, '', '', '');
 			db.videos.update({ videoId : vidId }, {$addToSet: {
 				tags : {$each:tags}
-			}});
+			}}, function(err, res) {
+				if(err)
+					console.log(err)
+			});
 		}
 	});
 }
@@ -102,15 +104,20 @@ var updateVid = function(vidList, blog, vidId, $, link) {
 		var tags = _.union(getTags.getTag($('p'), $, "", "", ""), blogs);
 		db.videos.update({ videoId : vidId }, {
 			$addToSet: {
-				foundOn : blog
+				foundOn : blog,
+				tags : {$each:tags},
+				origPosts : link
 			}
+		}, function(err, res) {
+			if(err)
+				console.log(err)
 		});
-		db.videos.update({ videoId : vidId }, {$addToSet: {
-			tags : {$each:tags}
-		}});
-		db.videos.update({ videoId : vidId }, {$addToSet: {
-			origPosts : link
-		}});
+		// db.videos.update({ videoId : vidId }, {$addToSet: {
+		// 	tags : {$each:tags}
+		// }});
+		// db.videos.update({ videoId : vidId }, {$addToSet: {
+		// 	origPosts : link
+		// }});
 	}
 	posts++;
 }
@@ -143,7 +150,8 @@ var newVid = function(vidId, url, blog, $, link) {
 						},
 						$addToSet: { tags : { $each: tags } }
 					}, { upsert : true }, function(err, res) {
-						console.log(err, res)
+						if(err)
+							console.log(err)
 					});
 				} else {
 					console.log('adding', result['items'][0]['snippet']['title'], vidId); 
@@ -188,9 +196,7 @@ var newVid = function(vidId, url, blog, $, link) {
 								avgLikePerHalfHour : 0,
 								avgDislikePerHalfHour : 0,
 								avgFavoritePerHalfHour : 0,
-								avgCommentPerHalfHour : 0,
-								taxonomy: taxonomy,
-								keywords: keywords
+								avgCommentPerHalfHour : 0
 							},
 							$addToSet: {
 								tags : {
@@ -198,14 +204,15 @@ var newVid = function(vidId, url, blog, $, link) {
 								}
 							}
 						}, { upsert : true }, function(err, res) {
-							console.log(err, res)
+							if(err)
+								console.log(err)
 						});
 					});
 				}
 				posts++;
 			}); 
 		} else if (error) {
-			// console.log(error);
+			console.log(error);
 		}			
 	});
 }

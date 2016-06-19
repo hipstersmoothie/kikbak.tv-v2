@@ -31,7 +31,6 @@ chuangbo:cookie
 grigio:babel
 ficshelf:media-query
 natestrauser:font-awesome
-standard-minifiers
 meteor-base
 mobile-experience
 mongo
@@ -46,3 +45,5 @@ spacebars
 check
 mrt:jquery-ui
 chriswessels:hammer
+standard-minifier-css
+standard-minifier-js
