@@ -10,7 +10,6 @@ var http = require('http'),
 	YouTube = require('youtube-node'),
 	db = require("./../helpers/db"),
 	getTags = require('./../helpers/getTags'),
-	analyzePost = require('./../helpers/alchemyHelper'),
 	pictureUtility = require('./../helpers/pictureUtility');
 
 var youTube = new YouTube();
@@ -172,13 +171,7 @@ var newVid = function(vidId, url, blog, $, link) {
 						smallThumb = result['items'][0]['snippet']['thumbnails'].high.url;
 					}
 
-					analyzePost(link, function(tagFound) {
-						if(tagFound && !_.includes(tags, "Music Video")) {
-							tags.push(tagFound)
-							console.log('analyzed', link, tagFound);
-						}
-						
-						db.videos.update({ videoId : vidId }, {
+					db.videos.update({ videoId : vidId }, {
 							$setOnInsert: {
 								youTubePostDate : result['items'][0]['snippet']['publishedAt'],
 								videoId : vidId,
@@ -207,7 +200,6 @@ var newVid = function(vidId, url, blog, $, link) {
 							if(err)
 								console.log(err)
 						});
-					});
 				}
 				posts++;
 			}); 

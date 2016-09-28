@@ -2,7 +2,6 @@ var db = require("./db"),
 	blockRegex = require('./blockRegex'),
 	blockedTitles = blockRegex.titles,
 	blockedPublished = blockRegex.publishers,
-	analyzePost = require('./alchemyHelper'),
 	_ = require('lodash'),
 	wonderRank = require('./wonderRank');
 
@@ -23,14 +22,6 @@ function analyzePosts(sort, callback) {
 					return clearInterval(inter);
 
 				var video = videos[i++]
-				if (!_.includes(video.tags, "Music Video")) {
-					analyzePost(video.origPosts[0], function(tag, data) {
-						if(tag) { 
-							console.log('tagged https://www.youtube.com/watch?v=' + video.videoId + ' ' + tag, data);
-							db.videos.update({videoId: video.videoId}, {$addToSet:{tags:tag}})
-						}
-					})
-					}
 			}, 500)
 		}
 	});
