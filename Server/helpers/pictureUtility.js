@@ -26,13 +26,13 @@ function compareStills(video, cback) {
 	}, function(err){
 	    if( err ) {
 	      console.log('A file failed to process');
-	      _.forEach(images, fs.unlink)
+	      unlinkImages(images);
 	      cback(false)
 	    } else {		
 	    	gm.compare(images[0], './workers/noPicture.jpg', 0.02, function (err, isEqual, equality, raw, path1, path2) {
 			  if (err) return cback(err);
 			  if(isEqual) {
-			  	_.forEach(images, fs.unlink)
+			  	unlinkImages(images);
 			  	cback(false)
 			  } else {
 			  	gm.compare(images[0], images[1], 0.002, function (err, isEqual, equality, raw, path1, path2) {
@@ -40,11 +40,11 @@ function compareStills(video, cback) {
 				  if(isEqual) {
 				  	gm.compare(images[1], images[2], 0.002, function (err, isEqual, equality, raw, path1, path2) {
 					  if (err) return handle(err);
-					  _.forEach(images, fs.unlink)
+					  unlinkImages(images);
 					  cback(isEqual)
 					});
 				  } else {
-				  	_.forEach(images, fs.unlink)
+				  	unlinkImages(images);
 				  	cback(isEqual)
 				  }
 				});
@@ -52,6 +52,15 @@ function compareStills(video, cback) {
 			});
 		}
 	});
+}
+
+function unlinkImages(images) {
+	_.forEach(images, function(image) {
+  		fs.unlink(image, function(err,res) {
+  			if(err) 
+  				console.log(err)
+  		});
+  	})
 }
 
 function findStills () {
@@ -63,7 +72,10 @@ function findStills () {
 					if(isSame === true)
 						db.videos.update({ videoId : video.videoId }, {$addToSet: {
 							tags : "NotAVid"
-						}});
+						}}, function(err, res) {
+							if(err)
+								console.log(err)
+						});
 				});
 			})(videos[i]);
 			i++;
